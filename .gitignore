@@ -85,7 +85,11 @@ Dependencies/
 **/fastlane/report.xml
 **/fastlane/Preview.html
 **/fastlane/screenshots/**/*.png
+**/fastlane/screenshots/
 **/fastlane/BuildOutputs
+**/fastlane/metadata
+**/fastlane/Deliverfile
+
 
 **/fastlane/.env.default
 
