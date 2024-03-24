@@ -107,11 +107,6 @@ extension NicknameEditorVC {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc private func didNicknameReturn() {
-        guard let nickname = nickNameTextField.text else { return }
-        self.updateUserNickname(nickname: nickname)
-    }
-    
     @objc private func textFieldTextDidChange() {
         guard let text = nickNameTextField.text else { return }
         
@@ -123,8 +118,9 @@ extension NicknameEditorVC {
     }
     
     @objc private func finishEditNickname() {
-        didNicknameReturn()
-        self.navigationController?.popViewController(animated: false)
+        guard let nickname = nickNameTextField.text else { return }
+        
+        self.updateUserNickname(nickname: nickname)
     }
 }
 
@@ -184,6 +180,15 @@ extension NicknameEditorVC: UITextFieldDelegate {
 
 extension NicknameEditorVC {
     func updateUserNickname(nickname: String) {
+        
+        guard nickname != self.currentNickname else {
+            print("💪 닉네임 변경 시도 전에 현재 닉네임과 동일한지 검사 성공 처리")
+//            self.delegate?.nicknameEditDidSuccess()
+//            닉네임 같은데 굳이 또 서버 요청을 할 필요가 있나?
+            self.navigationController?.popViewController(animated: false)
+            return
+        }
+        
         LoadingIndicator.showLoading()
         userProvider.request(.updateUserNickname(nickname: nickname)) { [weak self] response in
             LoadingIndicator.hideLoading()
@@ -193,15 +198,13 @@ extension NicknameEditorVC {
                 let status = result.statusCode
                 if 200..<300 ~= status {
                     self.delegate?.nicknameEditDidSuccess()
-                    self.dismiss(animated: false)
-                }
-                if status >= 400 {
-                    print("400 error")
+                    self.navigationController?.popViewController(animated: false)
+                } else {
                     self.showNetworkFailureToast()
                 }
             case .failure(let error):
+                self.showToast(message: "중복된 닉네임입니다.")
                 print(error.localizedDescription)
-                self.showNetworkFailureToast()
             }
         }
     }
