@@ -183,8 +183,6 @@ extension NicknameEditorVC {
         
         guard nickname != self.currentNickname else {
             print("💪 닉네임 변경 시도 전에 현재 닉네임과 동일한지 검사 성공 처리")
-//            self.delegate?.nicknameEditDidSuccess()
-//            닉네임 같은데 굳이 또 서버 요청을 할 필요가 있나?
             self.navigationController?.popViewController(animated: false)
             return
         }
@@ -203,7 +201,7 @@ extension NicknameEditorVC {
                     self.showNetworkFailureToast()
                 }
             case .failure(let error):
-                self.showToast(message: "중복된 닉네임입니다.")
+                self.showToast(message: "중복된 닉네임입니다.", heightOffset: 100)
                 print(error.localizedDescription)
             }
         }

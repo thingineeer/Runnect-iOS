@@ -2,16 +2,22 @@
 //  Toast.swift
 //  Runnect-iOS
 //
-//  Created by sejin on 2022/12/31.
+//  Created by 이명진 on 2024/03/25.
 //
 
 import UIKit
 
 import SnapKit
+import Then
 
 public extension UIViewController {
-    func showToast(message: String) {
-        Toast.show(message: message, view: self.view, safeAreaBottomInset: self.safeAreaBottomInset())
+    func showToast(message: String, heightOffset: CGFloat = 0) {
+        Toast.show(
+            message: message,
+            view: self.view,
+            safeAreaBottomInset: self.safeAreaBottomInset(),
+            heightOffset: heightOffset
+        )
     }
     
     func showNetworkFailureToast() {
@@ -20,34 +26,39 @@ public extension UIViewController {
 }
 
 public class Toast {
-    public static func show(message: String, view: UIView, safeAreaBottomInset: CGFloat = 0) {
+    public static func show(
+        message: String,
+        view: UIView,
+        safeAreaBottomInset: CGFloat = 0,
+        heightOffset: CGFloat = 0
+    ) {
+        let toastContainer = UIView().then {
+            $0.backgroundColor = UIColor.g2.withAlphaComponent(0.7)
+            $0.alpha = 1.0
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.isUserInteractionEnabled = false
+        }
         
-        let toastContainer = UIView()
-        let toastLabel = UILabel()
-        
-        toastContainer.backgroundColor = UIColor.g2.withAlphaComponent(0.7)
-        toastContainer.alpha = 1.0
-        toastContainer.layer.cornerRadius = 15
-        toastContainer.clipsToBounds = true
-        toastContainer.isUserInteractionEnabled = false
-        
-        toastLabel.textColor = .m4
-        toastLabel.font = .b4
-        toastLabel.textAlignment = .center
-        toastLabel.text = message
-        toastLabel.clipsToBounds = true
-        toastLabel.numberOfLines = 0
-        toastLabel.sizeToFit()
+        let toastLabel = UILabel().then {
+            $0.textColor = .m4
+            $0.font = .b4
+            $0.textAlignment = .center
+            $0.text = message
+            $0.clipsToBounds = true
+            $0.numberOfLines = 0
+            $0.sizeToFit()
+        }
         
         toastContainer.addSubview(toastLabel)
         view.addSubview(toastContainer)
         
-        let toastConatinerWidth = toastLabel.intrinsicContentSize.width + 40.0
+        let toastContainerWidth = toastLabel.intrinsicContentSize.width + 40.0
         
         toastContainer.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(safeAreaBottomInset+160)
-            $0.width.equalTo(toastConatinerWidth)
+            $0.bottom.equalToSuperview().inset(safeAreaBottomInset + 160 + heightOffset)
+            $0.width.equalTo(toastContainerWidth)
             $0.height.equalTo(31)
         }
         

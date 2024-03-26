@@ -174,7 +174,7 @@ extension NickNameSetUpVC {
                 }
             case .failure(let error):
                 print(error.localizedDescription)
-                self.showNetworkFailureToast()
+                self.showToast(message: "중복된 닉네임입니다.", heightOffset: 100)
             }
         }
     }
