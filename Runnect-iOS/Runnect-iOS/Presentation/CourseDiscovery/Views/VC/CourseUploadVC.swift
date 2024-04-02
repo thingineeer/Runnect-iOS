@@ -141,24 +141,19 @@ extension CourseUploadVC {
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
+    
+    // 업로드 버튼 상태 업데이트 메소드
+    private func updateUploadButtonState() {
+        let isTitleNotEmpty = !(courseTitleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        let isContentNotEmptyAndNotPlaceholder = !(activityTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || activityTextView.text == placeholder)
+        uploadButton.setEnabled(isTitleNotEmpty && isContentNotEmptyAndNotPlaceholder)
+    }
 }
 // MARK: - @objc Function
 
 extension CourseUploadVC {
     @objc private func textFieldTextDidChange() {
-        guard let text = courseTitleTextField.text else { return }
-        
-        if text.count > courseTitleMaxLength {
-            let index = text.index(text.startIndex, offsetBy: courseTitleMaxLength)
-            let newString = text[text.startIndex..<index]
-            self.courseTitleTextField.text = String(newString)
-        }
-        
-        if text.count == 0 && activityTextView.text != self.placeholder && activityTextView.text.count == 0 {
-            uploadButton.setEnabled(true)
-        } else {
-            uploadButton.setEnabled(false)
-        }
+        updateUploadButtonState()
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -198,9 +193,10 @@ extension CourseUploadVC {
     }
 }
 
-// MARK: - naviVar Layout
-
 extension CourseUploadVC {
+    
+    // MARK: - naviVar Layout
+    
     private func setNavigationBar() {
         view.addSubview(navibar)
         navibar.snp.makeConstraints {
@@ -208,7 +204,7 @@ extension CourseUploadVC {
             $0.height.equalTo(48)
         }
     }
-    // MARK: - setUI
+    // MARK: - UI & Layout
     
     private func setUI() {
         view.backgroundColor = .w1
@@ -217,8 +213,6 @@ extension CourseUploadVC {
         mapImageView.backgroundColor = .systemGray4
         
     }
-    
-    // MARK: - Layout Helpers
     
     private func setLayout() {
         view.addSubview(buttonContainerView)
@@ -301,6 +295,8 @@ extension CourseUploadVC {
     }
 }
 
+// MARK: - UITextViewDelegate
+
 extension CourseUploadVC: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -314,16 +310,13 @@ extension CourseUploadVC: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        if !courseTitleTextField.isEmpty && !activityTextView.text.isEmpty {
-            uploadButton.setEnabled(true)
-        } else {
-            uploadButton.setEnabled(false)
-        }
+        updateUploadButtonState()
         
         if activityTextView.text.count > 150 {
             activityTextView.deleteBackward()
         }
     }
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == placeholder {
             activityTextView.textColor = .g3
