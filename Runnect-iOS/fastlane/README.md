@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Set Marketing and Build version
 
+### ios release
+
+```sh
+[bundle exec] fastlane ios release
+```
+
+Build app and release to App Store.
+
 ### ios beta
 
 ```sh
