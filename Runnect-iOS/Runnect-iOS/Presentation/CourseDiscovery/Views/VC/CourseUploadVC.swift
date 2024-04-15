@@ -45,7 +45,7 @@ class CourseUploadVC: UIViewController {
     }
     private let distanceInfoView = CourseDetailInfoView(title: "거리", description: "0.0km")
     private let departureInfoView = CourseDetailInfoView(title: "출발지", description: "")
-    private let placeholder = "코스에 대한 소개를 적어주세요.(난이도/풍경/지형)"
+    private let placeholder = "코스에 대한 소개를 적어주세요.(난이도/풍경/지형)\n(최대 150자)"
     
     let activityTextView = UITextView().then {
         $0.font = .b4
@@ -61,11 +61,10 @@ class CourseUploadVC: UIViewController {
         setNavigationBar()
         setUI()
         setLayout()
-        setupTextView()
+        setDelegate()
         setAddTarget()
-        setKeyboardNotification()
         setTapGesture()
-        addKeyboardObserver()
+        setKeyboardObservers()
         analyze(screenName: GAEvent.View.viewCourseUpload)
     }
     
@@ -107,21 +106,6 @@ extension CourseUploadVC {
         self.uploadButton.addTarget(self, action: #selector(uploadButtonDidTap), for: .touchUpInside)
     }
     
-    // 키보드가 올라오면 scrollView 위치 조정
-    private func setKeyboardNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil)
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil)
-    }
-    
     // 화면 터치 시 키보드 내리기
     private func setTapGesture() {
         let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
@@ -129,7 +113,14 @@ extension CourseUploadVC {
         view.addGestureRecognizer(tap)
     }
     
-    private func addKeyboardObserver() {
+    // 업로드 버튼 상태 업데이트 메소드
+    private func updateUploadButtonState() {
+        let isTitleNotEmpty = !(courseTitleTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        let isContentNotEmptyAndNotPlaceholder = !(activityTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || activityTextView.text == placeholder)
+        uploadButton.setEnabled(isTitleNotEmpty && isContentNotEmptyAndNotPlaceholder)
+    }
+    
+    private func setKeyboardObservers() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillShow),
@@ -146,19 +137,7 @@ extension CourseUploadVC {
 
 extension CourseUploadVC {
     @objc private func textFieldTextDidChange() {
-        guard let text = courseTitleTextField.text else { return }
-        
-        if text.count > courseTitleMaxLength {
-            let index = text.index(text.startIndex, offsetBy: courseTitleMaxLength)
-            let newString = text[text.startIndex..<index]
-            self.courseTitleTextField.text = String(newString)
-        }
-        
-        if text.count == 0 && activityTextView.text != self.placeholder && activityTextView.text.count == 0 {
-            uploadButton.setEnabled(true)
-        } else {
-            uploadButton.setEnabled(false)
-        }
+        updateUploadButtonState()
     }
     
     @objc private func keyboardWillShow(_ notification: Notification) {
@@ -175,11 +154,12 @@ extension CourseUploadVC {
         scrollView.contentInset = contentInset
         scrollView.scrollIndicatorInsets = contentInset
         
-        if activityTextView.isFirstResponder {
+        // scrollView 높이 설정
+        if courseTitleTextField.isFirstResponder || activityTextView.isFirstResponder {
             let contentViewHeight = scrollView.contentSize.height
             let textViewHeight = activityTextView.frame.height
             let textViewOffsetY = contentViewHeight - (contentInset.bottom + textViewHeight)
-            let position = CGPoint(x: 0, y: textViewOffsetY + 100)
+            let position = CGPoint(x: 0, y: textViewOffsetY + 50)
             scrollView.setContentOffset(position, animated: true)
             return
         }
@@ -198,9 +178,10 @@ extension CourseUploadVC {
     }
 }
 
-// MARK: - naviVar Layout
-
 extension CourseUploadVC {
+    
+    // MARK: - naviVar Layout
+    
     private func setNavigationBar() {
         view.addSubview(navibar)
         navibar.snp.makeConstraints {
@@ -208,7 +189,7 @@ extension CourseUploadVC {
             $0.height.equalTo(48)
         }
     }
-    // MARK: - setUI
+    // MARK: - UI & Layout
     
     private func setUI() {
         view.backgroundColor = .w1
@@ -216,9 +197,9 @@ extension CourseUploadVC {
         buttonContainerView.backgroundColor = .w1
         mapImageView.backgroundColor = .systemGray4
         
+        activityTextView.text = placeholder
+        activityTextView.textColor = .g3
     }
-    
-    // MARK: - Layout Helpers
     
     private func setLayout() {
         view.addSubview(buttonContainerView)
@@ -241,14 +222,15 @@ extension CourseUploadVC {
     
     private func setScrollViewLayout() {
         view.addSubview(scrollView)
-        [mapImageView,
-         courseTitleTextField,
-         dividerView,
-         distanceInfoView,
-         departureInfoView,
-         activityTextView].forEach {
-            scrollView.addSubview($0)
-        }
+        
+        scrollView.addSubviews(
+            mapImageView,
+            courseTitleTextField,
+            dividerView,
+            distanceInfoView,
+            departureInfoView,
+            activityTextView
+        )
         
         scrollView.snp.makeConstraints {
             $0.top.equalTo(navibar.snp.bottom)
@@ -294,12 +276,13 @@ extension CourseUploadVC {
         }
     }
     
-    func setupTextView() {
+    func setDelegate() {
         activityTextView.delegate = self
-        activityTextView.text = placeholder
-        activityTextView.textColor = .g3
+        courseTitleTextField.delegate = self
     }
 }
+
+// MARK: - UITextViewDelegate
 
 extension CourseUploadVC: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -314,21 +297,30 @@ extension CourseUploadVC: UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        if !courseTitleTextField.isEmpty && !activityTextView.text.isEmpty {
-            uploadButton.setEnabled(true)
-        } else {
-            uploadButton.setEnabled(false)
-        }
+        updateUploadButtonState()
         
         if activityTextView.text.count > 150 {
             activityTextView.deleteBackward()
         }
     }
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || textView.text == placeholder {
             activityTextView.textColor = .g3
             activityTextView.text = placeholder
         }
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension CourseUploadVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == courseTitleTextField {
+            activityTextView.becomeFirstResponder()
+            return true
+        }
+        return false
     }
 }
 

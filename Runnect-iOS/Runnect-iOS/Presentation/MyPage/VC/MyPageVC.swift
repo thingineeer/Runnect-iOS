@@ -148,7 +148,11 @@ extension MyPageVC {
             $0.image = ImageLiterals.icArrowRight
         }
         
-        containerView.addSubviews(icStar, label, icArrowRight)
+        containerView.addSubviews(
+            icStar,
+            label,
+            icArrowRight
+        )
         
         icStar.snp.makeConstraints {
             $0.top.equalToSuperview().offset(22)
@@ -297,9 +301,20 @@ extension MyPageVC {
             return
         }
         
-        view.addSubviews(myProfileView, myRunningProgressView, firstDivideView,
-                         activityRecordInfoView, secondDivideView, goalRewardInfoView,
-                         thirdDivideView, uploadedCourseInfoView, fourthDivideView, settingView, fifthDivideView, kakaoChannelAsk)
+        view.addSubviews(
+            myProfileView,
+            myRunningProgressView,
+            firstDivideView,
+            activityRecordInfoView,
+            secondDivideView,
+            goalRewardInfoView,
+            thirdDivideView,
+            uploadedCourseInfoView,
+            fourthDivideView,
+            settingView,
+            fifthDivideView,
+            kakaoChannelAsk
+        )
         
         myProfileView.snp.makeConstraints {
             $0.top.equalTo(navibar.snp.bottom).offset(6)
@@ -315,7 +330,11 @@ extension MyPageVC {
     }
     
     private func setMyProfileLayout() {
-        myProfileView.addSubviews(myProfileImage, myProfileNameLabel, myProfileEditButton)
+        myProfileView.addSubviews(
+            myProfileImage,
+            myProfileNameLabel,
+            myProfileEditButton
+        )
         
         myProfileImage.snp.makeConstraints {
             $0.top.equalToSuperview().offset(11)
@@ -344,8 +363,11 @@ extension MyPageVC {
     }
     
     private func setRunningProgressLayout() {
-        myRunningProgressView.addSubviews(myRunningLevelLabel, myRunningProgressBar,
-                                          myRunnigProgressPercentLabel)
+        myRunningProgressView.addSubviews(
+            myRunningLevelLabel,
+            myRunningProgressBar,
+            myRunnigProgressPercentLabel
+        )
         
         myRunningLevelLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
@@ -422,7 +444,11 @@ extension MyPageVC {
     }
     
     private func setVersionInfoLayout() {
-        view.addSubviews(topVersionDivideView, versionInfoView, bottomVersionDivideView)
+        view.addSubviews(
+            topVersionDivideView,
+            versionInfoView,
+            bottomVersionDivideView
+        )
         
         topVersionDivideView.snp.makeConstraints {
             $0.top.equalTo(kakaoChannelAsk.snp.bottom)
@@ -442,7 +468,10 @@ extension MyPageVC {
             $0.height.equalTo(4)
         }
         
-        versionInfoView.addSubviews(versionInfoLabel, versionInfoValueLabel)
+        versionInfoView.addSubviews(
+            versionInfoLabel,
+            versionInfoValueLabel
+        )
         
         versionInfoLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -487,7 +516,7 @@ extension MyPageVC {
                     self.showNetworkFailureToast()
                 }
             case .failure(let error):
-                print(error.localizedDescription)
+                print("🍀🍀🍀\(error.localizedDescription)")
                 self.showNetworkFailureToast()
             }
         }
