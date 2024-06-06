@@ -10,17 +10,22 @@
 
 <br>
 
-### iOS Developers
+### iOS Developers <~ing>
 <img src = "https://github.com/Runnect/Runnect-iOS/assets/88179341/a3633fff-f50b-4afa-a54f-8bd0b3d8668c" width = "40%" height = "40%"> | <img src = "https://github.com/Runnect/Runnect-iOS/assets/88179341/f8884b2b-4cd6-4077-9d9f-683e62f8137f" width = "40%" height = "40%"> |
 :---------:|:----------:
 [이명진](https://github.com/thingineeer) | [이소진](https://github.com/513sojin) |
 😸 | 🐶 |
 
+##  iOS Developers <~ed>
+ | <img src = "https://user-images.githubusercontent.com/77267404/210303677-1354bea7-fba4-4824-a22a-27ba56327370.png" width = "40%" height = "40%"> | <img src = "https://user-images.githubusercontent.com/77267404/210303710-db640ea4-a716-4947-812a-9b19aae8d2a4.png" width = "40%" height = "40%"> | <img src = "https://user-images.githubusercontent.com/77267404/210303572-f9581df7-c3c0-46a8-9c63-219384d6dd64.png" width = "40%" height = "40%"> |
+ :---------:|:----------:|:---------:
+ [이세진](https://github.com/lsj8706) | [이연우](https://github.com/lee-yeonwoo) | [이재현](https://github.com/dlwogus0128) |
+   👨🏻‍🌾 | 🥔 | 🍠
+
 ![3](https://github.com/thingineeer/Runnect-iOS/assets/88179341/67cf5c2f-83fb-4fea-a192-0c8e47634a58)
 ![4](https://github.com/thingineeer/Runnect-iOS/assets/88179341/f98af63b-20c7-4605-be54-011ff52392cf)
 ![5](https://github.com/thingineeer/Runnect-iOS/assets/88179341/9496f6b4-cbcb-4b12-93aa-9a0a0ab941f4)
 ![6](https://github.com/thingineeer/Runnect-iOS/assets/88179341/c9638911-b9ca-4e99-88ae-dccb4807ea0c)
-
 <br>
 <br>
 
