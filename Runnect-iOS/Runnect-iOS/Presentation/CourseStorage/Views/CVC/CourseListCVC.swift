@@ -15,7 +15,7 @@ protocol CourseListCVCDelegate: AnyObject {
 }
 
 @frozen
-enum CourseListCVCType {
+public enum CourseListCVCType {
     case title
     case titleWithLocation
     case all
@@ -43,7 +43,7 @@ final class CourseListCVC: UICollectionViewCell {
     
     private let courseImageView = UIImageView().then {
         $0.backgroundColor = .g3
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 5
         $0.clipsToBounds = true
     }

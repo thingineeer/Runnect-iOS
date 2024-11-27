@@ -109,7 +109,7 @@ final class MyPageVC: UIViewController {
         $0.textColor = .g2
         $0.font = .b2
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        $0.text = "v. \(version ?? "1.0.0")"
+        $0.text = "v \(version ?? "1.0.0")"
     }
     
     // MARK: - View Life Cycle

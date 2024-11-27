@@ -77,7 +77,11 @@ final class CourseDetailVC: UIViewController {
         $0.addTarget(self, action: #selector(startButtonDidTap), for: .touchUpInside)
     }
     
-    private let mapImageView = UIImageView()
+    private let mapImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+        $0.clipsToBounds = true
+    }
+    
     private let profileImageView = UIImageView().then {
         $0.image = ImageLiterals.imgStampC3
         $0.layer.cornerRadius = 17
@@ -226,7 +230,7 @@ extension CourseDetailVC {
             $0.textFont = .b3
         }
         
-        menu.customCellConfiguration = { (index: Index, _: String, cell: DropDownCell) -> Void in
+        menu.customCellConfiguration = { (index: Index, _: String, cell: DropDownCell) in
             let lastDividerLineRemove = UIView(frame: CGRect(origin: CGPoint(x: 0, y: isMyCourse ? 79 : 39), size: CGSize(width: 170, height: 10)))
             lastDividerLineRemove.backgroundColor = .white
             cell.separatorInset = .zero

@@ -13,7 +13,7 @@ import SnapKit
 import Then
 
 @frozen
-enum SheetType {
+public enum SheetType {
     case image // 가운에 이미지가 있는 시트
     case textField // 가운데 텍스트필드가 있는 시트
 }

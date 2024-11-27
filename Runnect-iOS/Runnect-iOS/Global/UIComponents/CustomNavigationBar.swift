@@ -14,7 +14,7 @@ protocol CustomNavigationBarDelegate: AnyObject {
 }
 
 @frozen
-enum NaviType {
+public enum NaviType {
     case title // 좌측 타이틀
     case titleWithLeftButton // 뒤로가기 버튼 + 중앙 타이틀
     case search // 검색창
