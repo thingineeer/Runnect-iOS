@@ -117,9 +117,10 @@ extension SplashVC {
                 remoteConfig.activate { (_, _) in
                     // 현재 앱 버전 가져오기
                     guard let info = Bundle.main.infoDictionary,
-                          let currentVersion = info["CFBundleShortVersionString"] as? String,
-                          let storeVersion = remoteConfig["iOS_current_market_version"].stringValue
+                          let currentVersion = info["CFBundleShortVersionString"] as? String
                     else { return }
+                    
+                    let storeVersion = remoteConfig["iOS_current_market_version"].stringValue
                     
                     let splitCurrentVersion = currentVersion.split(separator: ".").map { $0 }
                     let splitStoreVersion = storeVersion.split(separator: ".").map { $0 }
