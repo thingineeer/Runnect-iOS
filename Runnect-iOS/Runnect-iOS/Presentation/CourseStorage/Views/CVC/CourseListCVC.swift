@@ -15,7 +15,7 @@ protocol CourseListCVCDelegate: AnyObject {
 }
 
 @frozen
-enum CourseListCVCType {
+public enum CourseListCVCType {
     case title
     case titleWithLocation
     case all
