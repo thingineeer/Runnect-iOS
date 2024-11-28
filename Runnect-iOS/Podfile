@@ -9,28 +9,27 @@ target 'Runnect-iOS' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 	
-	pod 'NMapsMap-Legacy'
-	pod 'Kingfisher', '~> 7.0'
-	pod 'SnapKit', '~> 5.6.0'
-	pod 'Moya', '~> 15.0'
-	pod 'Then'
-	pod 'KakaoSDKCommon'
-	pod 'KakaoSDKAuth'
-	pod 'KakaoSDKUser'
-	pod 'KakaoSDKShare'
-	pod 'KakaoSDKTemplate'
-	pod 'FirebaseDynamicLinks'
-	pod 'KakaoSDKTalk'
-	pod 'DropDown', :git => 'https://github.com/thingineeer/DropDown.git', :commit => '95ee36f7bd925d466033c2c169979f1c574bf3b9'
-	pod 'CombineCocoa'
-	pod 'FirebaseAnalytics'
-	pod 'FirebaseAuth'
-	pod 'FirebaseFirestore'
-	pod 'Firebase/RemoteConfig'	
-
-	
+  pod 'NMapsMap-Legacy'
+  pod 'Kingfisher', '~> 7.0'
+  pod 'SnapKit', '~> 5.6.0'
+  pod 'Moya', '~> 15.0'
+  pod 'Then'
+  pod 'KakaoSDKCommon'
+  pod 'KakaoSDKAuth'
+  pod 'KakaoSDKUser'
+  pod 'KakaoSDKShare'
+  pod 'KakaoSDKTemplate'
+  pod 'FirebaseDynamicLinks'
+  pod 'KakaoSDKTalk'
+  pod 'DropDown', :git => 'https://github.com/thingineeer/DropDown.git', :commit => '95ee36f7bd925d466033c2c169979f1c574bf3b9'
+  pod 'CombineCocoa'
+  pod 'FirebaseAnalytics'
+  pod 'FirebaseAuth'
+  pod 'FirebaseFirestore'
+  pod 'Firebase/RemoteConfig'	
 end
-  # Pods for Runnect-iOS
+
+# Pods for Runnect-iOS
 
 post_install do |installer|
   # IPHONEOS_DEPLOYMENT_TARGET 설정
@@ -53,5 +52,29 @@ post_install do |installer|
         end
       end
     end
+  end
+
+  # Bitcode 제거 스크립트 추가
+  bitcode_strip_path = `xcrun --find bitcode_strip`.chop!
+  def strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
+    framework_path = File.join(Dir.pwd, framework_relative_path)
+    command = "#{bitcode_strip_path} #{framework_path} -r -o #{framework_path}"
+    puts "Stripping bitcode: #{command}"
+    system(command)
+  end
+
+  # 정확한 경로 반영
+  framework_paths = [
+    # NMapsMap 경로
+    "Pods/NMapsMap-Legacy/framework/NMapsMap.xcframework/ios-arm64/NMapsMap.framework/NMapsMap",
+    "Pods/NMapsMap-Legacy/framework/NMapsMap.xcframework/ios-arm64_x86_64-simulator/NMapsMap.framework/NMapsMap",
+
+    # NMapsGeometry 경로
+    "Pods/NMapsGeometry/framework/NMapsGeometry.xcframework/ios-arm64/NMapsGeometry.framework/NMapsGeometry",
+    "Pods/NMapsGeometry/framework/NMapsGeometry.xcframework/ios-arm64_x86_64-simulator/NMapsGeometry.framework/NMapsGeometry"
+  ]
+
+  framework_paths.each do |framework_relative_path|
+    strip_bitcode_from_framework(bitcode_strip_path, framework_relative_path)
   end
 end
