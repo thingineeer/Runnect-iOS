@@ -3,7 +3,7 @@
 # 한줄 소개
 러닝과 일상을 Connect하다! 데일리 러닝앱 서비스 Runnect 🏃
 
-### 앱스토어 링크: [Appstore](https://apps.apple.com/kr/app/runnect-%EC%BD%94%EC%8A%A4%EB%A5%BC-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EA%B3%B5%EC%9C%A0%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%BC%EB%A6%AC-%EB%9F%AC%EB%8B%9D%EC%95%B1/id1663884202)
+### 앱스토어 링크: [Appstore](https://apps.apple.com/kr/app/runnect-%EC%BD%94%EC%8A%A4%EB%A5%BC-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EA%B3%B5%EC%9C%A0%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%BC%EB%A6%AC-%EB%9F%AC%EB%8B%9D%EC%95%B1/id1663884202) v2.1.0
 
 ![1](https://github.com/thingineeer/Runnect-iOS/assets/88179341/937f9e65-61e5-4298-b703-bc2cf5022bf6)
 ![2](https://github.com/thingineeer/Runnect-iOS/assets/88179341/ad913367-65f2-4839-9658-e538bccf2d6c)
@@ -33,7 +33,7 @@
 - Development Environment
 <p align="left">
 <img src ="https://img.shields.io/badge/Swift-5.9-orange?logo=swift">
-<img src ="https://img.shields.io/badge/Xcode-15.0-blue?logo=xcode">
+<img src ="https://img.shields.io/badge/Xcode-16.0-blue?logo=xcode">
 <img src ="https://img.shields.io/badge/iOS-17.0-green.svg">
 
 <br>
@@ -46,10 +46,11 @@
  Moya | 서버 통신 | 15.0.0 | CocoaPods
  SnapKit | UI Layout | 5.6.0 | CocoaPods
  Then | UI 선언 | 3.0.0 | CocoaPods
- Kingfisher | 이미지 처리 | 7.10.1| CocoaPods
+ Kingfisher | 이미지 처리 | 7.12.0| CocoaPods
  NMapsMap  | 네이버 지도 SDK | 3.17.0| CocoaPods
- Firebase | Dynamic Link(공유), Google Analytics | 10.19.0 | CocoaPods
+ Firebase | Dynamic Link(공유), Google Analytics | 11.5.0 | CocoaPods
  DropDown | 드롭 다운 메뉴 | 2.3.13 | CocoaPods
+ KakaoSDK | 소셜 로그인 | 2.22.7 | CocoaPods
  
  <br>
 
