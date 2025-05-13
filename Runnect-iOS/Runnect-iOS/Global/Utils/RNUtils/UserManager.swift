@@ -38,7 +38,7 @@ final class UserManager {
         self.isKakao = isKakao
     }
     
-    func signIn(token: String, provider: String, completion: @escaping(Result<String, RNError>) -> Void) {
+    func signIn(token: String, provider: String, completion: @escaping (Result<String, RNError>) -> Void) {
         authProvider.request(.signIn(token: token, provider: provider)) { [weak self] response in
             guard let self = self else { return }
             switch response {
@@ -79,7 +79,7 @@ final class UserManager {
         }
     }
     
-    func getNewToken(completion: @escaping(Result<Bool, RNError>) -> Void) {
+    func getNewToken(completion: @escaping (Result<Bool, RNError>) -> Void) {
         authProvider.request(.getNewToken) { [weak self] response in
             guard let self = self else { return }
             switch response {
