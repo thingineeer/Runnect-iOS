@@ -3,14 +3,14 @@
 # 한줄 소개
 러닝과 일상을 Connect하다! 데일리 러닝앱 서비스 Runnect 🏃
 
-### 앱스토어 링크: [Appstore](https://apps.apple.com/kr/app/runnect-%EC%BD%94%EC%8A%A4%EB%A5%BC-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EA%B3%B5%EC%9C%A0%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%BC%EB%A6%AC-%EB%9F%AC%EB%8B%9D%EC%95%B1/id1663884202) v2.1.0
+### 앱스토어 링크: [Appstore](https://apps.apple.com/kr/app/runnect-%EC%BD%94%EC%8A%A4%EB%A5%BC-%EA%B7%B8%EB%A6%AC%EA%B3%A0-%EA%B3%B5%EC%9C%A0%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%BC%EB%A6%AC-%EB%9F%AC%EB%8B%9D%EC%95%B1/id1663884202) v2.2.0
 
 ![1](https://github.com/thingineeer/Runnect-iOS/assets/88179341/937f9e65-61e5-4298-b703-bc2cf5022bf6)
 ![2](https://github.com/thingineeer/Runnect-iOS/assets/88179341/ad913367-65f2-4839-9658-e538bccf2d6c)
 
 <br>
 
-### iOS Developers <~ing>
+## iOS Developers <~ing>
 <img src = "https://github.com/Runnect/Runnect-iOS/assets/88179341/a3633fff-f50b-4afa-a54f-8bd0b3d8668c" width = "40%" height = "40%"> | <img src = "https://github.com/Runnect/Runnect-iOS/assets/88179341/f8884b2b-4cd6-4077-9d9f-683e62f8137f" width = "40%" height = "40%"> |
 :---------:|:----------:
 [이명진](https://github.com/thingineeer) | [이소진](https://github.com/513sojin) |
