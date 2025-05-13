@@ -259,6 +259,8 @@ extension CourseDetailVC {
     func setData(model: UploadedCourseDetailResponseDto) {
         self.uploadedCourseDetailModel = model
         self.userId = model.user.id
+        self.publicCourseId = model.publicCourse.id
+        self.courseId = model.publicCourse.courseId
         self.mapImageView.setImage(with: model.publicCourse.image)
         self.profileImageView.image = GoalRewardInfoModel.stampNameImageDictionary[model.user.image]
         // 탈퇴 유저 처리
@@ -358,10 +360,18 @@ extension CourseDetailVC {
             $0.centerY.equalTo(navibar)
         }
         
-        shareButton.snp.makeConstraints {
-            $0.trailing.trailing.equalTo(moreButton).offset(-50)
-            $0.centerY.equalTo(navibar)
+        if UserManager.shared.userType == .visitor {
+            shareButton.snp.makeConstraints {
+                $0.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(10)
+                $0.centerY.equalTo(navibar)
+            }
+        } else {
+            shareButton.snp.makeConstraints {
+                $0.trailing.equalTo(moreButton).offset(-50)
+                $0.centerY.equalTo(navibar)
+            }
         }
+
     }
     
     private func setUI() {
@@ -372,6 +382,12 @@ extension CourseDetailVC {
         firstHorizontalDivideLine.backgroundColor = .g3
         secondHorizontalDivideLine.backgroundColor = .g5
         thirdHorizontalDivideLine.backgroundColor = .g3
+        
+        guard UserManager.shared.userType != .visitor else {
+            // 방문자일 경우 더보기 버튼 제거
+            moreButton.isHidden = true
+            return
+        }
     }
     
     private func setLayout() {

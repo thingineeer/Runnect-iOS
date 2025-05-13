@@ -28,7 +28,7 @@ final class UserManager {
     @UserDefaultWrapper<String>(key: "refreshToken") public var refreshToken
     @UserDefaultWrapper<Bool>(key: "isKakao") public var isKakao
     var hasAccessToken: Bool { return self.accessToken != nil }
-    var userType: UserType = .registered
+    var userType: UserType = .visitor
     
     private init() {}
     
