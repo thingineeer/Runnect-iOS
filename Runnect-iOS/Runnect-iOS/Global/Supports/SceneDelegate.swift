@@ -51,6 +51,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         let window = UIWindow(windowScene: windowScene)
                         let navigationController = UINavigationController()
                         
+                        if UserManager.shared.userType != .registered { UserManager.shared.userType = .visitor }
+                        
                         switch courseType {
                         case .publicCourse:
                             let courseDetailVC = CourseDetailVC()

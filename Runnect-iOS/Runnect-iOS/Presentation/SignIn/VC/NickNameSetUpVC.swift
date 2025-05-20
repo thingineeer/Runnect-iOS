@@ -160,6 +160,7 @@ extension NickNameSetUpVC {
                     do {
                         let responseDto = try result.map(BaseResponse<BlankData>.self)
                         if responseDto.status == 200 {
+                            UserManager.shared.userType = .registered
                             self.pushToTabBarController()
                         } else {
                             self.showToast(message: responseDto.message)
