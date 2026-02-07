@@ -13,6 +13,7 @@ import KakaoSDKCommon
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import GoogleMobileAds
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -37,10 +38,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
-        
+
         NMFAuthManager.shared().clientId = Config.naverMapClientId
+        #if DEBUG
+        NMFAuthManager.shared().delegate = self
+        #endif
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
-        
+
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+
         return true
     }
     
@@ -58,3 +64,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 }
+
+// MARK: - NMFAuthManagerDelegate
+
+#if DEBUG
+extension AppDelegate: NMFAuthManagerDelegate {
+    func authorized(_ state: NMFAuthState, error: Error?) {
+        if let error = error {
+            print("[NMFAuth] 인증 실패 (DEBUG): \(error.localizedDescription)")
+            return
+        }
+        switch state {
+        case .authorized:
+            print("[NMFAuth] 인증 성공")
+        case .authorizing:
+            print("[NMFAuth] 인증 진행 중")
+        case .pending:
+            print("[NMFAuth] 인증 대기 중")
+        case .unauthorized:
+            print("[NMFAuth] 미인증 상태")
+        @unknown default:
+            break
+        }
+    }
+}
+#endif

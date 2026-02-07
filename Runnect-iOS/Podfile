@@ -26,7 +26,8 @@ target 'Runnect-iOS' do
   pod 'FirebaseAnalytics'
   pod 'FirebaseAuth'
   pod 'FirebaseFirestore'
-  pod 'Firebase/RemoteConfig'	
+  pod 'Firebase/RemoteConfig'
+  pod 'Google-Mobile-Ads-SDK'
 end
 
 # Pods for Runnect-iOS

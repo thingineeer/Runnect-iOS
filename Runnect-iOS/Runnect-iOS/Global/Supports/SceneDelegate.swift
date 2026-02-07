@@ -11,6 +11,7 @@ import KakaoSDKCommon
 import FirebaseDynamicLinks
 import FirebaseCore
 import FirebaseCoreInternal
+import AppTrackingTransparency
 
 // 들어온 링크가 공유된 코스인지, 개인 보관함에 있는 코스인지 나타내기 위한 타입입니다.
 enum CourseType {
@@ -18,8 +19,9 @@ enum CourseType {
 }
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    
+
     var window: UIWindow?
+    private var hasRequestedATT = false
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -95,8 +97,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        requestTrackingAuthorizationIfNeeded()
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
@@ -143,6 +144,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate {
     private func analyze(screenName: String) {
         GAManager.shared.logEvent(eventType: .screen(screenName: screenName))
+    }
+
+    private func requestTrackingAuthorizationIfNeeded() {
+        guard !hasRequestedATT else { return }
+        hasRequestedATT = true
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .authorized:
+                    print("[ATT] 추적 허용")
+                case .denied:
+                    print("[ATT] 추적 거부")
+                case .notDetermined:
+                    print("[ATT] 미결정")
+                case .restricted:
+                    print("[ATT] 제한됨")
+                @unknown default:
+                    break
+                }
+            }
+        }
     }
 }
 
