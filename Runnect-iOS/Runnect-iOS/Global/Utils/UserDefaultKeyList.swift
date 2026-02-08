@@ -11,4 +11,8 @@ struct UserDefaultKeyList {
     struct Auth {
         @UserDefaultWrapper<Bool>(key: "didSignIn") public static var didSignIn
     }
+
+    struct Ad {
+        @UserDefaultWrapper<Int>(key: "appLaunchCount") public static var appLaunchCount
+    }
 }

@@ -8,7 +8,6 @@
 import UIKit
 import KakaoSDKAuth
 import KakaoSDKCommon
-import FirebaseDynamicLinks
 import FirebaseCore
 import FirebaseCoreInternal
 import AppTrackingTransparency
@@ -39,44 +38,39 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
         analyze(screenName: GAEvent.View.viewHome)
+        incrementAppLaunchCount()
         
     }
     
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        
-        if let incomingURL = userActivity.webpageURL {
-            DynamicLinks.dynamicLinks()
-                .handleUniversalLink(incomingURL) { dynamicLink, error in
-                    
-                    if let (courseType, courseId) = self.handleDynamicLink(dynamicLink) {
-                        guard let windowScene = scene as? UIWindowScene else { return }
-                        let window = UIWindow(windowScene: windowScene)
-                        let navigationController = UINavigationController()
-                        
-                        if UserManager.shared.userType != .registered { UserManager.shared.userType = .visitor }
-                        
-                        switch courseType {
-                        case .publicCourse:
-                            let courseDetailVC = CourseDetailVC()
-                            courseDetailVC.getUploadedCourseDetail(courseId: courseId)
-                            navigationController.pushViewController(courseDetailVC, animated: false)
-                        case .privateCourse:
-                            let privateCourseDetailVC = RunningWaitingVC()
-                            privateCourseDetailVC.setData(courseId: courseId, publicCourseId: nil)
-                            navigationController.pushViewController(privateCourseDetailVC, animated: false)
-                        }
-                        
-                        let tabBarController = TabBarController()
-                        navigationController.navigationBar.isHidden = true
-                        navigationController.viewControllers = [tabBarController, navigationController.viewControllers.last].compactMap { $0 }
-                        
-                        tabBarController.selectedIndex = 2
-                        window.rootViewController = navigationController
-                        window.makeKeyAndVisible()
-                        self.window = window
-                    }
-                }
+        guard let incomingURL = userActivity.webpageURL,
+              let (courseType, courseId) = self.handleUniversalLink(incomingURL) else { return }
+
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let window = UIWindow(windowScene: windowScene)
+        let navigationController = UINavigationController()
+
+        if UserManager.shared.userType != .registered { UserManager.shared.userType = .visitor }
+
+        switch courseType {
+        case .publicCourse:
+            let courseDetailVC = CourseDetailVC()
+            courseDetailVC.getUploadedCourseDetail(courseId: courseId)
+            navigationController.pushViewController(courseDetailVC, animated: false)
+        case .privateCourse:
+            let privateCourseDetailVC = RunningWaitingVC()
+            privateCourseDetailVC.setData(courseId: courseId, publicCourseId: nil)
+            navigationController.pushViewController(privateCourseDetailVC, animated: false)
         }
+
+        let tabBarController = TabBarController()
+        navigationController.navigationBar.isHidden = true
+        navigationController.viewControllers = [tabBarController, navigationController.viewControllers.last].compactMap { $0 }
+
+        tabBarController.selectedIndex = 2
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+        self.window = window
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -116,25 +110,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
     
-    func handleDynamicLink(_ dynamicLink: DynamicLink?) -> (courseType: CourseType, courseId: Int)? {
-        if let dynamicLink = dynamicLink, let url = dynamicLink.url,
-           let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-           let queryItems = components.queryItems {
-            var courseId: Int?
-            var courseType: CourseType?
-            
-            for item in queryItems {
-                if item.name == "courseId", let id = item.value, let idInt = Int(id) {
-                    courseId = idInt
-                    courseType = .publicCourse
-                } else if item.name == "privateCourseId", let id = item.value, let idInt = Int(id) {
-                    courseId = idInt
-                    courseType = .privateCourse
-                }
-            }
-            
-            if let courseId = courseId, let courseType = courseType {
-                return (courseType, courseId)
+    func handleUniversalLink(_ url: URL) -> (courseType: CourseType, courseId: Int)? {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let queryItems = components.queryItems else { return nil }
+
+        for item in queryItems {
+            if item.name == "courseId", let id = item.value, let idInt = Int(id) {
+                return (.publicCourse, idInt)
+            } else if item.name == "privateCourseId", let id = item.value, let idInt = Int(id) {
+                return (.privateCourse, idInt)
             }
         }
         return nil
@@ -144,6 +128,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate {
     private func analyze(screenName: String) {
         GAManager.shared.logEvent(eventType: .screen(screenName: screenName))
+    }
+
+    private func incrementAppLaunchCount() {
+        let current = UserDefaultKeyList.Ad.appLaunchCount ?? 0
+        UserDefaultKeyList.Ad.appLaunchCount = current + 1
     }
 
     private func requestTrackingAuthorizationIfNeeded() {
