@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,6 +26,10 @@
 		71802C5C2B3364C2008DBCEE /* CourseDetailScrapCountDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71802C5B2B3364C2008DBCEE /* CourseDetailScrapCountDto.swift */; };
 		71BAD06A2B24CECC0061E31D /* UserProfileDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BAD0692B24CECC0061E31D /* UserProfileDto.swift */; };
 		71BAD06C2B24D1F70061E31D /* UserProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BAD06B2B24D1F70061E31D /* UserProfileVC.swift */; };
+		71F2065F2F38942A00DF721E /* Runnect Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 71F2065E2F38942A00DF721E /* Runnect Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		71F206782F38949F00DF721E /* RNWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 71F206772F38949F00DF721E /* RNWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		71F206912F38A00000DF721E /* WatchSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F206902F38A00000DF721E /* WatchSessionService.swift */; };
+		71F206D42F38A78B00DF721E /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 71F206D32F38A78B00DF721E /* NMapsMap */; };
 		71F7804E2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7804D2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift */; };
 		71F780502B0893D700B53253 /* MarathonMapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7804F2B0893D700B53253 /* MarathonMapCollectionViewCell.swift */; };
 		A3305A97296EF58C000B1A10 /* GoalRewardInfoDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3305A96296EF58C000B1A10 /* GoalRewardInfoDto.swift */; };
@@ -175,6 +179,48 @@
 		DAD5A3E2296D4C6500C8166B /* PickedMapListResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3E1296D4C6500C8166B /* PickedMapListResponseDto.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		71F206602F38942A00DF721E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE4545BD295D7AF4003201E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 71F2065D2F38942A00DF721E;
+			remoteInfo = "Runnect Watch Watch App";
+		};
+		71F206792F38949F00DF721E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE4545BD295D7AF4003201E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 71F206762F38949F00DF721E;
+			remoteInfo = "RNWatch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		71F2066B2F38942B00DF721E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				71F2065F2F38942A00DF721E /* Runnect Watch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F206852F3894A000DF721E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				71F206782F38949F00DF721E /* RNWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		21AAB1608F63555F24884DF7 /* Pods-Runnect-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runnect-iOS.debug.xcconfig"; path = "Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		232686352B03AF4400675A17 /* NetworkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
@@ -198,6 +244,11 @@
 		71802C5B2B3364C2008DBCEE /* CourseDetailScrapCountDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailScrapCountDto.swift; sourceTree = "<group>"; };
 		71BAD0692B24CECC0061E31D /* UserProfileDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileDto.swift; sourceTree = "<group>"; };
 		71BAD06B2B24D1F70061E31D /* UserProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVC.swift; sourceTree = "<group>"; };
+		71F206592F38942900DF721E /* Runnect Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Runnect Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		71F2065E2F38942A00DF721E /* Runnect Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Runnect Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		71F206722F38949F00DF721E /* RNWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RNWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		71F206772F38949F00DF721E /* RNWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RNWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		71F206902F38A00000DF721E /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		71F7804D2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarathonTitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		71F7804F2B0893D700B53253 /* MarathonMapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarathonMapCollectionViewCell.swift; sourceTree = "<group>"; };
 		A3305A96296EF58C000B1A10 /* GoalRewardInfoDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardInfoDto.swift; sourceTree = "<group>"; };
@@ -360,12 +411,52 @@
 		F675A6127C7FC7CF7D7C89A7 /* Pods_Runnect_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runnect_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		71F206B02F38B00000DF721E /* Exceptions for "RNWatch Watch App" folder in "RNWatch Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 71F206762F38949F00DF721E /* RNWatch Watch App */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		71F2067B2F38949F00DF721E /* RNWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				71F206B02F38B00000DF721E /* Exceptions for "RNWatch Watch App" folder in "RNWatch Watch App" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "RNWatch Watch App";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		71F2065B2F38942A00DF721E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F206742F38949F00DF721E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE4545C2295D7AF4003201E1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				D891B7BBD3CC454890382E5D /* Pods_Runnect_iOS.framework in Frameworks */,
+				71F206D42F38A78B00DF721E /* NMapsMap in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,6 +940,7 @@
 			children = (
 				CE665614295D989A00C64E12 /* .swiftlint.yml */,
 				CE4545C7295D7AF4003201E1 /* Runnect-iOS */,
+				71F2067B2F38949F00DF721E /* RNWatch Watch App */,
 				CE4545C6295D7AF4003201E1 /* Products */,
 				3F7098551CF7A77F3FE7EB2B /* Pods */,
 				50F042AA623895133F88BD6F /* Frameworks */,
@@ -859,6 +951,10 @@
 			isa = PBXGroup;
 			children = (
 				CE4545C5295D7AF4003201E1 /* Runnect-iOS.app */,
+				71F206592F38942900DF721E /* Runnect Watch.app */,
+				71F2065E2F38942A00DF721E /* Runnect Watch Watch App.app */,
+				71F206722F38949F00DF721E /* RNWatch.app */,
+				71F206772F38949F00DF721E /* RNWatch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1015,6 +1111,7 @@
 				CE102C4929DBAD3D00E23E69 /* AuthInterceptor.swift */,
 				CEE59FD929DD6F7D00C791F1 /* Providers.swift */,
 				232686352B03AF4400675A17 /* NetworkProvider.swift */,
+				71F206902F38A00000DF721E /* WatchSessionService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -1267,6 +1364,77 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		71F206582F38942900DF721E /* Runnect Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71F2066F2F38942B00DF721E /* Build configuration list for PBXNativeTarget "Runnect Watch" */;
+			buildPhases = (
+				71F206572F38942900DF721E /* Resources */,
+				71F2066B2F38942B00DF721E /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				71F206612F38942A00DF721E /* PBXTargetDependency */,
+			);
+			name = "Runnect Watch";
+			productName = "Runnect Watch";
+			productReference = 71F206592F38942900DF721E /* Runnect Watch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		71F2065D2F38942A00DF721E /* Runnect Watch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71F2066E2F38942B00DF721E /* Build configuration list for PBXNativeTarget "Runnect Watch Watch App" */;
+			buildPhases = (
+				71F2065A2F38942A00DF721E /* Sources */,
+				71F2065B2F38942A00DF721E /* Frameworks */,
+				71F2065C2F38942A00DF721E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Runnect Watch Watch App";
+			productName = "Runnect Watch Watch App";
+			productReference = 71F2065E2F38942A00DF721E /* Runnect Watch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		71F206712F38949F00DF721E /* RNWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71F206862F3894A000DF721E /* Build configuration list for PBXNativeTarget "RNWatch" */;
+			buildPhases = (
+				71F206702F38949F00DF721E /* Resources */,
+				71F206852F3894A000DF721E /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				71F2067A2F38949F00DF721E /* PBXTargetDependency */,
+			);
+			name = RNWatch;
+			productName = RNWatch;
+			productReference = 71F206722F38949F00DF721E /* RNWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		71F206762F38949F00DF721E /* RNWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 71F206822F3894A000DF721E /* Build configuration list for PBXNativeTarget "RNWatch Watch App" */;
+			buildPhases = (
+				71F206732F38949F00DF721E /* Sources */,
+				71F206742F38949F00DF721E /* Frameworks */,
+				71F206752F38949F00DF721E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				71F2067B2F38949F00DF721E /* RNWatch Watch App */,
+			);
+			name = "RNWatch Watch App";
+			productName = "RNWatch Watch App";
+			productReference = 71F206772F38949F00DF721E /* RNWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		CE4545C4295D7AF4003201E1 /* Runnect-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE4545D9295D7AF5003201E1 /* Build configuration list for PBXNativeTarget "Runnect-iOS" */;
@@ -1277,6 +1445,7 @@
 				CE4545C2295D7AF4003201E1 /* Frameworks */,
 				CE4545C3295D7AF4003201E1 /* Resources */,
 				E291492871BAA8F18A984EC8 /* [CP] Embed Pods Frameworks */,
+				DEE22AC182E7D825049A9569 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1294,9 +1463,21 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1410;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
+					71F206582F38942900DF721E = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					71F2065D2F38942A00DF721E = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					71F206712F38949F00DF721E = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					71F206762F38949F00DF721E = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					CE4545C4295D7AF4003201E1 = {
 						CreatedOnToolsVersion = 14.1;
 					};
@@ -1311,16 +1492,51 @@
 				Base,
 			);
 			mainGroup = CE4545BC295D7AF4003201E1;
+			packageReferences = (
+				71F206D22F38A78B00DF721E /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+			);
 			productRefGroup = CE4545C6295D7AF4003201E1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				CE4545C4295D7AF4003201E1 /* Runnect-iOS */,
+				71F206582F38942900DF721E /* Runnect Watch */,
+				71F2065D2F38942A00DF721E /* Runnect Watch Watch App */,
+				71F206712F38949F00DF721E /* RNWatch */,
+				71F206762F38949F00DF721E /* RNWatch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		71F206572F38942900DF721E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F2065C2F38942A00DF721E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F206702F38949F00DF721E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F206752F38949F00DF721E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE4545C3295D7AF4003201E1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1357,6 +1573,23 @@
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
+		DEE22AC182E7D825049A9569 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E0B9D85C00C4A8AE14AB99B5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1387,13 +1620,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1403,6 +1632,20 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		71F2065A2F38942A00DF721E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71F206732F38949F00DF721E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE4545C1295D7AF4003201E1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1445,6 +1688,7 @@
 				CE58759E29601476005D967E /* LoadingIndicator.swift in Sources */,
 				CE5875A2296015A2005D967E /* NetworkLoggerPlugin.swift in Sources */,
 				CEEC6B3C2961C51A00D00E1E /* CourseStorageVC.swift in Sources */,
+				71F206912F38A00000DF721E /* WatchSessionService.swift in Sources */,
 				CE4545C9295D7AF4003201E1 /* AppDelegate.swift in Sources */,
 				CE6655C8295D849F00C64E12 /* StringLiterals.swift in Sources */,
 				CEEC6B3E2961C53700D00E1E /* CourseDiscoveryVC.swift in Sources */,
@@ -1569,6 +1813,19 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		71F206612F38942A00DF721E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 71F2065D2F38942A00DF721E /* Runnect Watch Watch App */;
+			targetProxy = 71F206602F38942A00DF721E /* PBXContainerItemProxy */;
+		};
+		71F2067A2F38949F00DF721E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 71F206762F38949F00DF721E /* RNWatch Watch App */;
+			targetProxy = 71F206792F38949F00DF721E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		CE4545D3295D7AF5003201E1 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -1581,6 +1838,234 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		71F206692F38942B00DF721E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = "Runnect Watch";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "th1ngjin.Runnect-Watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		71F2066A2F38942B00DF721E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = "Runnect Watch";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "th1ngjin.Runnect-Watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		71F2066C2F38942B00DF721E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Runnect Watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Runnect Watch";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "th1ngjin.Runnect-Watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Debug;
+		};
+		71F2066D2F38942B00DF721E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Runnect Watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Runnect Watch";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "th1ngjin.Runnect-Watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.2;
+			};
+			name = Release;
+		};
+		71F206832F3894A000DF721E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RNWatch Watch App/RNWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "RNWatch Watch App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Runnect;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		71F206842F3894A000DF721E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RNWatch Watch App/RNWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "RNWatch Watch App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Runnect;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		71F206872F3894A000DF721E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = Runnect;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS.watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		71F206882F3894A000DF721E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				INFOPLIST_KEY_CFBundleDisplayName = Runnect;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS.watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		CE4545D7295D7AF5003201E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1722,7 +2207,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1763,7 +2248,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 2.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.runnect.Runnect-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1780,6 +2265,42 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		71F2066E2F38942B00DF721E /* Build configuration list for PBXNativeTarget "Runnect Watch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71F2066C2F38942B00DF721E /* Debug */,
+				71F2066D2F38942B00DF721E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		71F2066F2F38942B00DF721E /* Build configuration list for PBXNativeTarget "Runnect Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71F206692F38942B00DF721E /* Debug */,
+				71F2066A2F38942B00DF721E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		71F206822F3894A000DF721E /* Build configuration list for PBXNativeTarget "RNWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71F206832F3894A000DF721E /* Debug */,
+				71F206842F3894A000DF721E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		71F206862F3894A000DF721E /* Build configuration list for PBXNativeTarget "RNWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71F206872F3894A000DF721E /* Debug */,
+				71F206882F3894A000DF721E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CE4545C0295D7AF4003201E1 /* Build configuration list for PBXProject "Runnect-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1799,6 +2320,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		71F206D22F38A78B00DF721E /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.23.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		71F206D32F38A78B00DF721E /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71F206D22F38A78B00DF721E /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CE4545BD295D7AF4003201E1 /* Project object */;
 }

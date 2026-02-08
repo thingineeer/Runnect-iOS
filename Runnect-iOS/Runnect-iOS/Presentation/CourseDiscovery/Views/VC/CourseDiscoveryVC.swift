@@ -273,6 +273,7 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
         switch indexPath.section {
         case Section.adImage:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AdImageCollectionViewCell.className, for: indexPath) as? AdImageCollectionViewCell else { return UICollectionViewCell() }
+            cell.setRootViewController(self)
             return cell
         case Section.marathonTitle:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MarathonTitleCollectionViewCell.className, for: indexPath) as? MarathonTitleCollectionViewCell else { return UICollectionViewCell() }
@@ -311,7 +312,9 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
         
         switch indexPath.section {
         case Section.adImage:
-            return CGSize(width: screenWidth, height: screenWidth * (174/390))
+            let bannerWidth = screenWidth - 32
+            let bannerHeight = bannerWidth * (174.0 / 390.0)
+            return CGSize(width: screenWidth, height: bannerHeight + 20)
         case Section.marathonTitle:
             return CGSize(width: screenWidth, height: 98)
         case Section.marathonCourseList:

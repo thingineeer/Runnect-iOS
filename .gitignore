@@ -1,3 +1,7 @@
+# Claude Code
+.claude/
+CLAUDE.md
+
 # Created by https://www.toptal.com/developers/gitignore/api/xcode,swift,cocoapods
 # Edit at https://www.toptal.com/developers/gitignore?templates=xcode,swift,cocoapods
 
@@ -131,3 +135,12 @@ Info.plist
 Runnect-iOS/Runnect-iOS/GoogleService-Info.plist
 Runnect-iOS/GoogleService-Info.plist
 GoogleService-Info.plist
+
+### Firebase Hosting ###
+.firebase/
+firebase-debug.log
+
+### Cursor ###
+.cursor/
+.cursorignore
+.cursorindexingignore
