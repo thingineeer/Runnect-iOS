@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "8Q4H7X3Q58.com.runnect.Runnect-iOS",
+        "paths": ["/share/*"]
+      }
+    ]
+  }
+}

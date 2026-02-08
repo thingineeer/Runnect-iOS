@@ -131,3 +131,7 @@ Info.plist
 Runnect-iOS/Runnect-iOS/GoogleService-Info.plist
 Runnect-iOS/GoogleService-Info.plist
 GoogleService-Info.plist
+
+### Firebase Hosting ###
+.firebase/
+firebase-debug.log

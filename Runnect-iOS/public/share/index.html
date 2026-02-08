@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runnect - 코스 공유</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F5F5F5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 400px;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: #593EEC;
+      border-radius: 20px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: 22px;
+      color: #1A1A1A;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+    .btn {
+      display: inline-block;
+      background: #593EEC;
+      color: white;
+      text-decoration: none;
+      padding: 14px 48px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">R</div>
+    <h1>Runnect</h1>
+    <p>공유된 코스를 확인하려면<br>Runnect 앱을 열어주세요.</p>
+    <a class="btn" id="storeLink" href="https://apps.apple.com/app/id1663884202">앱 설치하기</a>
+  </div>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var courseId = params.get('courseId');
+      var privateCourseId = params.get('privateCourseId');
+
+      if (courseId || privateCourseId) {
+        var btn = document.getElementById('storeLink');
+        btn.textContent = '앱에서 열기';
+      }
+    })();
+  </script>
+</body>
+</html>
