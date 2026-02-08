@@ -156,16 +156,33 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         ).cgPath
         gradientLayer.frame = gradientView.bounds
         shimmerGradientLayer.frame = shimmerView.bounds
+
+        // containerView bounds가 확정된 후 carousel cell 크기를 갱신
+        if containerView.bounds.size != .zero {
+            bannerCollectionView.collectionViewLayout.invalidateLayout()
+        }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         stopAutoScroll()
-        if shouldShowAds && !isAd1Loaded && !isAd2Loaded {
-            adsResponseCount = 0
-            carouselShown = false
-            loadAdMobBanners()
-        }
+        cancelShimmerTimeout()
+
+        // 상태 초기화
+        adsResponseCount = 0
+        carouselShown = false
+        isAd1Loaded = false
+        isAd2Loaded = false
+        currentPage = 0
+        pages = imgBanners.map { .image($0) }
+
+        // UI 초기 상태로 리셋
+        bannerCollectionView.isHidden = true
+        gradientView.isHidden = true
+        pageControlStack.isHidden = true
+        adLabelContainer.alpha = 0
+        shimmerView.isHidden = false
+        shimmerView.alpha = 1
     }
 
     deinit {
@@ -621,7 +638,14 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
 
 extension AdImageCollectionViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return containerView.bounds.size
+        let size = containerView.bounds.size
+        guard size.width > 0 && size.height > 0 else {
+            // layoutSubviews 이전에 호출될 경우 fallback 크기 계산
+            let bannerWidth = UIScreen.main.bounds.width - 32
+            let bannerHeight = bannerWidth * (174.0 / 390.0)
+            return CGSize(width: bannerWidth, height: bannerHeight)
+        }
+        return size
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
