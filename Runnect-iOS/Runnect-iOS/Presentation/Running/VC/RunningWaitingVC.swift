@@ -13,8 +13,6 @@ import Moya
 import SnapKit
 import Then
 
-import FirebaseDynamicLinks
-
 final class RunningWaitingVC: UIViewController {
     
     // MARK: - Properties
@@ -131,6 +129,7 @@ extension RunningWaitingVC {
 
 extension RunningWaitingVC {
     @objc private func startButtonDidTap() {
+        guard handleVisitor() else { return }
         guard let courseModel = self.courseModel, self.distanceLabel.text != "0.0" else { return }
         
         let countDownVC = CountDownVC()
@@ -155,9 +154,6 @@ extension RunningWaitingVC {
         self.shareCourse(
             courseTitle: model.title,
             courseId: model.id,
-            courseImageURL: model.image,
-            minimumAppVersion: "2.0.1",
-            descriptionText: "이 코스는 링크로만 들어올 수 있어요!",
             parameter: "privateCourseId"
         )
     }
