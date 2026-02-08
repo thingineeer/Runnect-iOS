@@ -172,28 +172,25 @@ extension CourseDetailVC {
     }
     
     @objc private func shareButtonTapped() {
+        guard handleVisitor() else { return }
         guard let model = self.uploadedCourseDetailModel else {
             return
         }
-        
+
         let publicCourse = model.publicCourse
-        
+
         analyze(buttonName: GAEvent.Button.clickShare)
-        
+
         self.shareCourse(
             courseTitle: publicCourse.title,
             courseId: publicCourse.id,
-            courseImageURL: publicCourse.image,
-            minimumAppVersion: "1.0.4",
-            descriptionText: publicCourse.description,
             parameter: "courseId"
         )
     }
     
     @objc private func pushToUserProfileVC() {
         guard UserManager.shared.userType != .visitor else {
-            // 방문자일 경우 토스트 메세지만
-            self.showToast(message: "회원만 조회 가능 합니다.")
+            self.showToastOnWindow(text: "러넥트에 가입하면 프로필을 조회할 수 있어요")
             return
         }
         

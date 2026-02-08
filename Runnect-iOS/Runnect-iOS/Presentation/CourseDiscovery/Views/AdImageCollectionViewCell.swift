@@ -9,106 +9,573 @@ import UIKit
 
 import SnapKit
 import Then
+import GoogleMobileAds
 
-final class AdImageCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate {
-    
-    // MARK: - collectionview
-    
+protocol AdImageCollectionViewCellDelegate: AnyObject {
+    func adBannerDidReceiveAd()
+    func adBannerDidFailToReceiveAd()
+}
+
+final class AdImageCollectionViewCell: UICollectionViewCell {
+
+    // MARK: - Types
+
+    private enum PageType {
+        case image(UIImage)
+        case ad(GADBannerView)
+    }
+
+    // MARK: - Constants
+
+    private static let adPageInterval: TimeInterval = 5.0
+    private static let imagePageInterval: TimeInterval = 4.0
+    private static let adFreeAppLaunchThreshold = 3
+
+    // MARK: - Properties
+
+    weak var delegate: AdImageCollectionViewCellDelegate?
+    private var isAd1Loaded = false
+    private var isAd2Loaded = false
+    private var adsResponseCount = 0
+    private var carouselShown = false
+    private var shimmerTimeoutWork: DispatchWorkItem?
+    private var autoScrollWork: DispatchWorkItem?
+    private let imgBanners: [UIImage] = [ImageLiterals.imgBanner1, ImageLiterals.imgBanner2, ImageLiterals.imgBanner3]
+    private var pages: [PageType] = []
+    private var currentPage: Int = 0
+
+    private var shouldShowAds: Bool {
+        guard UserManager.shared.userType != .visitor else { return false }
+        let launchCount = UserDefaultKeyList.Ad.appLaunchCount ?? 0
+        return launchCount > Self.adFreeAppLaunchThreshold
+    }
+
+    // MARK: - UI Components (Container)
+
+    private let shadowView = UIView().then {
+        $0.backgroundColor = .clear
+        $0.layer.shadowColor = UIColor(hex: "#171717").cgColor
+        $0.layer.shadowOpacity = 0.08
+        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+        $0.layer.shadowRadius = 6
+    }
+
+    private let containerView = UIView().then {
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 16
+    }
+
+    // MARK: - UI Components (AdMob)
+
+    private lazy var bannerView1: GADBannerView = {
+        let adWidth = UIScreen.main.bounds.width - 32
+        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(adWidth)
+        let banner = GADBannerView(adSize: adSize)
+        banner.adUnitID = Config.adMobBannerAdUnitId
+        return banner
+    }()
+
+    private lazy var bannerView2: GADBannerView = {
+        let adWidth = UIScreen.main.bounds.width - 32
+        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(adWidth)
+        let banner = GADBannerView(adSize: adSize)
+        banner.adUnitID = Config.adMobBannerAdUnitId
+        return banner
+    }()
+
+    // MARK: - UI Components (Carousel)
+
     private lazy var bannerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.isScrollEnabled = true
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.isUserInteractionEnabled = true
+        collectionView.isPagingEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
-    
-    // MARK: - Constants
-    
-    final let collectionViewInset = UIEdgeInsets(top: 28, left: 16, bottom: 28, right: 16)
-    
-    // MARK: - UI Components
-    var imgBanners: [UIImage] = [ImageLiterals.imgBanner1, ImageLiterals.imgBanner2, ImageLiterals.imgBanner3]
-    var currentPage: Int = 0
-    private var timer: Timer?
-    
-    private var pageControl = UIPageControl()
-    
+
+    // MARK: - UI Components (AD Label - Glass Pill)
+
+    private let adLabelContainer = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark)).then {
+        $0.layer.cornerRadius = 11
+        $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
+        $0.layer.borderWidth = 0.5
+        $0.alpha = 0
+    }
+
+    private let adLabel = UILabel().then {
+        $0.text = "AD"
+        $0.font = .b9
+        $0.textColor = UIColor.white.withAlphaComponent(0.9)
+    }
+
+    // MARK: - UI Components (Custom Page Control)
+
+    private let pageControlStack = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 4
+        $0.alignment = .center
+    }
+
+    // MARK: - UI Components (Gradient Overlay)
+
+    private let gradientView = UIView()
+    private let gradientLayer = CAGradientLayer()
+
+    // MARK: - UI Components (Shimmer Loading)
+
+    private let shimmerView = UIView().then {
+        $0.backgroundColor = .m3
+    }
+
+    private let shimmerGradientLayer = CAGradientLayer()
+
     // MARK: - Life cycle
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
+        pages = imgBanners.map { .image($0) }
         setLayout()
-        setDelegate()
-        startBannerSlide()
+        setCarousel()
+        setupShimmer()
+        setupPageDots()
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        shadowView.layer.shadowPath = UIBezierPath(
+            roundedRect: containerView.frame,
+            cornerRadius: 16
+        ).cgPath
+        gradientLayer.frame = gradientView.bounds
+        shimmerGradientLayer.frame = shimmerView.bounds
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        stopAutoScroll()
+        if shouldShowAds && !isAd1Loaded && !isAd2Loaded {
+            adsResponseCount = 0
+            carouselShown = false
+            loadAdMobBanners()
+        }
+    }
+
+    deinit {
+        autoScrollWork?.cancel()
+        shimmerTimeoutWork?.cancel()
+    }
 }
-// MARK: - Extensions
+
+// MARK: - AdMob
 
 extension AdImageCollectionViewCell {
-    
-    private func setDelegate() {
+
+    func setRootViewController(_ viewController: UIViewController) {
+        guard shouldShowAds else {
+            skipAdsAndShowCarousel()
+            return
+        }
+        bannerView1.rootViewController = viewController
+        bannerView2.rootViewController = viewController
+        loadAdMobBanners()
+    }
+
+    private func skipAdsAndShowCarousel() {
+        pages = imgBanners.map { .image($0) }
+        carouselShown = true
+        showCarousel()
+        delegate?.adBannerDidFailToReceiveAd()
+    }
+
+    private func loadAdMobBanners() {
+        bannerView1.delegate = self
+        bannerView2.delegate = self
+        bannerView1.load(GADRequest())
+        bannerView2.load(GADRequest())
+        showShimmer()
+        startShimmerTimeout()
+    }
+
+    /// 두 광고 응답 완료 후 페이지 구성 및 캐러셀 표시
+    private func buildPagesAndShowCarousel() {
+        guard !carouselShown else { return }
+        carouselShown = true
+
+        buildPages()
+        showCarousel()
+
+        if isAd1Loaded || isAd2Loaded {
+            delegate?.adBannerDidReceiveAd()
+            analyze(buttonName: GAEvent.Button.clickTryBanner)
+        } else {
+            delegate?.adBannerDidFailToReceiveAd()
+        }
+    }
+
+    /// 광고 로드 상태에 따라 페이지 배열 구성: [배너1, 광고1?, 배너2, 광고2?, 배너3]
+    private func buildPages() {
+        var result: [PageType] = []
+        result.append(.image(imgBanners[0]))
+        if isAd1Loaded {
+            result.append(.ad(bannerView1))
+        }
+        result.append(.image(imgBanners[1]))
+        if isAd2Loaded {
+            result.append(.ad(bannerView2))
+        }
+        result.append(.image(imgBanners[2]))
+        pages = result
+    }
+
+    /// 캐러셀 표시 애니메이션
+    private func showCarousel() {
+        cancelShimmerTimeout()
+
+        bannerCollectionView.reloadData()
+        setupPageDots()
+
+        bannerCollectionView.isHidden = false
+        gradientView.isHidden = false
+        pageControlStack.isHidden = false
+
+        bannerCollectionView.alpha = 0
+        gradientView.alpha = 0
+        pageControlStack.alpha = 0
+
+        let duration: TimeInterval = UIAccessibility.isReduceMotionEnabled ? 0 : 0.3
+
+        UIView.animate(withDuration: duration, animations: {
+            self.shimmerView.alpha = 0
+            self.bannerCollectionView.alpha = 1
+            self.gradientView.alpha = 1
+            self.pageControlStack.alpha = 1
+        }, completion: { _ in
+            self.shimmerView.isHidden = true
+            self.shimmerView.alpha = 1
+            self.shimmerGradientLayer.removeAnimation(forKey: "shimmer")
+            self.startAutoScroll()
+            self.updateAdPillVisibility()
+        })
+    }
+}
+
+// MARK: - GADBannerViewDelegate
+
+extension AdImageCollectionViewCell: GADBannerViewDelegate {
+    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+        if bannerView === bannerView1 {
+            isAd1Loaded = true
+        } else if bannerView === bannerView2 {
+            isAd2Loaded = true
+        }
+        adsResponseCount += 1
+        if adsResponseCount >= 2 {
+            buildPagesAndShowCarousel()
+        }
+    }
+
+    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+        print("[AdMob] 배너 광고 로드 실패: \(error.localizedDescription)")
+        if bannerView === bannerView1 {
+            isAd1Loaded = false
+        } else if bannerView === bannerView2 {
+            isAd2Loaded = false
+        }
+        adsResponseCount += 1
+        if adsResponseCount >= 2 {
+            buildPagesAndShowCarousel()
+        }
+    }
+}
+
+// MARK: - Shimmer Loading
+
+extension AdImageCollectionViewCell {
+
+    private func setupShimmer() {
+        shimmerGradientLayer.colors = [
+            UIColor.m3.cgColor,
+            UIColor.white.withAlphaComponent(0.2).cgColor,
+            UIColor.m3.cgColor
+        ]
+        shimmerGradientLayer.locations = [0, 0.5, 1]
+        shimmerGradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
+        shimmerGradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
+        shimmerView.layer.addSublayer(shimmerGradientLayer)
+    }
+
+    private func showShimmer() {
+        shimmerView.isHidden = false
+        shimmerView.alpha = 1
+        bannerCollectionView.isHidden = true
+        adLabelContainer.alpha = 0
+        pageControlStack.isHidden = true
+        gradientView.isHidden = true
+
+        guard !UIAccessibility.isReduceMotionEnabled else { return }
+
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = [-0.2, -0.1, 0.0]
+        animation.toValue = [1.0, 1.1, 1.2]
+        animation.duration = 1.5
+        animation.repeatCount = .infinity
+        shimmerGradientLayer.add(animation, forKey: "shimmer")
+    }
+
+    /// 3초 타임아웃: 응답 안 온 광고는 포기하고 캐러셀 표시
+    private func startShimmerTimeout() {
+        cancelShimmerTimeout()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            self.buildPagesAndShowCarousel()
+        }
+        shimmerTimeoutWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0, execute: work)
+    }
+
+    private func cancelShimmerTimeout() {
+        shimmerTimeoutWork?.cancel()
+        shimmerTimeoutWork = nil
+    }
+}
+
+// MARK: - Custom Page Control
+
+extension AdImageCollectionViewCell {
+
+    private func setupPageDots() {
+        pageControlStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        for _ in 0..<pages.count {
+            let dot = UIView()
+            dot.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+            dot.layer.cornerRadius = 2
+            dot.snp.makeConstraints {
+                $0.width.height.equalTo(4)
+            }
+            pageControlStack.addArrangedSubview(dot)
+        }
+        updatePageDots()
+    }
+
+    private func updatePageDots() {
+        guard !pages.isEmpty else { return }
+        let activeIndex = currentPage % pages.count
+        for (index, dot) in pageControlStack.arrangedSubviews.enumerated() {
+            let isActive = index == activeIndex
+            dot.backgroundColor = isActive ? .white : UIColor.white.withAlphaComponent(0.5)
+            dot.layer.cornerRadius = 2
+            dot.snp.remakeConstraints {
+                $0.width.equalTo(isActive ? 16 : 4)
+                $0.height.equalTo(4)
+            }
+        }
+        UIView.animate(withDuration: 0.2) {
+            self.pageControlStack.layoutIfNeeded()
+        }
+        updateAccessibility()
+    }
+
+    private func updateAdPillVisibility() {
+        guard !pages.isEmpty else {
+            adLabelContainer.alpha = 0
+            return
+        }
+        let pageIndex = currentPage % pages.count
+        let isAdPage: Bool
+        if case .ad = pages[pageIndex] {
+            isAdPage = true
+        } else {
+            isAdPage = false
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.adLabelContainer.alpha = isAdPage ? 1 : 0
+        }
+    }
+}
+
+// MARK: - Auto Scroll
+
+extension AdImageCollectionViewCell {
+
+    private func currentPageInterval() -> TimeInterval {
+        guard !pages.isEmpty else { return Self.imagePageInterval }
+        let pageIndex = currentPage % pages.count
+        if case .ad = pages[pageIndex] {
+            return Self.adPageInterval
+        }
+        return Self.imagePageInterval
+    }
+
+    private func startAutoScroll() {
+        stopAutoScroll()
+
+        guard !UIAccessibility.isReduceMotionEnabled, !pages.isEmpty else { return }
+
+        currentPage = pages.count
+        bannerCollectionView.scrollToItem(
+            at: IndexPath(item: currentPage, section: 0),
+            at: .centeredHorizontally,
+            animated: false
+        )
+
+        scheduleNextScroll()
+    }
+
+    private func scheduleNextScroll() {
+        autoScrollWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            self?.scrollToNextPage()
+        }
+        autoScrollWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + currentPageInterval(), execute: work)
+    }
+
+    private func stopAutoScroll() {
+        autoScrollWork?.cancel()
+        autoScrollWork = nil
+    }
+
+    private func scrollToNextPage() {
+        guard !pages.isEmpty else { return }
+        currentPage += 1
+        if currentPage >= pages.count * 2 {
+            currentPage = pages.count
+            bannerCollectionView.scrollToItem(
+                at: IndexPath(item: currentPage, section: 0),
+                at: .centeredHorizontally,
+                animated: false
+            )
+        }
+
+        let indexPath = IndexPath(item: currentPage, section: 0)
+        let animated = !UIAccessibility.isReduceMotionEnabled
+        bannerCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: animated)
+        updatePageDots()
+        updateAdPillVisibility()
+        scheduleNextScroll()
+    }
+}
+
+// MARK: - Accessibility
+
+extension AdImageCollectionViewCell {
+
+    private func updateAccessibility() {
+        guard !pages.isEmpty else { return }
+        let pageIndex = currentPage % pages.count
+        let isAdPage: Bool
+        if case .ad = pages[pageIndex] {
+            isAdPage = true
+        } else {
+            isAdPage = false
+        }
+
+        isAccessibilityElement = true
+        if isAdPage {
+            accessibilityLabel = "광고 배너, \(pageIndex + 1)/\(pages.count)"
+        } else {
+            accessibilityLabel = "프로모션 배너, \(pageIndex + 1)/\(pages.count)"
+        }
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+
+extension AdImageCollectionViewCell: UIScrollViewDelegate {
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard scrollView === bannerCollectionView, scrollView.frame.width > 0 else { return }
+        currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
+        updatePageDots()
+        updateAdPillVisibility()
+        scheduleNextScroll()
+    }
+}
+
+// MARK: - Carousel Setup
+
+extension AdImageCollectionViewCell {
+
+    private func setCarousel() {
         bannerCollectionView.delegate = self
         bannerCollectionView.dataSource = self
-        bannerCollectionView.isPagingEnabled = true
-        bannerCollectionView.showsHorizontalScrollIndicator = false
         bannerCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "BannerCell")
     }
-    
-    private func startBannerSlide() {
-        currentPage = imgBanners.count
-        timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(animateBannerSlide), userInfo: nil, repeats: true)
-        pageControl.currentPage = 0
-        pageControl.numberOfPages = imgBanners.count
-        pageControl.pageIndicatorTintColor = .lightGray
-        pageControl.currentPageIndicatorTintColor = .white
-    }
-    
-    private func updatePageControl() {
-        let currentIndex = currentPage % imgBanners.count
-        pageControl.currentPage = currentIndex
-        let indexPath = IndexPath(item: currentPage, section: 0)
-        bannerCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-    }
-    
-    internal func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
-        pageControl.currentPage = currentPage % imgBanners.count
-    }
-    
-    // MARK: - Layout Helpers
-    
+}
+
+// MARK: - Layout
+
+extension AdImageCollectionViewCell {
+
     private func setLayout() {
         contentView.backgroundColor = .clear
-        contentView.addSubview(bannerCollectionView)
-        contentView.addSubview(pageControl)
-        
+        contentView.addSubview(shadowView)
+        shadowView.addSubview(containerView)
+        containerView.addSubviews(bannerCollectionView, shimmerView, gradientView, adLabelContainer, pageControlStack)
+        adLabelContainer.contentView.addSubview(adLabel)
+
+        shadowView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(8)
+        }
+
+        containerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
         bannerCollectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-        
-        pageControl.snp.makeConstraints {
-            $0.centerX.equalTo(self)
-            $0.bottom.equalTo(bannerCollectionView.snp.bottom)
+
+        shimmerView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
+
+        gradientView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(48)
+        }
+        setupGradient()
+
+        adLabelContainer.snp.makeConstraints {
+            $0.top.leading.equalToSuperview().inset(12)
+            $0.height.equalTo(22)
+        }
+
+        adLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(8)
+        }
+
+        pageControlStack.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(12)
+        }
+
+        // 초기 상태: shimmer만 표시
+        bannerCollectionView.isHidden = true
+        adLabelContainer.alpha = 0
+        gradientView.isHidden = true
+        pageControlStack.isHidden = true
     }
-}
 
-// MARK: - @objc Function
-
-extension AdImageCollectionViewCell {
-    @objc func animateBannerSlide() {
-        currentPage += 1
-        if currentPage >= imgBanners.count {
-            currentPage = 0
-        }
-        updatePageControl()
+    private func setupGradient() {
+        gradientLayer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.3).cgColor
+        ]
+        gradientLayer.locations = [0, 1]
+        gradientView.layer.addSublayer(gradientLayer)
     }
 }
 
@@ -116,31 +583,47 @@ extension AdImageCollectionViewCell {
 
 extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imgBanners.count*3
+        return pages.count * 3
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = bannerCollectionView.dequeueReusableCell(withReuseIdentifier: "BannerCell", for: indexPath)
-        let imageIndex = indexPath.item % imgBanners.count
-        let imageView = UIImageView(frame: cell.contentView.bounds)
-        imageView.image = imgBanners[imageIndex]
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.isUserInteractionEnabled = true
-        cell.contentView.addSubviews(imageView)
-        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BannerCell", for: indexPath)
+        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+
+        guard !pages.isEmpty else { return cell }
+
+        let pageIndex = indexPath.item % pages.count
+        switch pages[pageIndex] {
+        case .image(let image):
+            cell.contentView.backgroundColor = .clear
+            let imageView = UIImageView().then {
+                $0.image = image
+                $0.contentMode = .scaleAspectFill
+                $0.clipsToBounds = true
+            }
+            cell.contentView.addSubview(imageView)
+            imageView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
+        case .ad(let adBannerView):
+            cell.contentView.backgroundColor = .w1
+            adBannerView.removeFromSuperview()
+            cell.contentView.addSubview(adBannerView)
+            adBannerView.snp.makeConstraints {
+                $0.center.equalToSuperview()
+            }
+        }
         return cell
     }
-    
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension AdImageCollectionViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return self.frame.size
+        return containerView.bounds.size
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }

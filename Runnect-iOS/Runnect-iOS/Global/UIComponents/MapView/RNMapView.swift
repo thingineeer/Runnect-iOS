@@ -426,7 +426,7 @@ extension RNMapView {
 extension RNMapView: NMFMapViewCameraDelegate, NMFMapViewTouchDelegate {
     // 지도 탭 이벤트
     func mapView(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
-        guard isDrawMode && markers.count < 25 else { return }
+        guard isDrawMode && markers.count < 30 else { return }
         self.makeMarker(at: latlng)
         
     }

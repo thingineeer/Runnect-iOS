@@ -29,7 +29,9 @@ Set Marketing and Build version
 [bundle exec] fastlane ios release
 ```
 
-Build app and release to App Store.
+Build app and release to App Store Review
+
+Usage: fastlane release version:2.3.0
 
 ### ios beta
 
@@ -38,6 +40,26 @@ Build app and release to App Store.
 ```
 
 Push a new beta build to TestFlight
+
+Usage: fastlane beta version:2.3.0
+
+### ios update_metadata
+
+```sh
+[bundle exec] fastlane ios update_metadata
+```
+
+Upload metadata only (no binary)
+
+Usage: fastlane update_metadata version:2.3.0
+
+### ios download_metadata
+
+```sh
+[bundle exec] fastlane ios download_metadata
+```
+
+Download current metadata from App Store Connect
 
 ### ios register_new_device
 
@@ -53,7 +75,7 @@ Register Devices
 [bundle exec] fastlane ios match_read_only
 ```
 
-Match all code signing
+Match all code signing (read only)
 
 ----
 
