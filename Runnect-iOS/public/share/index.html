@@ -62,17 +62,49 @@
     <p>공유된 코스를 확인하려면<br>Runnect 앱을 열어주세요.</p>
     <a class="btn" id="storeLink" href="https://apps.apple.com/app/id1663884202">앱 설치하기</a>
   </div>
-  <script>
-    (function() {
-      var params = new URLSearchParams(window.location.search);
-      var courseId = params.get('courseId');
-      var privateCourseId = params.get('privateCourseId');
 
-      if (courseId || privateCourseId) {
-        var btn = document.getElementById('storeLink');
-        btn.textContent = '앱에서 열기';
-      }
-    })();
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js';
+    import { getAnalytics, logEvent } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js';
+
+    var firebaseConfig = {
+      apiKey: "AIzaSyAfIcPe-mskJm9cxgtjcWPixe2I_8VsQOM",
+      authDomain: "runnect-ios.firebaseapp.com",
+      projectId: "runnect-ios",
+      storageBucket: "runnect-ios.firebasestorage.app",
+      messagingSenderId: "17552101098",
+      appId: "1:17552101098:web:fa6862e3997979e3c0d193",
+      measurementId: "G-E3BLH86DK5"
+    };
+
+    var app = initializeApp(firebaseConfig);
+    var analytics = getAnalytics(app);
+
+    var params = new URLSearchParams(window.location.search);
+    var courseId = params.get('courseId');
+    var privateCourseId = params.get('privateCourseId');
+    var courseType = courseId ? 'public' : (privateCourseId ? 'private' : 'unknown');
+    var id = courseId || privateCourseId || 'none';
+
+    logEvent(analytics, 'share_link_visit', {
+      course_type: courseType,
+      course_id: id,
+      referrer: document.referrer || 'direct'
+    });
+
+    var btn = document.getElementById('storeLink');
+
+    if (courseId || privateCourseId) {
+      btn.textContent = '앱에서 열기';
+    }
+
+    btn.addEventListener('click', function() {
+      logEvent(analytics, 'share_link_click', {
+        course_type: courseType,
+        course_id: id,
+        action: 'open_store'
+      });
+    });
   </script>
 </body>
 </html>

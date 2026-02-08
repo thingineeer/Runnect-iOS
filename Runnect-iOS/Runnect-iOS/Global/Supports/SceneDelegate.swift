@@ -46,6 +46,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let incomingURL = userActivity.webpageURL,
               let (courseType, courseId) = self.handleUniversalLink(incomingURL) else { return }
 
+        let courseTypeString = courseType == .publicCourse ? "public" : "private"
+        GAManager.shared.logEvent(eventType: .share(
+            eventName: GAEvent.Share.openShareLink,
+            courseType: courseTypeString,
+            courseId: courseId
+        ))
+
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
         let navigationController = UINavigationController()

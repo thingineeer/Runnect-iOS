@@ -81,4 +81,8 @@ struct GAEvent {
         static let clickJoinInStorage = "click_join_in_storage"
         static let clickJoinInMyPage = "click_join_in_my_page"
     }
+
+    struct Share {
+        static let openShareLink = "open_share_link"
+    }
 }
