@@ -39,13 +39,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
 
-        NMFAuthManager.shared().clientId = Config.naverMapClientId
+        NMFAuthManager.shared().ncpKeyId = Config.naverMapClientId
         #if DEBUG
         NMFAuthManager.shared().delegate = self
         #endif
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+
+        // WatchConnectivity 세션 시작
+        WatchSessionService.shared.startSession()
 
         return true
     }
