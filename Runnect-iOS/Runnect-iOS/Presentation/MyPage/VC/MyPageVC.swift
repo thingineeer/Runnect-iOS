@@ -68,8 +68,8 @@ final class MyPageVC: UIViewController {
         $0.trackTintColor = .m6
         $0.layer.cornerRadius = 6
         $0.clipsToBounds = true
-        $0.layer.sublayers![1].cornerRadius = 6
-        $0.subviews[1].clipsToBounds = true
+        $0.layer.sublayers?.forEach { $0.cornerRadius = 6 }
+        $0.subviews.forEach { $0.clipsToBounds = true }
     }
     
     private let myRunnigProgressPercentLabel = UILabel()

@@ -52,6 +52,7 @@ extension SplashVC {
                     switch result {
                     case .success:
                         print("SplashVC-토큰 재발급 성공")
+                        UserManager.shared.userType = .registered
                         self?.pushToTabBarController()
                     case .failure(let error):
                         print(error)
@@ -112,24 +113,35 @@ extension SplashVC {
         settings.minimumFetchInterval = 86400 // 개발 중에는 0으로 설정, 실제 앱에서는 적절한 값을 설정
         remoteConfig.configSettings = settings
         
+        remoteConfig.setDefaults(["iOS_current_market_version": "0.0.0" as NSString])
+
         remoteConfig.fetch { (status, error) -> Void in
             if status == .success {
                 remoteConfig.activate { (_, _) in
-                    // 현재 앱 버전 가져오기
                     guard let info = Bundle.main.infoDictionary,
                           let currentVersion = info["CFBundleShortVersionString"] as? String
                     else { return }
-                    
+
                     let storeVersion = remoteConfig["iOS_current_market_version"].stringValue
-                    
+
+                    guard !storeVersion.isEmpty,
+                          storeVersion != "0.0.0" else {
+                        // Remote Config에 키가 없거나 기본값이면 업데이트 체크 건너뜀
+                        self.checkDidSignIn()
+                        return
+                    }
+
                     let splitCurrentVersion = currentVersion.split(separator: ".").map { $0 }
                     let splitStoreVersion = storeVersion.split(separator: ".").map { $0 }
-                    
+
+                    guard !splitCurrentVersion.isEmpty, !splitStoreVersion.isEmpty else {
+                        self.checkDidSignIn()
+                        return
+                    }
+
                     if splitCurrentVersion[0] < splitStoreVersion[0] {
-                        // 스토어 버전이 더 높으면 업데이트 필요
                         self.showUpdateAlert()
                     } else {
-                        // 업데이트가 필요하지 않으면 기본 로직 수행
                         self.checkDidSignIn()
                     }
                 }
