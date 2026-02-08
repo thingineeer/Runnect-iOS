@@ -19,26 +19,31 @@ final class AuthInterceptor: RequestInterceptor {
 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var urlRequest = urlRequest
-        
-        // 방문자일 경우
-        if UserManager.shared.userType == .visitor && urlRequest.url?.absoluteString.hasPrefix(Config.baseURL) == true {
-            urlRequest.setValue("visitor", forHTTPHeaderField: "accessToken")
-            urlRequest.setValue("visitor", forHTTPHeaderField: "refreshToken")
+
+        guard urlRequest.url?.absoluteString.hasPrefix(Config.baseURL) == true else {
             completion(.success(urlRequest))
             return
         }
 
-        guard urlRequest.url?.absoluteString.hasPrefix(Config.baseURL) == true,
-              let accessToken = UserManager.shared.accessToken,
-              let refreshToken = UserManager.shared.refreshToken
-        else {
+        // 실제 토큰이 있으면 등록 사용자로 처리
+        if let accessToken = UserManager.shared.accessToken,
+           let refreshToken = UserManager.shared.refreshToken {
+            urlRequest.setValue(accessToken, forHTTPHeaderField: "accessToken")
+            urlRequest.setValue(refreshToken, forHTTPHeaderField: "refreshToken")
+            print("[AuthInterceptor] 토큰 주입 완료 - userType: \(UserManager.shared.userType), url: \(urlRequest.url?.lastPathComponent ?? "")")
             completion(.success(urlRequest))
             return
         }
-        
-        urlRequest.setValue(accessToken, forHTTPHeaderField: "accessToken")
-        urlRequest.setValue(refreshToken, forHTTPHeaderField: "refreshToken")
-        print("adator 적용 \(urlRequest.headers)")
+
+        // 토큰이 없는 방문자일 경우
+        if UserManager.shared.userType == .visitor {
+            urlRequest.setValue("visitor", forHTTPHeaderField: "accessToken")
+            urlRequest.setValue("visitor", forHTTPHeaderField: "refreshToken")
+            print("[AuthInterceptor] visitor 모드 - url: \(urlRequest.url?.lastPathComponent ?? "")")
+        } else {
+            print("[AuthInterceptor] 토큰 nil, userType: \(UserManager.shared.userType) - url: \(urlRequest.url?.lastPathComponent ?? "")")
+        }
+
         completion(.success(urlRequest))
     }
 
