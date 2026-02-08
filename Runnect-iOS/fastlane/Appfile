@@ -1,8 +1,7 @@
-app_identifier(ENV["APP_IDENTIFIER"]) # The bundle identifier of your app
-apple_id(ENV["APPLE_ID"]) # Your Apple Developer Portal username
+app_identifier("com.runnect.Runnect-iOS")
 
-itc_team_id(ENV["ITC_TEAM_ID"]) # App Store Connect Team ID
-team_id(ENV["TEAM_ID"]) # Developer Portal Team ID
+# App Store Connect API Key 인증 사용 (Apple ID 불필요)
+# API Key 설정은 Fastfile 내 api_key 메서드에서 관리
 
 # For more information about the Appfile, see:
 #     https://docs.fastlane.tools/advanced/#appfile
