@@ -1,0 +1,13 @@
+The app provides the ability to draw, share, and record running courses.
+
+We support login with Apple and Kakao with simple social login, and we also provide a way to use the basic features of the app without login for users who do not want to log in.
+Of course, logout and withdrawal of members are also provided within the app.
+
+If you want to test your login with Kakao, please use the attached account.
+
+[Changes in v2.4.0]
+- Launched Apple Watch companion app with real-time running data sync (distance, time, pace, heart rate zone).
+- Improved course discovery feed pagination performance by up to 90% (incremental cell insertion, image prefetching).
+- Added GPS-based real-time distance tracking during running.
+- Added native feed ads in course discovery (every 10 courses, max 3).
+- Improved running UX: end-run confirmation alert, better back navigation flow.
