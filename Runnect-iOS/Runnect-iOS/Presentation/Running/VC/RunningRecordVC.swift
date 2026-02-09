@@ -85,6 +85,7 @@ final class RunningRecordVC: UIViewController {
         self.setAddTarget()
         self.setKeyboardNotification()
         self.setTapGesture()
+        self.setNaviBarBackAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,6 +129,12 @@ extension RunningRecordVC {
         view.addGestureRecognizer(tap)
     }
     
+    private func setNaviBarBackAction() {
+        naviBar.resetLeftButtonAction({ [weak self] in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }, .titleWithLeftButton)
+    }
+
     func setData(runningModel: RunningModel) {
         self.runningModel = runningModel
         self.distanceStatsView.setAttributedStats(stats: runningModel.distance ?? "0.0")

@@ -272,11 +272,18 @@ extension RunTrackingVC {
     }
     
     @objc private func runningCompleteButtonDidTap() {
-        stopwatch.isRunning.toggle()
-        stopRunLocationTracking()
-        WatchSessionService.shared.stopSendingRunningData()
-        WatchSessionService.shared.sendRunCompleted()
-        self.pushToRunningRecordVC()
+        let alertVC = RNAlertVC(description: "러닝을 종료하시겠습니까?")
+            .setButtonTitle("취소", "종료하기")
+        alertVC.modalPresentationStyle = .overFullScreen
+        alertVC.rightButtonTapAction = { [weak self] in
+            alertVC.dismiss(animated: false)
+            self?.stopwatch.isRunning.toggle()
+            self?.stopRunLocationTracking()
+            WatchSessionService.shared.stopSendingRunningData()
+            WatchSessionService.shared.sendRunCompleted()
+            self?.pushToRunningRecordVC()
+        }
+        self.present(alertVC, animated: false)
     }
 
     @objc private func handleWatchCommand(_ notification: Notification) {
