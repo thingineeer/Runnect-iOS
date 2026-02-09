@@ -43,6 +43,7 @@ final class CountDownVC: UIViewController {
         super.viewDidLoad()
         setUI()
         setLayout()
+        WatchSessionService.shared.sendCountdownStarted()
         animateTimeLabel()
     }
 }

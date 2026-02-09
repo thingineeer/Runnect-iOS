@@ -51,6 +51,10 @@ final class WatchSessionService: NSObject, ObservableObject {
 
     // MARK: - One-shot Messages
 
+    func sendCountdownStarted() {
+        sendIfReachable(["messageType": "countdownStarted"])
+    }
+
     func sendRunStarted() {
         sendIfReachable(["messageType": "runStarted"])
     }

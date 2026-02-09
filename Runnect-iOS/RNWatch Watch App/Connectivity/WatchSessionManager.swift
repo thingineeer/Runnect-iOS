@@ -183,10 +183,19 @@ extension WatchSessionManager: WCSessionDelegate {
                 }
             }
 
-        case "runStarted":
+        case "countdownStarted":
             runningState = .countdown
             lastKilometer = 0
             resetLocalTimer()
+
+        case "runStarted":
+            // Fallback: if countdown message was missed, go directly to active
+            if runningState != .countdown {
+                lastKilometer = 0
+                resetLocalTimer()
+            }
+            runningState = .active
+            startLocalTimer()
 
         case "runCompleted":
             runningState = .summary
