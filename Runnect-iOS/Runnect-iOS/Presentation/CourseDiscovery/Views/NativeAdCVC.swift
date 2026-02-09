@@ -97,8 +97,7 @@ extension NativeAdCVC {
 
         mediaView.snp.makeConstraints {
             $0.leading.top.trailing.equalToSuperview()
-            let imageHeight = contentView.frame.width * (124.0 / 174.0)
-            $0.height.equalTo(imageHeight)
+            $0.height.equalTo(mediaView.snp.width).multipliedBy(124.0 / 174.0)
         }
 
         adLabel.snp.makeConstraints {
