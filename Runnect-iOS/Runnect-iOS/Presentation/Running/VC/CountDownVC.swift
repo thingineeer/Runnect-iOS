@@ -61,6 +61,7 @@ extension CountDownVC {
                 self.animateTimeLabel()
             } else {
                 guard let runningModel = self.runningModel else { return }
+                WatchSessionService.shared.sendRunStarted()
                 let runTrackingVC = RunTrackingVC()
                 runTrackingVC.setData(runningModel: runningModel)
                 self.navigationController?.pushViewController(runTrackingVC, animated: true)

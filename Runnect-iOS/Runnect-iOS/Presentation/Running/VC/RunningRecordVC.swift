@@ -310,6 +310,7 @@ extension RunningRecordVC {
                 let status = result.statusCode
                 if 200..<300 ~= status {
                     analyze(buttonName: GAEvent.Button.clickStoreRunningTracking)
+                    WatchSessionService.shared.sendRunReset()
                     self.showToastOnWindow(text: "저장한 러닝 기록은 마이페이지에서 볼 수 있어요.")
                     self.navigationController?.popToRootViewController(animated: true)
                 }

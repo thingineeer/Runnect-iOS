@@ -132,6 +132,12 @@ final class RunTrackingVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.bindStopwatch()
+        self.startWatchDataSync()
+        self.observeWatchCommand()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -186,6 +192,37 @@ extension RunTrackingVC {
         timeStatsLabel.text = formattedString
     }
     
+    private func startWatchDataSync() {
+        WatchSessionService.shared.startSendingRunningData { [weak self] in
+            guard let self, let runningModel = self.runningModel else { return nil }
+            let distanceValue = Double(self.distance) ?? 0.0
+            let totalCourseDistance = Double(runningModel.distance ?? "0.0") ?? 0.0
+            let progress = totalCourseDistance > 0 ? min(distanceValue / totalCourseDistance, 1.0) : 0.0
+            let elapsedTime = self.totalTime
+            let pace = distanceValue > 0 ? Int(round(Double(elapsedTime) / distanceValue)) : 0
+
+            return [
+                "messageType": "runningUpdate",
+                "distance": distanceValue,
+                "elapsedTime": elapsedTime,
+                "pace": pace,
+                "progress": progress,
+                "totalCourseDistance": totalCourseDistance,
+                "isRunning": self.stopwatch.isRunning,
+                "courseName": ""
+            ]
+        }
+    }
+
+    private func observeWatchCommand() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleWatchCommand(_:)),
+            name: .watchCommandReceived,
+            object: nil
+        )
+    }
+
     private func pushToRunningRecordVC() {
         guard var runningModel = self.runningModel else { return }
         
@@ -206,6 +243,17 @@ extension RunTrackingVC {
     
     @objc private func runningCompleteButtonDidTap() {
         stopwatch.isRunning.toggle()
+        WatchSessionService.shared.stopSendingRunningData()
+        WatchSessionService.shared.sendRunCompleted()
+        self.pushToRunningRecordVC()
+    }
+
+    @objc private func handleWatchCommand(_ notification: Notification) {
+        guard let command = notification.userInfo?["command"] as? String,
+              command == "endRunning" else { return }
+        stopwatch.isRunning.toggle()
+        WatchSessionService.shared.stopSendingRunningData()
+        WatchSessionService.shared.sendRunCompleted()
         self.pushToRunningRecordVC()
     }
 }
