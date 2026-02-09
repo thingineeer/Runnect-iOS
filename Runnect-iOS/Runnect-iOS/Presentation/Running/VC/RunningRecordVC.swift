@@ -12,13 +12,13 @@ import SnapKit
 import Then
 
 final class RunningRecordVC: UIViewController {
-    
+
     // MARK: - Properties
-    
+
     private var runningModel: RunningModel?
-    
+
     private let recordProvider = Providers.recordProvider
-    
+
     private let courseTitleMaxLength = 20
     
     // MARK: - UI Components
@@ -301,13 +301,13 @@ extension RunningRecordVC {
         guard let time = runningModel.getFormattedTotalTime() else { return }
         guard let secondsPerKm = runningModel.getIntPace() else { return }
         let pace = RNTimeFormatter.secondsToHHMMSS(seconds: secondsPerKm)
-        
+
         let requestDto = RunningRecordRequestDto(courseId: courseId,
                                                  publicCourseId: runningModel.publicCourseId,
                                                  title: titleText,
                                                  time: time,
                                                  pace: pace)
-        
+
         LoadingIndicator.showLoading()
         recordProvider.request(.recordRunning(param: requestDto)) { [weak self] response in
             guard let self = self else { return }

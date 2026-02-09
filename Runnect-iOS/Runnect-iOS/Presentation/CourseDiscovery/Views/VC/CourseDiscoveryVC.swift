@@ -10,6 +10,7 @@ import Then
 import SnapKit
 import Combine
 import Moya
+import GoogleMobileAds
 
 protocol ScrapStateDelegate: AnyObject {
     func didUpdateScrapState(publicCourseId: Int, isScrapped: Bool)
@@ -38,6 +39,21 @@ final class CourseDiscoveryVC: UIViewController {
     private var pageNo: Int = 1
     private var sort = "date"
     private var isDataLoaded = false
+
+    // MARK: - Native Ad Properties
+
+    private static let nativeAdInterval = 10
+    private static let maxNativeAds = 3
+    private static let adFreeAppLaunchThreshold = 3
+
+    private var nativeAds = [GADNativeAd]()
+    private var adLoader: GADAdLoader?
+
+    private var shouldShowNativeAds: Bool {
+        guard UserManager.shared.userType != .visitor else { return false }
+        let launchCount = UserDefaultKeyList.Ad.appLaunchCount ?? 0
+        return launchCount > Self.adFreeAppLaunchThreshold
+    }
     
     // MARK: - UIComponents
     
@@ -85,6 +101,7 @@ final class CourseDiscoveryVC: UIViewController {
         setLayout()
         setAddTarget()
         setCombineEvent()
+        loadNativeAds()
         self.getCourseData(pageNo: pageNo)
     }
     
@@ -115,7 +132,8 @@ extension CourseDiscoveryVC {
                                                       MarathonTitleCollectionViewCell.self,
                                                       MarathonMapCollectionViewCell.self,
                                                       TitleCollectionViewCell.self,
-                                                      CourseListCVC.self]
+                                                      CourseListCVC.self,
+                                                      NativeAdCVC.self]
         cellTypes.forEach { cellType in
             mapCollectionView.register(cellType, forCellWithReuseIdentifier: cellType.className)
         }
@@ -137,12 +155,61 @@ extension CourseDiscoveryVC {
     
     private func reloadCellForCourse(publicCourseId: Int) {
         if let index = courseList.firstIndex(where: { $0.id == publicCourseId }) {
-            let indexPath = IndexPath(item: index, section: Section.courseList)
+            let collectionViewItem = collectionViewItem(for: index)
+            let indexPath = IndexPath(item: collectionViewItem, section: Section.courseList)
             mapCollectionView.reloadItems(at: [indexPath])
             print("\(indexPath) 부분 스크랩 교체 되었음")
         }
     }
-    
+
+    // MARK: - Native Ad Helpers
+
+    /// 광고가 삽입되는 위치인지 확인
+    private func isAdPosition(at item: Int) -> Bool {
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return false }
+        guard item > 0 else { return false }
+        // 매 10개 코스 뒤 (item 10, 21, 32, ...)
+        // item 10 -> 광고 0번째 (코스 0~9 뒤)
+        // item 21 -> 광고 1번째 (코스 10~19 뒤)
+        let adInterval = Self.nativeAdInterval + 1 // 코스 10개 + 광고 1개 = 11개 단위
+        if (item + 1) % adInterval == 0 {
+            let adIndex = (item + 1) / adInterval - 1
+            return adIndex < nativeAds.count
+        }
+        return false
+    }
+
+    /// collectionView item 인덱스에서 실제 courseList 인덱스로 변환
+    private func courseIndex(for item: Int) -> Int {
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return item }
+        let adInterval = Self.nativeAdInterval + 1
+        let adsBefore = item / adInterval // 이 item 이전에 삽입된 광고 수
+        // 현재 위치가 광고면 이 함수를 호출하면 안됨
+        return item - adsBefore
+    }
+
+    /// courseList 인덱스에서 collectionView item 인덱스로 변환
+    private func collectionViewItem(for courseIndex: Int) -> Int {
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return courseIndex }
+        let adInterval = Self.nativeAdInterval
+        let adsBefore = min(courseIndex / adInterval, nativeAds.count)
+        return courseIndex + adsBefore
+    }
+
+    /// 광고 포함 전체 아이템 수
+    private func totalItemCount() -> Int {
+        let courseCount = courseList.count
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return courseCount }
+        let possibleAds = min(courseCount / Self.nativeAdInterval, nativeAds.count)
+        return courseCount + possibleAds
+    }
+
+    /// 해당 item의 광고 인덱스 반환
+    private func nativeAdIndex(for item: Int) -> Int {
+        let adInterval = Self.nativeAdInterval + 1
+        return (item + 1) / adInterval - 1
+    }
+
     func refresh() {
         print("✅ refresh ✅")
         pageNo = 1
@@ -263,7 +330,7 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
         case Section.adImage, Section.marathonTitle, Section.marathonCourseList, Section.title:
             return 1
         case Section.courseList:
-            return self.courseList.count
+            return totalItemCount()
         default:
             return 0
         }
@@ -286,6 +353,9 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
             cell.delegate = self
             return cell
         case Section.courseList:
+            if isAdPosition(at: indexPath.item) {
+                return nativeAdCell(collectionView: collectionView, indexPath: indexPath)
+            }
             return courseListCell(collectionView: collectionView, indexPath: indexPath)
         default:
             return UICollectionViewCell()
@@ -297,9 +367,20 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CourseListCVC.className, for: indexPath) as? CourseListCVC else { return UICollectionViewCell() }
         cell.setCellType(type: .all)
         cell.delegate = self
-        let model = self.courseList[indexPath.item]
+        let realIndex = courseIndex(for: indexPath.item)
+        guard realIndex < courseList.count else { return UICollectionViewCell() }
+        let model = self.courseList[realIndex]
         let location = "\(model.departure.region) \(model.departure.city)"
-        cell.setData(imageURL: model.image, title: model.title, location: location, didLike: model.scrap, indexPath: indexPath.item)
+        cell.setData(imageURL: model.image, title: model.title, location: location, didLike: model.scrap, indexPath: realIndex)
+        return cell
+    }
+
+    private func nativeAdCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NativeAdCVC.className, for: indexPath) as? NativeAdCVC else { return UICollectionViewCell() }
+        let adIndex = nativeAdIndex(for: indexPath.item)
+        if adIndex < nativeAds.count {
+            cell.configure(with: nativeAds[adIndex])
+        }
         return cell
     }
 }
@@ -323,6 +404,11 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
             return CGSize(width: screenWidth, height: 106)
         case Section.courseList:
             let cellWidth = (screenWidth - 42) / 2
+            if isAdPosition(at: indexPath.item) {
+                // 네이티브 광고: 코스 셀과 동일한 크기 (2열 그리드 중 1칸)
+                let cellHeight = CourseListCVCType.getCellHeight(type: .all, cellWidth: cellWidth)
+                return CGSize(width: cellWidth, height: cellHeight)
+            }
             let cellHeight = CourseListCVCType.getCellHeight(type: .all, cellWidth: cellWidth)
             return CGSize(width: cellWidth, height: cellHeight)
         default:
@@ -345,9 +431,12 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.section == Section.courseList {
+            guard !isAdPosition(at: indexPath.item) else { return }
+            let realIndex = courseIndex(for: indexPath.item)
+            guard realIndex < courseList.count else { return }
             let courseDetailVC = CourseDetailVC()
             courseDetailVC.delegate = self
-            let courseModel = courseList[indexPath.item]
+            let courseModel = courseList[realIndex]
             courseDetailVC.setCourseId(courseId: courseModel.courseId, publicCourseId: courseModel.id)
             courseDetailVC.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(courseDetailVC, animated: true)
@@ -477,6 +566,40 @@ extension CourseDiscoveryVC: UploadSuccessDelegate {
         print("여기서 didUploadSuccess 함수 호출\n MyCourseSelectVC -> CourseDiscoveryVC 이벤트 전달")
         self.refresh()
         print("코스 발견 피드 새로고침 완료 되었음")
+    }
+}
+
+// MARK: - Native Ad Loading
+
+extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
+    private func loadNativeAds() {
+        guard shouldShowNativeAds else { return }
+
+        let multipleAdOptions = GADMultipleAdsAdLoaderOptions()
+        multipleAdOptions.numberOfAds = Self.maxNativeAds
+
+        adLoader = GADAdLoader(
+            adUnitID: Config.adMobNativeAdUnitId,
+            rootViewController: self,
+            adTypes: [.native],
+            options: [multipleAdOptions]
+        )
+        adLoader?.delegate = self
+        adLoader?.load(GADRequest())
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
+        nativeAds.append(nativeAd)
+    }
+
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+        if !nativeAds.isEmpty {
+            mapCollectionView.reloadData()
+        }
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+        print("[AdMob] 네이티브 광고 로드 실패: \(error.localizedDescription)")
     }
 }
 
