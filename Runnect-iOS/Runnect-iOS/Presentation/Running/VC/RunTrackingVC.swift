@@ -238,7 +238,17 @@ extension RunTrackingVC {
 
 extension RunTrackingVC {
     @objc private func popToPreviousVC() {
-        self.navigationController?.popViewController(animated: true)
+        let alertVC = RNAlertVC(description: "러닝을 종료하시겠습니까?")
+            .setButtonTitle("취소", "종료하기")
+        alertVC.modalPresentationStyle = .overFullScreen
+        alertVC.rightButtonTapAction = { [weak self] in
+            alertVC.dismiss(animated: false)
+            self?.stopwatch.isRunning = false
+            WatchSessionService.shared.stopSendingRunningData()
+            WatchSessionService.shared.sendRunReset()
+            self?.navigationController?.popViewController(animated: true)
+        }
+        self.present(alertVC, animated: false)
     }
     
     @objc private func runningCompleteButtonDidTap() {
