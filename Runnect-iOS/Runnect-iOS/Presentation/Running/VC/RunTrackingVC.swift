@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import CoreLocation
 
 import SnapKit
 import Then
@@ -14,15 +15,20 @@ import Then
 import NMapsMap
 
 final class RunTrackingVC: UIViewController {
-    
+
     // MARK: - Properties
-    
+
     private var runningModel: RunningModel?
-    
+
     private let stopwatch = Stopwatch()
     private var cancelBag = CancelBag()
     var totalTime: Int = 0
     var distance: String = "0.0"
+
+    // GPS 기반 실제 뛴 거리 (Watch 전송용)
+    private let runLocationManager = CLLocationManager()
+    private var lastLocation: CLLocation?
+    private var runDistance: Double = 0.0  // meters
     
     // MARK: - UI Components
     
@@ -132,6 +138,7 @@ final class RunTrackingVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.bindStopwatch()
+        self.startRunLocationTracking()
         self.startWatchDataSync()
         self.observeWatchCommand()
     }
@@ -192,18 +199,30 @@ extension RunTrackingVC {
         timeStatsLabel.text = formattedString
     }
     
+    private func startRunLocationTracking() {
+        runLocationManager.delegate = self
+        runLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        runLocationManager.distanceFilter = 5
+        runLocationManager.startUpdatingLocation()
+    }
+
+    private func stopRunLocationTracking() {
+        runLocationManager.stopUpdatingLocation()
+        runLocationManager.delegate = nil
+    }
+
     private func startWatchDataSync() {
         WatchSessionService.shared.startSendingRunningData { [weak self] in
             guard let self, let runningModel = self.runningModel else { return nil }
-            let distanceValue = Double(self.distance) ?? 0.0
+            let actualDistanceKm = self.runDistance / 1000.0
             let totalCourseDistance = Double(runningModel.distance ?? "0.0") ?? 0.0
-            let progress = totalCourseDistance > 0 ? min(distanceValue / totalCourseDistance, 1.0) : 0.0
+            let progress = totalCourseDistance > 0 ? min(actualDistanceKm / totalCourseDistance, 1.0) : 0.0
             let elapsedTime = self.totalTime
-            let pace = distanceValue > 0 ? Int(round(Double(elapsedTime) / distanceValue)) : 0
+            let pace = actualDistanceKm > 0 ? Int(round(Double(elapsedTime) / actualDistanceKm)) : 0
 
             return [
                 "messageType": "runningUpdate",
-                "distance": distanceValue,
+                "distance": actualDistanceKm,
                 "elapsedTime": elapsedTime,
                 "pace": pace,
                 "progress": progress,
@@ -244,6 +263,7 @@ extension RunTrackingVC {
         alertVC.rightButtonTapAction = { [weak self] in
             alertVC.dismiss(animated: false)
             self?.stopwatch.isRunning = false
+            self?.stopRunLocationTracking()
             WatchSessionService.shared.stopSendingRunningData()
             WatchSessionService.shared.sendRunReset()
             self?.navigationController?.popViewController(animated: true)
@@ -253,6 +273,7 @@ extension RunTrackingVC {
     
     @objc private func runningCompleteButtonDidTap() {
         stopwatch.isRunning.toggle()
+        stopRunLocationTracking()
         WatchSessionService.shared.stopSendingRunningData()
         WatchSessionService.shared.sendRunCompleted()
         self.pushToRunningRecordVC()
@@ -262,9 +283,28 @@ extension RunTrackingVC {
         guard let command = notification.userInfo?["command"] as? String,
               command == "endRunning" else { return }
         stopwatch.isRunning.toggle()
+        stopRunLocationTracking()
         WatchSessionService.shared.stopSendingRunningData()
         WatchSessionService.shared.sendRunCompleted()
         self.pushToRunningRecordVC()
+    }
+}
+
+// MARK: - CLLocationManagerDelegate
+
+extension RunTrackingVC: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let newLocation = locations.last,
+              newLocation.horizontalAccuracy >= 0,
+              newLocation.horizontalAccuracy < 20 else { return }
+
+        if let last = lastLocation {
+            let delta = newLocation.distance(from: last)
+            if delta > 1 {
+                runDistance += delta
+            }
+        }
+        lastLocation = newLocation
     }
 }
 
