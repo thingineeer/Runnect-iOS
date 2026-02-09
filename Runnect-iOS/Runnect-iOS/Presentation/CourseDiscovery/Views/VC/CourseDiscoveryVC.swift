@@ -90,7 +90,7 @@ final class CourseDiscoveryVC: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.isScrollEnabled = true
-        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = true
         return collectionView
     }()
     
