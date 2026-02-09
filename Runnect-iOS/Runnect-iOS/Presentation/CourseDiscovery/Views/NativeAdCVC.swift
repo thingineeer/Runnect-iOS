@@ -55,9 +55,11 @@ final class NativeAdCVC: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        nativeAdView.nativeAd = nil
         headlineLabel.text = nil
         mediaView.mediaContent = nil
         iconImageView.image = nil
+        iconImageView.isHidden = true
     }
 }
 

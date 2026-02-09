@@ -11,6 +11,7 @@ import SnapKit
 import Combine
 import Moya
 import GoogleMobileAds
+import Kingfisher
 
 protocol ScrapStateDelegate: AnyObject {
     func didUpdateScrapState(publicCourseId: Int, isScrapped: Bool)
@@ -38,7 +39,10 @@ final class CourseDiscoveryVC: UIViewController {
     private var isEnd: Bool = false
     private var pageNo: Int = 1
     private var sort = "date"
-    private var isDataLoaded = false
+    private var isFetchingData = false
+
+    /// 남은 아이템이 이 수 이하일 때 다음 페이지 프리페치 시작
+    private let prefetchThreshold = 6
 
     // MARK: - Native Ad Properties
 
@@ -124,6 +128,7 @@ extension CourseDiscoveryVC {
     private func setDelegate() {
         mapCollectionView.delegate = self
         mapCollectionView.dataSource = self
+        mapCollectionView.prefetchDataSource = self
         emptyView.delegate = self
     }
     
@@ -211,8 +216,9 @@ extension CourseDiscoveryVC {
     }
 
     func refresh() {
-        print("✅ refresh ✅")
+        print("refresh")
         pageNo = 1
+        isFetchingData = false
         self.courseList = []
         self.getCourseData(pageNo: pageNo)
     }
@@ -442,6 +448,31 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
             navigationController?.pushViewController(courseDetailVC, animated: true)
         }
     }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard indexPath.section == Section.courseList else { return }
+
+        let totalItems = totalItemCount()
+        let remainingItems = totalItems - indexPath.item - 1
+
+        // 남은 아이템이 threshold 이하이면 다음 페이지 로드
+        if remainingItems <= prefetchThreshold {
+            loadNextPageIfNeeded()
+        }
+    }
+
+    /// 다음 페이지 로드 조건을 확인하고 로드
+    private func loadNextPageIfNeeded() {
+        // 이미 로딩 중이면 무시
+        guard !isFetchingData else { return }
+        // 마지막 페이지면 무시
+        guard pageNo < totalPageNum else { return }
+        // 현재 페이지의 데이터가 다 안 왔으면 무시
+        guard courseList.count >= pageNo * serverResponseNumber else { return }
+
+        pageNo += 1
+        getCourseData(pageNo: pageNo)
+    }
     
     // 외부에서 Marathon Cell에서 받아오는 indexPath를 처리 합니다.
     private func setMarathonCourseSelection(at indexPath: IndexPath) {
@@ -461,33 +492,7 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
 
 extension CourseDiscoveryVC: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        performPagination()
         changeButtonStyleOnScroll()
-    }
-    
-    private func performPagination() {
-        let contentOffsetY = mapCollectionView.contentOffset.y // 우리가 보는 화면
-        let collectionViewHeight = mapCollectionView.contentSize.height // 전체 사이즈
-        let paginationY = mapCollectionView.bounds.size.height // 유저 화면의 가장 아래 y축 이라고 생각
-        
-        /// 페이지네이션 중단 코드
-        if contentOffsetY > collectionViewHeight - paginationY {
-            if courseList.count < pageNo * serverResponseNumber {
-                // 페이지 끝에 도달하면 현재 페이지에 더 이상 데이터가 없음을 의미
-                // 새로온 데이터의 갯수가 원래 서버에서 응답에서 온 갯수보다 작으면 페이지네이션 금지
-                return
-            }
-            
-            if pageNo < totalPageNum {
-                if !isDataLoaded {
-                    isDataLoaded = true
-                    print("🫠\(pageNo)")
-                    self.pageNo += 1
-                    getCourseData(pageNo: pageNo)
-                    isDataLoaded = false
-                }
-            }
-        }
     }
     
     private func changeButtonStyleOnScroll() {
@@ -516,6 +521,36 @@ extension CourseDiscoveryVC: UIScrollViewDelegate {
         self.miniUploadButton.alpha = 0.0
         self.uploadButton.alpha = 1.0
         self.miniUploadButton.frame.origin.x = 276
+    }
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension CourseDiscoveryVC: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let imageURLs = indexPaths.compactMap { indexPath -> URL? in
+            guard indexPath.section == Section.courseList else { return nil }
+            guard !isAdPosition(at: indexPath.item) else { return nil }
+            let realIndex = courseIndex(for: indexPath.item)
+            guard realIndex < courseList.count else { return nil }
+            return URL(string: courseList[realIndex].image)
+        }
+
+        guard !imageURLs.isEmpty else { return }
+        ImagePrefetcher(urls: imageURLs).start()
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        let imageURLs = indexPaths.compactMap { indexPath -> URL? in
+            guard indexPath.section == Section.courseList else { return nil }
+            guard !isAdPosition(at: indexPath.item) else { return nil }
+            let realIndex = courseIndex(for: indexPath.item)
+            guard realIndex < courseList.count else { return nil }
+            return URL(string: courseList[realIndex].image)
+        }
+
+        guard !imageURLs.isEmpty else { return }
+        ImagePrefetcher(urls: imageURLs).stop()
     }
 }
 
@@ -607,40 +642,85 @@ extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
 
 extension CourseDiscoveryVC {
     private func getCourseData(pageNo: Int) {
-        LoadingIndicator.showLoading() // 항상 0.7초 늦게 로딩이 되어 버림 0.5초를 넣은 이유는 pagination을 구현할때 한번에 다 받아오지 않게 하기 위함
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [self] in
-            publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { response in
+        isFetchingData = true
+
+        // 첫 페이지 로드 시에만 로딩 인디케이터 표시 (페이지네이션은 백그라운드 로딩)
+        let isFirstPage = (pageNo == 1)
+        if isFirstPage {
+            LoadingIndicator.showLoading()
+        }
+
+        publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { [weak self] response in
+            guard let self = self else { return }
+
+            if isFirstPage {
                 LoadingIndicator.hideLoading()
-                print("‼️ sort=  \(self.sort) ‼️\n")
-                switch response {
-                case .success(let result):
-                    let status = result.statusCode
-                    if 200..<300 ~= status {
-                        do {
-                            let responseDto = try result.map(BaseResponse<PickedMapListResponseDto>.self)
-                            guard let data = responseDto.data else { return }
-                            
-                            guard let totalPageNum = data.totalPageSize, let isEnd = data.isEnd else { return }
-                            self.totalPageNum = totalPageNum
-                            self.isEnd = isEnd
-                            
-                            self.courseList.append(contentsOf: data.publicCourses)
+            }
+            self.isFetchingData = false
+
+            switch response {
+            case .success(let result):
+                let status = result.statusCode
+                if 200..<300 ~= status {
+                    do {
+                        let responseDto = try result.map(BaseResponse<PickedMapListResponseDto>.self)
+                        guard let data = responseDto.data else { return }
+
+                        guard let totalPageNum = data.totalPageSize, let isEnd = data.isEnd else { return }
+                        self.totalPageNum = totalPageNum
+                        self.isEnd = isEnd
+
+                        let newCourses = data.publicCourses
+
+                        if isFirstPage {
+                            // 첫 페이지(초기 로드 또는 정렬 변경): reloadData 사용
+                            self.courseList = newCourses
                             self.mapCollectionView.reloadData()
-                            print("pageNo= \(pageNo), isEnd= \(self.isEnd), totalPageNum= \(self.totalPageNum)")
-                        } catch {
-                            print(error.localizedDescription)
+                            self.emptyView.isHidden = !newCourses.isEmpty
+                        } else {
+                            // 페이지네이션: performBatchUpdates + insertItems 사용
+                            self.insertNewCourses(newCourses)
                         }
+
+                        print("pageNo= \(pageNo), isEnd= \(self.isEnd), totalPageNum= \(self.totalPageNum)")
+                    } catch {
+                        print(error.localizedDescription)
                     }
-                    if status >= 400 {
-                        print("400 error")
-                        self.showNetworkFailureToast()
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
+                }
+                if status >= 400 {
+                    print("400 error")
                     self.showNetworkFailureToast()
                 }
+            case .failure(let error):
+                print(error.localizedDescription)
+                self.showNetworkFailureToast()
             }
         }
+    }
+
+    /// 새 코스를 기존 리스트에 추가하면서 광고 셀도 함께 삽입하는 incremental update
+    private func insertNewCourses(_ newCourses: [PublicCourse]) {
+        guard !newCourses.isEmpty else { return }
+
+        // 삽입 전 상태 (광고 포함 전체 아이템 수)
+        let oldTotalItemCount = totalItemCount()
+
+        // courseList에 새 데이터 추가
+        courseList.append(contentsOf: newCourses)
+
+        // 삽입 후 상태 (광고 포함 전체 아이템 수)
+        let newTotalItemCount = totalItemCount()
+
+        // 새로 삽입할 IndexPath 계산 (코스 셀 + 광고 셀 모두 포함)
+        let insertedIndexPaths = (oldTotalItemCount..<newTotalItemCount).map {
+            IndexPath(item: $0, section: Section.courseList)
+        }
+
+        guard !insertedIndexPaths.isEmpty else { return }
+
+        mapCollectionView.performBatchUpdates({
+            self.mapCollectionView.insertItems(at: insertedIndexPaths)
+        }, completion: nil)
     }
     
     private func scrapCourse(publicCourseId: Int, scrapTF: Bool) {
@@ -676,9 +756,8 @@ extension CourseDiscoveryVC: ListEmptyViewDelegate {
 
 extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
     func didTapSortButton(ordering: String) {
-        // 기존의 getCourseData 함수 호출을 getSortedCourseData로 변경
         pageNo = 1
-        print("‼️\(ordering)‼️ 터치 하셨습니다. 0.7초 후에 ‼️\(ordering)‼️ 으로 정렬이 되는 데이터가 불러 옵니다.")
+        isFetchingData = false
         sort = ordering
         self.courseList.removeAll()
         getCourseData(pageNo: pageNo)
@@ -693,3 +772,4 @@ extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
         }
     }
 }
+
