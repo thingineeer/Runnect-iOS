@@ -15,6 +15,7 @@ final class WorkoutManager: NSObject, ObservableObject {
     @Published var heartRate: Double = 0
     @Published var activeCalories: Double = 0
     @Published var isWorkoutActive = false
+    @Published var currentZone: HeartRateZone = .zone1
 
     // Summary values preserved after workout ends
     @Published var summaryHeartRate: Double = 0
@@ -124,6 +125,7 @@ final class WorkoutManager: NSObject, ObservableObject {
                 let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
                 if let value = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) {
                     self.heartRate = value
+                    self.updateHeartRateZone(value)
                 }
 
             case HKQuantityType(.activeEnergyBurned):
@@ -138,12 +140,26 @@ final class WorkoutManager: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - Heart Rate Zone
+
+    private func updateHeartRateZone(_ heartRate: Double) {
+        guard heartRate > 0 else { return }
+        let newZone = HeartRateZone.zone(for: heartRate)
+        let previousZone = currentZone
+        currentZone = newZone
+
+        if newZone != previousZone && newZone.rawValue >= 4 {
+            HapticManager.heartRateZoneAlert()
+        }
+    }
+
     func reset() {
         heartRate = 0
         activeCalories = 0
         summaryHeartRate = 0
         summaryCalories = 0
         isWorkoutActive = false
+        currentZone = .zone1
         workoutSession = nil
         workoutBuilder = nil
     }
