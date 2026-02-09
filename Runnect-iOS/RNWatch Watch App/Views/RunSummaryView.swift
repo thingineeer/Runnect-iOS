@@ -53,10 +53,9 @@ struct RunSummaryView: View {
                 ], spacing: 8) {
                     StatCell(title: "시간", value: data.formattedTime, color: .white)
                     StatCell(title: "페이스", value: data.formattedPace, color: .white)
-                    StatCell(
+                    HeartRateStatCell(
                         title: "평균 심박수",
-                        value: workoutManager.summaryHeartRate > 0 ? "\(Int(workoutManager.summaryHeartRate))" : "--",
-                        color: .runnectHeartRate
+                        heartRate: workoutManager.summaryHeartRate
                     )
                     StatCell(
                         title: "칼로리",
@@ -106,6 +105,45 @@ private struct StatCell: View {
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                 .foregroundColor(color)
                 .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(Color.white.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
+
+// MARK: - HeartRateStatCell
+
+private struct HeartRateStatCell: View {
+    let title: String
+    let heartRate: Double
+
+    private var zone: HeartRateZone {
+        HeartRateZone.zone(for: heartRate)
+    }
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(title)
+                .font(.system(size: 10))
+                .foregroundColor(.gray)
+
+            HStack(spacing: 3) {
+                Text(heartRate > 0 ? "\(Int(heartRate))" : "--")
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(.runnectHeartRate)
+                    .minimumScaleFactor(0.7)
+
+                if heartRate > 0 {
+                    Text(zone.shortLabel)
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Capsule().fill(zone.color))
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 6)
