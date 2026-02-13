@@ -56,11 +56,6 @@ final class NativeAdCVC: UICollectionViewCell {
         $0.clipsToBounds = true
     }
 
-    private let iconImageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFit
-        $0.clipsToBounds = true
-    }
-
     // MARK: - Initialization
 
     override init(frame: CGRect) {
@@ -79,8 +74,6 @@ final class NativeAdCVC: UICollectionViewCell {
         headlineLabel.text = nil
         advertiserLabel.text = nil
         mediaView.mediaContent = nil
-        iconImageView.image = nil
-        iconImageView.isHidden = true
     }
 }
 
@@ -92,8 +85,6 @@ extension NativeAdCVC {
 
         headlineLabel.text = nativeAd.headline
         mediaView.mediaContent = nativeAd.mediaContent
-        iconImageView.image = nativeAd.icon?.image
-        iconImageView.isHidden = nativeAd.icon == nil
 
         advertiserLabel.text = nativeAd.advertiser
         advertiserLabel.isHidden = nativeAd.advertiser == nil
@@ -111,12 +102,11 @@ extension NativeAdCVC {
 
     private func setLayout() {
         contentView.addSubview(nativeAdView)
-        nativeAdView.addSubviews(mediaView, adLabel, labelStackView, iconImageView)
+        nativeAdView.addSubviews(mediaView, adLabel, labelStackView)
 
         nativeAdView.mediaView = mediaView
         nativeAdView.headlineView = headlineLabel
         nativeAdView.advertiserView = advertiserLabel
-        nativeAdView.iconView = iconImageView
 
         nativeAdView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -133,16 +123,9 @@ extension NativeAdCVC {
             $0.height.equalTo(16)
         }
 
-        iconImageView.snp.makeConstraints {
-            $0.top.equalTo(mediaView.snp.bottom).offset(4)
-            $0.trailing.equalToSuperview()
-            $0.width.height.equalTo(20)
-        }
-
         labelStackView.snp.makeConstraints {
             $0.top.equalTo(mediaView.snp.bottom).offset(4)
-            $0.leading.equalToSuperview()
-            $0.width.equalTo(mediaView.snp.width).multipliedBy(0.7)
+            $0.leading.trailing.equalToSuperview()
         }
     }
 }
