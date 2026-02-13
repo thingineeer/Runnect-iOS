@@ -39,12 +39,11 @@ platform :ios do
     # API 키 인증
     api_key_data = api_key
 
-    # 코드 서명
-    match(
-      type: "appstore",
-      app_identifier: "com.runnect.Runnect-iOS",
-      readonly: true,
-      api_key: api_key_data
+    # 코드 서명: 자동 프로비저닝 (로컬 인증서 사용)
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: "./Runnect-iOS.xcodeproj",
+      team_id: "8Q4H7X3Q58"
     )
 
     # 버전 설정
@@ -92,6 +91,35 @@ platform :ios do
     puts "App Store 심사 제출 완료! #{elapsed_time}분 소요"
   end
 
+  ############# Submit for Review #############
+
+  desc "Submit existing build for App Store Review"
+  desc "Usage: fastlane submit_review version:2.4.1"
+  lane :submit_review do |options|
+    api_key_data = api_key
+    version = options[:version]
+
+    upload_to_app_store(
+      api_key: api_key_data,
+      app_version: version,
+      submit_for_review: true,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: true,
+      force: true,
+      automatic_release: false,
+      precheck_include_in_app_purchases: false,
+      submission_information: {
+        add_id_info_uses_idfa: true,
+        add_id_info_serves_ads: true,
+        add_id_info_tracks_action: true,
+        add_id_info_tracks_install: true
+      }
+    )
+
+    puts "App Store 심사 제출 완료!"
+  end
+
   ############# TestFlight #############
 
   desc "Push a new beta build to TestFlight"
@@ -104,8 +132,8 @@ platform :ios do
 
     match(
       type: "appstore",
-      app_identifier: "com.runnect.Runnect-iOS",
-      readonly: true,
+      app_identifier: ["com.runnect.Runnect-iOS", "com.runnect.Runnect-iOS.watchkitapp"],
+      readonly: false,
       api_key: api_key_data
     )
 
@@ -147,11 +175,20 @@ platform :ios do
     upload_to_app_store(
       api_key: api_key_data,
       app_version: version,
+      reject_if_possible: true,
+      submit_for_review: true,
       skip_binary_upload: true,
       skip_screenshots: true,
       skip_metadata: false,
       force: true,
-      precheck_include_in_app_purchases: false
+      automatic_release: false,
+      precheck_include_in_app_purchases: false,
+      submission_information: {
+        add_id_info_uses_idfa: true,
+        add_id_info_serves_ads: true,
+        add_id_info_tracks_action: true,
+        add_id_info_tracks_install: true
+      }
     )
 
     puts "메타데이터 업데이트 완료!"
