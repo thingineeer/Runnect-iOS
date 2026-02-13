@@ -43,22 +43,26 @@
 
 라이브러리 | 사용 목적 | Version | Management Tool
 :---------:|:----------:|:---------: |:---------:
- Moya | 서버 통신 | 15.0.0 | CocoaPods
- SnapKit | UI Layout | 5.6.0 | CocoaPods
- Then | UI 선언 | 3.0.0 | CocoaPods
- Kingfisher | 이미지 처리 | 7.12.0| CocoaPods
- NMapsMap  | 네이버 지도 SDK | 3.17.0| CocoaPods
- Firebase | Dynamic Link(공유), Google Analytics | 11.5.0 | CocoaPods
- DropDown | 드롭 다운 메뉴 | 2.3.13 | CocoaPods
- KakaoSDK | 소셜 로그인 | 2.22.7 | CocoaPods
- 
+ Moya | 서버 통신 | 15.0.0 | SPM
+ SnapKit | UI Layout | 5.6.0 | SPM
+ Then | UI 선언 | 3.0.0 | SPM
+ Kingfisher | 이미지 처리 | 7.0.0 | SPM
+ NMapsMap  | 네이버 지도 SDK | 3.17.0 | SPM
+ Firebase | Analytics, Auth, Firestore, RemoteConfig | 11.0.0 | SPM
+ Google-Mobile-Ads-SDK | AdMob 광고 | 11.0.0 | SPM
+ DropDown | 드롭 다운 메뉴 (커스텀 포크) | 2.3.13 | SPM
+ KakaoSDK | 소셜 로그인 | 2.0.0 | SPM
+ CombineCocoa | Combine + UIKit 바인딩 | 0.4.1 | SPM
+
  <br>
 
  - 🧱 framework
 
-프레임워크 | 사용 이유 
+프레임워크 | 사용 이유
 :---------:|:----------:
  UIKit | UI 구현
+ WatchKit | Apple Watch 연동
+ Combine | 비동기 이벤트 처리
 
 <br>
 <br>
