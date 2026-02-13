@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>2.4.0</string>
 	<key>CFBundleVersion</key>
-	<string>2026.0209.0251</string>
+	<string>2026.0210.0051</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>러닝 중 심박수와 칼로리 정보를 표시하기 위해 건강 데이터 접근이 필요합니다.</string>
 	<key>NSHealthUpdateUsageDescription</key>
