@@ -115,7 +115,7 @@ extension SplashVC {
         
         remoteConfig.setDefaults(["iOS_current_market_version": "0.0.0" as NSString])
 
-        remoteConfig.fetch { (status, error) -> Void in
+        remoteConfig.fetch { (status, error) in
             if status == .success {
                 remoteConfig.activate { (_, _) in
                     guard let info = Bundle.main.infoDictionary,

@@ -33,8 +33,8 @@ final class WatchSessionService: NSObject, ObservableObject {
         stopSendingRunningData()
         sendTimer = Timer.publish(every: 5.0, on: .main, in: .common)
             .autoconnect()
-            .sink { [weak self] _ in
-                guard let self,
+            .sink { _ in
+                guard
                       WCSession.default.isReachable,
                       let data = provider()
                 else { return }
