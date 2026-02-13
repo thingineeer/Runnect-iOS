@@ -21,6 +21,7 @@ final class NativeAdCVC: UICollectionViewCell {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 5
+        $0.backgroundColor = .g3
     }
 
     private let headlineLabel = UILabel().then {
@@ -29,11 +30,30 @@ final class NativeAdCVC: UICollectionViewCell {
         $0.numberOfLines = 1
     }
 
+    private let advertiserLabel = UILabel().then {
+        $0.font = .b6
+        $0.textColor = .g2
+        $0.numberOfLines = 1
+    }
+
+    private lazy var labelStackView = UIStackView(
+        arrangedSubviews: [
+            headlineLabel,
+            advertiserLabel
+        ]
+    ).then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+    }
+
     private let adLabel = UILabel().then {
         $0.text = "광고"
         $0.font = .b9
-        $0.textColor = .g4
-        $0.backgroundColor = .w1
+        $0.textColor = .w1
+        $0.backgroundColor = .m1
+        $0.textAlignment = .center
+        $0.layer.cornerRadius = 4
+        $0.clipsToBounds = true
     }
 
     private let iconImageView = UIImageView().then {
@@ -57,6 +77,7 @@ final class NativeAdCVC: UICollectionViewCell {
         super.prepareForReuse()
         nativeAdView.nativeAd = nil
         headlineLabel.text = nil
+        advertiserLabel.text = nil
         mediaView.mediaContent = nil
         iconImageView.image = nil
         iconImageView.isHidden = true
@@ -73,6 +94,9 @@ extension NativeAdCVC {
         mediaView.mediaContent = nativeAd.mediaContent
         iconImageView.image = nativeAd.icon?.image
         iconImageView.isHidden = nativeAd.icon == nil
+
+        advertiserLabel.text = nativeAd.advertiser
+        advertiserLabel.isHidden = nativeAd.advertiser == nil
     }
 }
 
@@ -87,10 +111,11 @@ extension NativeAdCVC {
 
     private func setLayout() {
         contentView.addSubview(nativeAdView)
-        nativeAdView.addSubviews(mediaView, adLabel, headlineLabel, iconImageView)
+        nativeAdView.addSubviews(mediaView, adLabel, labelStackView, iconImageView)
 
         nativeAdView.mediaView = mediaView
         nativeAdView.headlineView = headlineLabel
+        nativeAdView.advertiserView = advertiserLabel
         nativeAdView.iconView = iconImageView
 
         nativeAdView.snp.makeConstraints {
@@ -104,18 +129,20 @@ extension NativeAdCVC {
 
         adLabel.snp.makeConstraints {
             $0.top.leading.equalToSuperview().inset(6)
+            $0.width.equalTo(30)
+            $0.height.equalTo(16)
         }
 
         iconImageView.snp.makeConstraints {
             $0.top.equalTo(mediaView.snp.bottom).offset(4)
-            $0.leading.equalToSuperview()
-            $0.width.height.equalTo(16)
+            $0.trailing.equalToSuperview()
+            $0.width.height.equalTo(20)
         }
 
-        headlineLabel.snp.makeConstraints {
+        labelStackView.snp.makeConstraints {
             $0.top.equalTo(mediaView.snp.bottom).offset(4)
-            $0.leading.equalTo(iconImageView.snp.trailing).offset(4)
-            $0.trailing.equalToSuperview()
+            $0.leading.equalToSuperview()
+            $0.width.equalTo(mediaView.snp.width).multipliedBy(0.7)
         }
     }
 }
