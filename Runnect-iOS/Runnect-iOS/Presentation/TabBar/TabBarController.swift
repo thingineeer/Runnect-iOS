@@ -37,7 +37,7 @@ extension TabBarController {
             tabBar.standardAppearance = appearance
             tabBar.scrollEdgeAppearance = appearance
         } else {
-            // iOS 25 이하: 기존 커스텀 스타일 유지
+            // iOS 18 이하: 기존 커스텀 스타일 유지
             tabBar.backgroundColor = .white
             tabBar.unselectedItemTintColor = .g3
             tabBar.tintColor = .m1
