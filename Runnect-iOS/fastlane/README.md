@@ -33,6 +33,16 @@ Build app and release to App Store Review
 
 Usage: fastlane release version:2.3.0
 
+### ios submit_review
+
+```sh
+[bundle exec] fastlane ios submit_review
+```
+
+Submit existing build for App Store Review
+
+Usage: fastlane submit_review version:2.4.1
+
 ### ios beta
 
 ```sh

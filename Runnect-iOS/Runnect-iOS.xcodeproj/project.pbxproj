@@ -19,7 +19,6 @@
 		71288ED32B26ED2500D6C921 /* UserUploadedLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71288ED22B26ED2500D6C921 /* UserUploadedLabelCell.swift */; };
 		712DB0702B443ACC0013FD79 /* GAEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712DB06F2B443ACC0013FD79 /* GAEvent.swift */; };
 		712F661D2A7B7BAB00D9539B /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712F661C2A7B7BAB00D9539B /* Config.swift */; };
-		D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60580146C4D0444DCFA48DF /* AdConfig.swift */; };
 		7136BF8A2AF921A900679364 /* CustomBottomSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7136BF892AF921A900679364 /* CustomBottomSheetVC.swift */; };
 		715D36E82B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 715D36E72B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift */; };
 		71773C8E2B6BDF3B0041605E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 71773C8D2B6BDF3B0041605E /* GoogleService-Info.plist */; };
@@ -32,6 +31,7 @@
 		71F206D42F38A78B00DF721E /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = 71F206D32F38A78B00DF721E /* NMapsMap */; };
 		71F7804E2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7804D2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift */; };
 		71F780502B0893D700B53253 /* MarathonMapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F7804F2B0893D700B53253 /* MarathonMapCollectionViewCell.swift */; };
+		9D18A25F11CB07E21EC2C48A /* NativeAdCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D18A25E11CB07E21EC2C48A /* NativeAdCVC.swift */; };
 		A3305A97296EF58C000B1A10 /* GoalRewardInfoDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3305A96296EF58C000B1A10 /* GoalRewardInfoDto.swift */; };
 		A3BC2F2B2962C3D500198261 /* GoalRewardInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F2A2962C3D500198261 /* GoalRewardInfoVC.swift */; };
 		A3BC2F2D2962C3F200198261 /* ActivityRecordInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F2C2962C3F200198261 /* ActivityRecordInfoVC.swift */; };
@@ -167,6 +167,7 @@
 		CEEC6B4B2961D89700D00E1E /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEC6B4A2961D89700D00E1E /* CustomNavigationBar.swift */; };
 		CEF3CD9A296DB305002723A1 /* CourseDetailResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF3CD99296DB305002723A1 /* CourseDetailResponseDto.swift */; };
 		CEFA9A2F29FC263700F2D0CF /* UserDeleteResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA9A2E29FC263700F2D0CF /* UserDeleteResponseDto.swift */; };
+		D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60580146C4D0444DCFA48DF /* AdConfig.swift */; };
 		D891B7BBD3CC454890382E5D /* Pods_Runnect_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F675A6127C7FC7CF7D7C89A7 /* Pods_Runnect_iOS.framework */; };
 		DA0587F22A05D54100B72869 /* EditCourseRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0587F12A05D54100B72869 /* EditCourseRequestDto.swift */; };
 		DA0587F42A05DEC000B72869 /* CourseEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0587F32A05DEC000B72869 /* CourseEditVC.swift */; };
@@ -174,7 +175,6 @@
 		DA20D849296697B400F1581F /* CourseUploadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA20D848296697B400F1581F /* CourseUploadVC.swift */; };
 		DA20D84E2966A9B300F1581F /* CourseSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA20D84D2966A9B300F1581F /* CourseSearchVC.swift */; };
 		DA97A033296E65D80086760E /* CourseUploadingRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA97A032296E65D80086760E /* CourseUploadingRequestDto.swift */; };
-		9D18A25F11CB07E21EC2C48A /* NativeAdCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D18A25E11CB07E21EC2C48A /* NativeAdCVC.swift */; };
 		DAD5A3D8296C6D9600C8166B /* AdImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3D7296C6D9600C8166B /* AdImageCollectionViewCell.swift */; };
 		DAD5A3DA296C6DA500C8166B /* TitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3D9296C6DA500C8166B /* TitleCollectionViewCell.swift */; };
 		DAD5A3E2296D4C6500C8166B /* PickedMapListResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3E1296D4C6500C8166B /* PickedMapListResponseDto.swift */; };
@@ -220,7 +220,6 @@
 		71288ED22B26ED2500D6C921 /* UserUploadedLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUploadedLabelCell.swift; sourceTree = "<group>"; };
 		712DB06F2B443ACC0013FD79 /* GAEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAEvent.swift; sourceTree = "<group>"; };
 		712F661C2A7B7BAB00D9539B /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		B60580146C4D0444DCFA48DF /* AdConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdConfig.swift; sourceTree = "<group>"; };
 		7136BF892AF921A900679364 /* CustomBottomSheetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomSheetVC.swift; sourceTree = "<group>"; };
 		715D36E72B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUploadedCourseResponseDto.swift; sourceTree = "<group>"; };
 		71773C8D2B6BDF3B0041605E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -232,6 +231,7 @@
 		71F206902F38A00000DF721E /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		71F7804D2B0893B600B53253 /* MarathonTitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarathonTitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		71F7804F2B0893D700B53253 /* MarathonMapCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarathonMapCollectionViewCell.swift; sourceTree = "<group>"; };
+		9D18A25E11CB07E21EC2C48A /* NativeAdCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdCVC.swift; sourceTree = "<group>"; };
 		A3305A96296EF58C000B1A10 /* GoalRewardInfoDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardInfoDto.swift; sourceTree = "<group>"; };
 		A3BC2F2A2962C3D500198261 /* GoalRewardInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardInfoVC.swift; sourceTree = "<group>"; };
 		A3BC2F2C2962C3F200198261 /* ActivityRecordInfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRecordInfoVC.swift; sourceTree = "<group>"; };
@@ -255,6 +255,7 @@
 		A3E624FF2A15262B008370FF /* GoalRewardTitleCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardTitleCVC.swift; sourceTree = "<group>"; };
 		A3F67AE1296D33AC001598A2 /* MyPageDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageDto.swift; sourceTree = "<group>"; };
 		A3F67AE9296E4936001598A2 /* ActivityRecordInfoDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRecordInfoDto.swift; sourceTree = "<group>"; };
+		B60580146C4D0444DCFA48DF /* AdConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdConfig.swift; sourceTree = "<group>"; };
 		CE09037C296E9ED900BEA710 /* ScrapCourseResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrapCourseResponseDto.swift; sourceTree = "<group>"; };
 		CE0C23732966D62A00B45063 /* PagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagedView.swift; sourceTree = "<group>"; };
 		CE0C23762966D64D00B45063 /* PageCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCVC.swift; sourceTree = "<group>"; };
@@ -386,7 +387,6 @@
 		DA20D848296697B400F1581F /* CourseUploadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseUploadVC.swift; sourceTree = "<group>"; };
 		DA20D84D2966A9B300F1581F /* CourseSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchVC.swift; sourceTree = "<group>"; };
 		DA97A032296E65D80086760E /* CourseUploadingRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseUploadingRequestDto.swift; sourceTree = "<group>"; };
-		9D18A25E11CB07E21EC2C48A /* NativeAdCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAdCVC.swift; sourceTree = "<group>"; };
 		DAD5A3D7296C6D9600C8166B /* AdImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		DAD5A3D9296C6DA500C8166B /* TitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		DAD5A3E1296D4C6500C8166B /* PickedMapListResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickedMapListResponseDto.swift; sourceTree = "<group>"; };
@@ -394,7 +394,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		71F206B02F38B00000DF721E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		71F206B02F38B00000DF721E /* Exceptions for "RNWatch Watch App" folder in "RNWatch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -404,7 +404,18 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		71F2067B2F38949F00DF721E /* RNWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (71F206B02F38B00000DF721E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "RNWatch Watch App"; sourceTree = "<group>"; };
+		71F2067B2F38949F00DF721E /* RNWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				71F206B02F38B00000DF721E /* Exceptions for "RNWatch Watch App" folder in "RNWatch Watch App" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "RNWatch Watch App";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1725,7 +1736,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "RNWatch Watch App/RNWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2026.0210.0051;
+				CURRENT_PROJECT_VERSION = 2026.0213.1752;
 				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1762,7 +1773,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "RNWatch Watch App/RNWatch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2026.0210.0051;
+				CURRENT_PROJECT_VERSION = 2026.0213.1752;
 				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1913,7 +1924,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Runnect-iOS/Runnect-iOSDebug.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2026.0210.0051;
+				CURRENT_PROJECT_VERSION = 2026.0213.1752;
 				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Runnect-iOS/Info.plist";
@@ -1954,7 +1965,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Runnect-iOS/Runnect-iOS.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2026.0210.0051;
+				CURRENT_PROJECT_VERSION = 2026.0213.1752;
 				DEVELOPMENT_TEAM = 8Q4H7X3Q58;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Runnect-iOS/Info.plist";
