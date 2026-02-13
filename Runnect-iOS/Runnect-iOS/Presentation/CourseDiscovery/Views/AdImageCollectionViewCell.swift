@@ -156,16 +156,18 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         ).cgPath
         gradientLayer.frame = gradientView.bounds
         shimmerGradientLayer.frame = shimmerView.bounds
+
+        // containerView bounds가 확정된 후 carousel cell 크기를 갱신
+        if containerView.bounds.size != .zero {
+            bannerCollectionView.collectionViewLayout.invalidateLayout()
+        }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         stopAutoScroll()
-        if shouldShowAds && !isAd1Loaded && !isAd2Loaded {
-            adsResponseCount = 0
-            carouselShown = false
-            loadAdMobBanners()
-        }
+        // 이미 캐러셀이 표시된 상태면 리셋하지 않음
+        // 새 광고 로드가 필요할 때만 리셋 (setRootViewController에서 처리)
     }
 
     deinit {
@@ -178,13 +180,20 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
 extension AdImageCollectionViewCell {
 
-    func setRootViewController(_ viewController: UIViewController) {
+    /// 이미 로드된 광고가 있으면 shimmer 없이 바로 표시
+    func setRootViewController(_ viewController: UIViewController, skipReload: Bool = false) {
         guard shouldShowAds else {
+            if skipReload && carouselShown { return }
             skipAdsAndShowCarousel()
             return
         }
         bannerView1.rootViewController = viewController
         bannerView2.rootViewController = viewController
+
+        if skipReload && carouselShown {
+            // 이미 로드된 상태 — shimmer 없이 바로 표시
+            return
+        }
         loadAdMobBanners()
     }
 
@@ -368,9 +377,20 @@ extension AdImageCollectionViewCell {
     private func updatePageDots() {
         guard !pages.isEmpty else { return }
         let activeIndex = currentPage % pages.count
+
+        let isAdPage: Bool
+        if case .ad = pages[activeIndex] {
+            isAdPage = true
+        } else {
+            isAdPage = false
+        }
+
+        let activeColor: UIColor = isAdPage ? .m1 : .white
+        let inactiveColor: UIColor = isAdPage ? UIColor.m1.withAlphaComponent(0.3) : UIColor.white.withAlphaComponent(0.5)
+
         for (index, dot) in pageControlStack.arrangedSubviews.enumerated() {
             let isActive = index == activeIndex
-            dot.backgroundColor = isActive ? .white : UIColor.white.withAlphaComponent(0.5)
+            dot.backgroundColor = isActive ? activeColor : inactiveColor
             dot.layer.cornerRadius = 2
             dot.snp.remakeConstraints {
                 $0.width.equalTo(isActive ? 16 : 4)
@@ -398,6 +418,19 @@ extension AdImageCollectionViewCell {
 
         UIView.animate(withDuration: 0.2) {
             self.adLabelContainer.alpha = isAdPage ? 1 : 0
+            self.gradientView.alpha = isAdPage ? 0 : 1
+        }
+        updateDotColors(isAdPage: isAdPage)
+    }
+
+    private func updateDotColors(isAdPage: Bool) {
+        let activeColor: UIColor = isAdPage ? .m1 : .white
+        let inactiveColor: UIColor = isAdPage ? UIColor.m1.withAlphaComponent(0.3) : UIColor.white.withAlphaComponent(0.5)
+
+        guard !pages.isEmpty else { return }
+        let activeIndex = currentPage % pages.count
+        for (index, dot) in pageControlStack.arrangedSubviews.enumerated() {
+            dot.backgroundColor = index == activeIndex ? activeColor : inactiveColor
         }
     }
 }
@@ -413,6 +446,11 @@ extension AdImageCollectionViewCell {
             return Self.adPageInterval
         }
         return Self.imagePageInterval
+    }
+
+    func resumeAutoScrollIfNeeded() {
+        guard carouselShown, autoScrollWork == nil else { return }
+        scheduleNextScroll()
     }
 
     private func startAutoScroll() {
@@ -492,12 +530,59 @@ extension AdImageCollectionViewCell {
 
 extension AdImageCollectionViewCell: UIScrollViewDelegate {
 
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        guard scrollView === bannerCollectionView else { return }
+        // 배너 가로 스와이프 시 상위 세로 스크롤 잠금
+        findParentScrollView()?.isScrollEnabled = false
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard scrollView === bannerCollectionView else { return }
+        if !decelerate {
+            findParentScrollView()?.isScrollEnabled = true
+        }
+    }
+
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView === bannerCollectionView, scrollView.frame.width > 0 else { return }
+
+        findParentScrollView()?.isScrollEnabled = true
+
         currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
+
+        // 무한 스크롤: 양 끝에 도달하면 중간 범위로 리셋
+        if !pages.isEmpty {
+            if currentPage < pages.count {
+                currentPage += pages.count
+                bannerCollectionView.scrollToItem(
+                    at: IndexPath(item: currentPage, section: 0),
+                    at: .centeredHorizontally,
+                    animated: false
+                )
+            } else if currentPage >= pages.count * 2 {
+                currentPage -= pages.count
+                bannerCollectionView.scrollToItem(
+                    at: IndexPath(item: currentPage, section: 0),
+                    at: .centeredHorizontally,
+                    animated: false
+                )
+            }
+        }
+
         updatePageDots()
         updateAdPillVisibility()
         scheduleNextScroll()
+    }
+
+    private func findParentScrollView() -> UIScrollView? {
+        var view = superview
+        while let v = view {
+            if let scrollView = v as? UIScrollView, scrollView !== bannerCollectionView {
+                return scrollView
+            }
+            view = v.superview
+        }
+        return nil
     }
 }
 
@@ -588,29 +673,34 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BannerCell", for: indexPath)
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-
         guard !pages.isEmpty else { return cell }
 
         let pageIndex = indexPath.item % pages.count
         switch pages[pageIndex] {
         case .image(let image):
             cell.contentView.backgroundColor = .clear
-            let imageView = UIImageView().then {
-                $0.image = image
-                $0.contentMode = .scaleAspectFill
-                $0.clipsToBounds = true
-            }
-            cell.contentView.addSubview(imageView)
-            imageView.snp.makeConstraints {
-                $0.edges.equalToSuperview()
+            // 기존 UIImageView 재사용 — 매번 생성/제거 방지
+            if let imageView = cell.contentView.viewWithTag(100) as? UIImageView {
+                imageView.image = image
+            } else {
+                cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+                let imageView = UIImageView()
+                imageView.tag = 100
+                imageView.contentMode = .scaleAspectFill
+                imageView.clipsToBounds = true
+                imageView.image = image
+                cell.contentView.addSubview(imageView)
+                imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
             }
         case .ad(let adBannerView):
             cell.contentView.backgroundColor = .w1
-            adBannerView.removeFromSuperview()
-            cell.contentView.addSubview(adBannerView)
-            adBannerView.snp.makeConstraints {
-                $0.center.equalToSuperview()
+            if adBannerView.superview !== cell.contentView {
+                cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+                cell.contentView.addSubview(adBannerView)
+                adBannerView.snp.makeConstraints {
+                    $0.centerY.equalToSuperview()
+                    $0.leading.trailing.equalToSuperview()
+                }
             }
         }
         return cell
@@ -621,7 +711,13 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
 
 extension AdImageCollectionViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return containerView.bounds.size
+        let size = containerView.bounds.size
+        guard size.width > 0 && size.height > 0 else {
+            let bannerWidth = UIScreen.main.bounds.width - 32
+            let bannerHeight = bannerWidth * (174.0 / 390.0)
+            return CGSize(width: bannerWidth, height: bannerHeight)
+        }
+        return size
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

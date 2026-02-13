@@ -55,19 +55,11 @@ struct Config {
     }
 
     static var adMobBannerAdUnitId: String {
-        #if DEBUG
-        return "ca-app-pub-3940256099942544/2934735716" // 테스트 배너 광고 단위 ID
-        #else
-        return "ca-app-pub-5283496525222246/6292439277" // 프로덕션 배너 광고 단위 ID
-        #endif
+        return AdConfig.bannerAdUnitId
     }
 
     static var adMobNativeAdUnitId: String {
-        #if DEBUG
-        return "ca-app-pub-3940256099942544/3986624511" // 테스트 네이티브 광고 단위 ID
-        #else
-        return "" // 프로덕션 네이티브 광고 단위 ID 발급 후 교체 필요
-        #endif
+        return AdConfig.nativeAdUnitId
     }
 
     static var accessToken: String {

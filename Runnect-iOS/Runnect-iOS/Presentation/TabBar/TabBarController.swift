@@ -8,9 +8,13 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-    
+
+    // MARK: - Properties
+
+    private var previousSelectedIndex = 0
+
     // MARK: - View Life Cycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
@@ -23,12 +27,24 @@ final class TabBarController: UITabBarController {
 
 extension TabBarController {
     private func setUI() {
-        tabBar.backgroundColor = .white
-        tabBar.unselectedItemTintColor = .g3
-        tabBar.tintColor = .m1
-        tabBar.layer.cornerRadius = 20
-        tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        tabBar.layer.applyShadow(alpha: 0.03, y: -4, blur: 5)
+        if #available(iOS 26.0, *) {
+            // iOS 26+: Liquid Glass 활용
+            tabBar.tintColor = .m1
+            tabBar.unselectedItemTintColor = .g3
+            // Liquid Glass 활성화: 시스템 기본 반투명 외관 설정
+            let appearance = UITabBarAppearance()
+            appearance.configureWithDefaultBackground()
+            tabBar.standardAppearance = appearance
+            tabBar.scrollEdgeAppearance = appearance
+        } else {
+            // iOS 18 이하: 기존 커스텀 스타일 유지
+            tabBar.backgroundColor = .white
+            tabBar.unselectedItemTintColor = .g3
+            tabBar.tintColor = .m1
+            tabBar.layer.cornerRadius = 20
+            tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            tabBar.layer.applyShadow(alpha: 0.03, y: -4, blur: 5)
+        }
     }
     
     private func setTabBarControllers() {
@@ -65,7 +81,19 @@ extension TabBarController {
 extension TabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let title = viewController.title else { return }
-        
+
+        let currentIndex = tabBarController.selectedIndex
+
+        // 이미 선택된 탭을 다시 탭했을 때 스크롤 투 탑 (API 호출 없음)
+        if currentIndex == previousSelectedIndex {
+            if let nav = viewController as? UINavigationController,
+               let courseDiscoveryVC = nav.visibleViewController as? CourseDiscoveryVC {
+                courseDiscoveryVC.scrollToTop()
+            }
+        }
+
+        previousSelectedIndex = currentIndex
+
         switch title {
         case "코스 그리기":
             analyze(buttonName: GAEvent.Button.clickCourseDrawingTabBar)

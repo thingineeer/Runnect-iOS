@@ -44,6 +44,10 @@ final class CourseDiscoveryVC: UIViewController {
     /// 남은 아이템이 이 수 이하일 때 다음 페이지 프리페치 시작
     private let prefetchThreshold = 6
 
+    // MARK: - Banner Ad Cache
+
+    private var bannerAdsLoaded = false
+
     // MARK: - Native Ad Properties
 
     private static let nativeAdInterval = 10
@@ -105,6 +109,7 @@ final class CourseDiscoveryVC: UIViewController {
         setLayout()
         setAddTarget()
         setCombineEvent()
+        setupRefreshControl()
         loadNativeAds()
         self.getCourseData(pageNo: pageNo)
     }
@@ -215,12 +220,28 @@ extension CourseDiscoveryVC {
         return (item + 1) / adInterval - 1
     }
 
-    func refresh() {
-        print("refresh")
+    private func setupRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = .m1
+        refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
+        mapCollectionView.refreshControl = refreshControl
+    }
+
+    @objc private func handlePullToRefresh() {
+        refreshCourseList()
+    }
+
+    /// Section 4(courseList)만 새로고침 — courseList를 API 응답 전에 비우지 않아 data source 불일치 방지
+    func refreshCourseList() {
         pageNo = 1
         isFetchingData = false
-        self.courseList = []
-        self.getCourseData(pageNo: pageNo)
+        getCourseData(pageNo: pageNo)
+    }
+
+    /// 탭 재탭 시 스크롤만 — API 호출 없음
+    func scrollToTop() {
+        guard mapCollectionView.contentOffset.y > 0 else { return }
+        mapCollectionView.setContentOffset(.zero, animated: true)
     }
 }
 
@@ -280,7 +301,12 @@ extension CourseDiscoveryVC {
         
         mapCollectionView.snp.makeConstraints {
             $0.top.equalTo(self.naviBar.snp.bottom)
-            $0.leading.bottom.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            if #available(iOS 26, *) {
+                $0.bottom.equalToSuperview()
+            } else {
+                $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            }
         }
         
         uploadButton.snp.makeConstraints {
@@ -346,7 +372,10 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
         switch indexPath.section {
         case Section.adImage:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AdImageCollectionViewCell.className, for: indexPath) as? AdImageCollectionViewCell else { return UICollectionViewCell() }
-            cell.setRootViewController(self)
+            cell.setRootViewController(self, skipReload: bannerAdsLoaded)
+            if !bannerAdsLoaded {
+                bannerAdsLoaded = true
+            }
             return cell
         case Section.marathonTitle:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MarathonTitleCollectionViewCell.className, for: indexPath) as? MarathonTitleCollectionViewCell else { return UICollectionViewCell() }
@@ -450,6 +479,10 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.section == Section.adImage, let bannerCell = cell as? AdImageCollectionViewCell {
+            bannerCell.resumeAutoScrollIfNeeded()
+        }
+
         guard indexPath.section == Section.courseList else { return }
 
         let totalItems = totalItemCount()
@@ -590,7 +623,7 @@ extension CourseDiscoveryVC: ScrapStateDelegate {
         // 왜??? 이미 데이터는 삭제가 되어서 $0.id 랑 publicCourseId 가 같은게 매치가 될 수 없어!!!
         // 네트워크 성공하기 전에 didRemoveCourse(publicCourseId:) 를 호출 해야 해당 부분 확인하고 지운다음, 서버측에서 지워야 1페이지부터 시작 안하고 지울 수 있음
         // ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
-        self.refresh()
+        self.refreshCourseList()
     }
 }
 
@@ -599,7 +632,7 @@ extension CourseDiscoveryVC: ScrapStateDelegate {
 extension CourseDiscoveryVC: UploadSuccessDelegate {
     func didUploadSuccess() {
         print("여기서 didUploadSuccess 함수 호출\n MyCourseSelectVC -> CourseDiscoveryVC 이벤트 전달")
-        self.refresh()
+        self.refreshCourseList()
         print("코스 발견 피드 새로고침 완료 되었음")
     }
 }
@@ -629,7 +662,7 @@ extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
 
     func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
         if !nativeAds.isEmpty {
-            mapCollectionView.reloadData()
+            mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
         }
     }
 
@@ -644,19 +677,22 @@ extension CourseDiscoveryVC {
     private func getCourseData(pageNo: Int) {
         isFetchingData = true
 
-        // 첫 페이지 로드 시에만 로딩 인디케이터 표시 (페이지네이션은 백그라운드 로딩)
         let isFirstPage = (pageNo == 1)
-        if isFirstPage {
+        let isRefreshing = mapCollectionView.refreshControl?.isRefreshing == true
+
+        // pull-to-refresh 중이면 자체 스피너 사용, 아니면 로딩 인디케이터
+        if isFirstPage && !isRefreshing {
             LoadingIndicator.showLoading()
         }
 
         publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { [weak self] response in
             guard let self = self else { return }
 
-            if isFirstPage {
+            if isFirstPage && !isRefreshing {
                 LoadingIndicator.hideLoading()
             }
             self.isFetchingData = false
+            self.mapCollectionView.refreshControl?.endRefreshing()
 
             switch response {
             case .success(let result):
@@ -673,16 +709,13 @@ extension CourseDiscoveryVC {
                         let newCourses = data.publicCourses
 
                         if isFirstPage {
-                            // 첫 페이지(초기 로드 또는 정렬 변경): reloadData 사용
                             self.courseList = newCourses
-                            self.mapCollectionView.reloadData()
+                            // Section 4(courseList)만 갱신 — 배너·마라톤 등 불필요한 재구성 방지
+                            self.mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
                             self.emptyView.isHidden = !newCourses.isEmpty
                         } else {
-                            // 페이지네이션: performBatchUpdates + insertItems 사용
                             self.insertNewCourses(newCourses)
                         }
-
-                        print("pageNo= \(pageNo), isEnd= \(self.isEnd), totalPageNum= \(self.totalPageNum)")
                     } catch {
                         print(error.localizedDescription)
                     }
@@ -759,7 +792,6 @@ extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
         pageNo = 1
         isFetchingData = false
         sort = ordering
-        self.courseList.removeAll()
         getCourseData(pageNo: pageNo)
         
         switch ordering {

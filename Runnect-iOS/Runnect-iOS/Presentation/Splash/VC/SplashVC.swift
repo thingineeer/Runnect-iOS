@@ -131,15 +131,26 @@ extension SplashVC {
                         return
                     }
 
-                    let splitCurrentVersion = currentVersion.split(separator: ".").map { $0 }
-                    let splitStoreVersion = storeVersion.split(separator: ".").map { $0 }
+                    let splitCurrentVersion = currentVersion.split(separator: ".").compactMap { Int($0) }
+                    let splitStoreVersion = storeVersion.split(separator: ".").compactMap { Int($0) }
 
                     guard !splitCurrentVersion.isEmpty, !splitStoreVersion.isEmpty else {
                         self.checkDidSignIn()
                         return
                     }
 
-                    if splitCurrentVersion[0] < splitStoreVersion[0] {
+                    // major → minor → patch 순서로 비교
+                    var needsUpdate = false
+                    for i in 0..<min(splitCurrentVersion.count, splitStoreVersion.count) {
+                        if splitCurrentVersion[i] < splitStoreVersion[i] {
+                            needsUpdate = true
+                            break
+                        } else if splitCurrentVersion[i] > splitStoreVersion[i] {
+                            break
+                        }
+                    }
+
+                    if needsUpdate {
                         self.showUpdateAlert()
                     } else {
                         self.checkDidSignIn()
