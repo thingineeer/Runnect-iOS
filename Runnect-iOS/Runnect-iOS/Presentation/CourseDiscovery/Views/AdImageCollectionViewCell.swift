@@ -536,6 +536,28 @@ extension AdImageCollectionViewCell: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView === bannerCollectionView, scrollView.frame.width > 0 else { return }
         currentPage = Int(scrollView.contentOffset.x / scrollView.frame.width)
+
+        // 무한 스크롤: 양 끝에 도달하면 중간 범위로 리셋
+        if !pages.isEmpty {
+            if currentPage < pages.count {
+                // 왼쪽 끝 → 중간 범위로 점프
+                currentPage += pages.count
+                bannerCollectionView.scrollToItem(
+                    at: IndexPath(item: currentPage, section: 0),
+                    at: .centeredHorizontally,
+                    animated: false
+                )
+            } else if currentPage >= pages.count * 2 {
+                // 오른쪽 끝 → 중간 범위로 점프
+                currentPage -= pages.count
+                bannerCollectionView.scrollToItem(
+                    at: IndexPath(item: currentPage, section: 0),
+                    at: .centeredHorizontally,
+                    animated: false
+                )
+            }
+        }
+
         updatePageDots()
         updateAdPillVisibility()
         scheduleNextScroll()
