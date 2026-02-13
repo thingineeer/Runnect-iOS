@@ -60,7 +60,7 @@ platform :ios do
 
     # 빌드
     build_app(
-      workspace: "Runnect-iOS.xcworkspace",
+      project: "Runnect-iOS.xcodeproj",
       scheme: "Runnect-iOS",
       configuration: "Release",
       clean: true,
@@ -148,7 +148,7 @@ platform :ios do
     end
 
     build_app(
-      workspace: "Runnect-iOS.xcworkspace",
+      project: "Runnect-iOS.xcodeproj",
       scheme: "Runnect-iOS",
       configuration: "Release",
       clean: true

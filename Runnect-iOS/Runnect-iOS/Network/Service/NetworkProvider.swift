@@ -5,6 +5,7 @@
 //  Created by Sojin Lee on 2023/11/14.
 //
 
+import UIKit
 import Moya
 
 class NetworkProvider<Provider: TargetType>: MoyaProvider<Provider> {

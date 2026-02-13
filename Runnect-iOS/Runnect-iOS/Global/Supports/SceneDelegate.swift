@@ -9,7 +9,6 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKCommon
 import FirebaseCore
-import FirebaseCoreInternal
 import AppTrackingTransparency
 
 // 들어온 링크가 공유된 코스인지, 개인 보관함에 있는 코스인지 나타내기 위한 타입입니다.
