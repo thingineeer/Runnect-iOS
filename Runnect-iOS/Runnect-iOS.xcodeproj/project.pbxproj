@@ -168,7 +168,7 @@
 		CEF3CD9A296DB305002723A1 /* CourseDetailResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF3CD99296DB305002723A1 /* CourseDetailResponseDto.swift */; };
 		CEFA9A2F29FC263700F2D0CF /* UserDeleteResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFA9A2E29FC263700F2D0CF /* UserDeleteResponseDto.swift */; };
 		D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60580146C4D0444DCFA48DF /* AdConfig.swift */; };
-		D891B7BBD3CC454890382E5D /* Pods_Runnect_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F675A6127C7FC7CF7D7C89A7 /* Pods_Runnect_iOS.framework */; };
+
 		DA0587F22A05D54100B72869 /* EditCourseRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0587F12A05D54100B72869 /* EditCourseRequestDto.swift */; };
 		DA0587F42A05DEC000B72869 /* CourseEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0587F32A05DEC000B72869 /* CourseEditVC.swift */; };
 		DA20D847296697A600F1581F /* MyCourseSelectVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA20D846296697A600F1581F /* MyCourseSelectVC.swift */; };
@@ -178,6 +178,23 @@
 		DAD5A3D8296C6D9600C8166B /* AdImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3D7296C6D9600C8166B /* AdImageCollectionViewCell.swift */; };
 		DAD5A3DA296C6DA500C8166B /* TitleCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3D9296C6DA500C8166B /* TitleCollectionViewCell.swift */; };
 		DAD5A3E2296D4C6500C8166B /* PickedMapListResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD5A3E1296D4C6500C8166B /* PickedMapListResponseDto.swift */; };
+		AA00000100000001AAAAAAAA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000100000002AAAAAAAA /* Kingfisher */; };
+		AA00000200000001AAAAAAAA /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000200000002AAAAAAAA /* SnapKit */; };
+		AA00000300000001AAAAAAAA /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000300000002AAAAAAAA /* Moya */; };
+		AA00000400000001AAAAAAAA /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000400000002AAAAAAAA /* Then */; };
+		AA00000500000001AAAAAAAA /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000500000002AAAAAAAA /* CombineMoya */; };
+		AA00000600000001AAAAAAAA /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000600000002AAAAAAAA /* KakaoSDKCommon */; };
+		AA00000700000001AAAAAAAA /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000700000002AAAAAAAA /* KakaoSDKAuth */; };
+		AA00000800000001AAAAAAAA /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000800000002AAAAAAAA /* KakaoSDKUser */; };
+		AA00000900000001AAAAAAAA /* KakaoSDKShare in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000900000002AAAAAAAA /* KakaoSDKShare */; };
+		AA00001000000001AAAAAAAA /* KakaoSDKTemplate in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001000000002AAAAAAAA /* KakaoSDKTemplate */; };
+		AA00001100000001AAAAAAAA /* KakaoSDKTalk in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001100000002AAAAAAAA /* KakaoSDKTalk */; };
+		AA00001200000001AAAAAAAA /* CombineCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001200000002AAAAAAAA /* CombineCocoa */; };
+		AA00001300000001AAAAAAAA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001300000002AAAAAAAA /* FirebaseAnalytics */; };
+		AA00001400000001AAAAAAAA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001400000002AAAAAAAA /* FirebaseAuth */; };
+		AA00001500000001AAAAAAAA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001500000002AAAAAAAA /* FirebaseFirestore */; };
+		AA00001600000001AAAAAAAA /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001600000002AAAAAAAA /* FirebaseRemoteConfig */; };
+		AA00001700000001AAAAAAAA /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = AA00001700000002AAAAAAAA /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,14 +222,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		21AAB1608F63555F24884DF7 /* Pods-Runnect-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runnect-iOS.debug.xcconfig"; path = "Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS.debug.xcconfig"; sourceTree = "<group>"; };
 		232686352B03AF4400675A17 /* NetworkProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
 		23EE06C02AC1AD5200CB3FF8 /* LocationSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSelectView.swift; sourceTree = "<group>"; };
 		23EE06C42AC1AE1900CB3FF8 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		23EE06C82AC1DED100CB3FF8 /* GesturePublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GesturePublisher.swift; sourceTree = "<group>"; };
 		23EE06CA2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAddressSearchingResponseDto.swift; sourceTree = "<group>"; };
 		23EE06D02AC2F44E00CB3FF8 /* TmapAddressSearchingResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TmapAddressSearchingResponseDto.swift; sourceTree = "<group>"; };
-		6F84B8CEF6DE932945A540D6 /* Pods-Runnect-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runnect-iOS.release.xcconfig"; path = "Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		7110A6032AA337DD009A7E99 /* Runnect-iOSDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Runnect-iOSDebug.entitlements"; sourceTree = "<group>"; };
 		711E18202B38516D00C651CD /* GAManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAManager.swift; sourceTree = "<group>"; };
 		71288ECE2B26ECDB00D6C921 /* UserInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoCell.swift; sourceTree = "<group>"; };
@@ -390,7 +405,6 @@
 		DAD5A3D7296C6D9600C8166B /* AdImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		DAD5A3D9296C6DA500C8166B /* TitleCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleCollectionViewCell.swift; sourceTree = "<group>"; };
 		DAD5A3E1296D4C6500C8166B /* PickedMapListResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickedMapListResponseDto.swift; sourceTree = "<group>"; };
-		F675A6127C7FC7CF7D7C89A7 /* Pods_Runnect_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runnect_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -430,8 +444,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D891B7BBD3CC454890382E5D /* Pods_Runnect_iOS.framework in Frameworks */,
 				71F206D42F38A78B00DF721E /* NMapsMap in Frameworks */,
+				AA00000100000001AAAAAAAA /* Kingfisher in Frameworks */,
+				AA00000200000001AAAAAAAA /* SnapKit in Frameworks */,
+				AA00000300000001AAAAAAAA /* Moya in Frameworks */,
+				AA00000400000001AAAAAAAA /* Then in Frameworks */,
+				AA00000500000001AAAAAAAA /* CombineMoya in Frameworks */,
+				AA00000600000001AAAAAAAA /* KakaoSDKCommon in Frameworks */,
+				AA00000700000001AAAAAAAA /* KakaoSDKAuth in Frameworks */,
+				AA00000800000001AAAAAAAA /* KakaoSDKUser in Frameworks */,
+				AA00000900000001AAAAAAAA /* KakaoSDKShare in Frameworks */,
+				AA00001000000001AAAAAAAA /* KakaoSDKTemplate in Frameworks */,
+				AA00001100000001AAAAAAAA /* KakaoSDKTalk in Frameworks */,
+				AA00001200000001AAAAAAAA /* CombineCocoa in Frameworks */,
+				AA00001300000001AAAAAAAA /* FirebaseAnalytics in Frameworks */,
+				AA00001400000001AAAAAAAA /* FirebaseAuth in Frameworks */,
+				AA00001500000001AAAAAAAA /* FirebaseFirestore in Frameworks */,
+				AA00001600000001AAAAAAAA /* FirebaseRemoteConfig in Frameworks */,
+				AA00001700000001AAAAAAAA /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,23 +474,6 @@
 				23EE06C42AC1AE1900CB3FF8 /* BaseView.swift */,
 			);
 			path = Base;
-			sourceTree = "<group>";
-		};
-		3F7098551CF7A77F3FE7EB2B /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				21AAB1608F63555F24884DF7 /* Pods-Runnect-iOS.debug.xcconfig */,
-				6F84B8CEF6DE932945A540D6 /* Pods-Runnect-iOS.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		50F042AA623895133F88BD6F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				F675A6127C7FC7CF7D7C89A7 /* Pods_Runnect_iOS.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		711E181F2B38515B00C651CD /* Analytics */ = {
@@ -918,8 +931,6 @@
 				CE4545C7295D7AF4003201E1 /* Runnect-iOS */,
 				71F2067B2F38949F00DF721E /* RNWatch Watch App */,
 				CE4545C6295D7AF4003201E1 /* Products */,
-				3F7098551CF7A77F3FE7EB2B /* Pods */,
-				50F042AA623895133F88BD6F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1362,13 +1373,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CE4545D9295D7AF5003201E1 /* Build configuration list for PBXNativeTarget "Runnect-iOS" */;
 			buildPhases = (
-				E0B9D85C00C4A8AE14AB99B5 /* [CP] Check Pods Manifest.lock */,
 				CE665613295D980700C64E12 /* ShellScript */,
 				CE4545C1295D7AF4003201E1 /* Sources */,
 				CE4545C2295D7AF4003201E1 /* Frameworks */,
 				CE4545C3295D7AF4003201E1 /* Resources */,
-				E291492871BAA8F18A984EC8 /* [CP] Embed Pods Frameworks */,
-				DEE22AC182E7D825049A9569 /* [CP] Copy Pods Resources */,
 				FCF3953C85D3B378BDCD6D2F /* Embed Watch Content */,
 			);
 			buildRules = (
@@ -1377,6 +1385,27 @@
 				71F2067A2F38949F00DF721E /* PBXTargetDependency */,
 			);
 			name = "Runnect-iOS";
+			packageProductDependencies = (
+				AA00000100000002AAAAAAAA /* Kingfisher */,
+				AA00000200000002AAAAAAAA /* SnapKit */,
+				AA00000300000002AAAAAAAA /* Moya */,
+				AA00000400000002AAAAAAAA /* Then */,
+				AA00000500000002AAAAAAAA /* CombineMoya */,
+				AA00000600000002AAAAAAAA /* KakaoSDKCommon */,
+				AA00000700000002AAAAAAAA /* KakaoSDKAuth */,
+				AA00000800000002AAAAAAAA /* KakaoSDKUser */,
+				AA00000900000002AAAAAAAA /* KakaoSDKShare */,
+				AA00001000000002AAAAAAAA /* KakaoSDKTemplate */,
+				AA00001100000002AAAAAAAA /* KakaoSDKTalk */,
+				AA00001200000002AAAAAAAA /* CombineCocoa */,
+				AA00001300000002AAAAAAAA /* FirebaseAnalytics */,
+				AA00001400000002AAAAAAAA /* FirebaseAuth */,
+				AA00001500000002AAAAAAAA /* FirebaseFirestore */,
+				AA00001600000002AAAAAAAA /* FirebaseRemoteConfig */,
+				AA00001700000002AAAAAAAA /* GoogleMobileAds */,
+				71F206D32F38A78B00DF721E /* NMapsMap */,
+				AA00001800000002AAAAAAAA /* DropDown */,
+			);
 			productName = "Runnect-iOS";
 			productReference = CE4545C5295D7AF4003201E1 /* Runnect-iOS.app */;
 			productType = "com.apple.product-type.application";
@@ -1410,6 +1439,15 @@
 			mainGroup = CE4545BC295D7AF4003201E1;
 			packageReferences = (
 				71F206D22F38A78B00DF721E /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				AA00000100000003AAAAAAAA /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				AA00000200000003AAAAAAAA /* XCRemoteSwiftPackageReference "SnapKit" */,
+				AA00000300000003AAAAAAAA /* XCRemoteSwiftPackageReference "Moya" */,
+				AA00000400000003AAAAAAAA /* XCRemoteSwiftPackageReference "Then" */,
+				AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				AA00001200000003AAAAAAAA /* XCRemoteSwiftPackageReference "CombineCocoa" */,
+				AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				AA00001700000003AAAAAAAA /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				AA00001800000003AAAAAAAA /* XCRemoteSwiftPackageReference "DropDown" */,
 			);
 			productRefGroup = CE4545C6295D7AF4003201E1 /* Products */;
 			projectDirPath = "";
@@ -1464,70 +1502,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-		DEE22AC182E7D825049A9569 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E0B9D85C00C4A8AE14AB99B5 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Runnect-iOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E291492871BAA8F18A984EC8 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runnect-iOS/Pods-Runnect-iOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1917,7 +1891,6 @@
 		};
 		CE4545DA295D7AF5003201E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 21AAB1608F63555F24884DF7 /* Pods-Runnect-iOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1958,7 +1931,6 @@
 		};
 		CE4545DB295D7AF5003201E1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6F84B8CEF6DE932945A540D6 /* Pods-Runnect-iOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2038,6 +2010,78 @@
 				minimumVersion = 3.23.1;
 			};
 		};
+		AA00000100000003AAAAAAAA /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		AA00000200000003AAAAAAAA /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.0;
+			};
+		};
+		AA00000300000003AAAAAAAA /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.0;
+			};
+		};
+		AA00000400000003AAAAAAAA /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		AA00001200000003AAAAAAAA /* XCRemoteSwiftPackageReference "CombineCocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CombineCommunity/CombineCocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.1;
+			};
+		};
+		AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		AA00001700000003AAAAAAAA /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		AA00001800000003AAAAAAAA /* XCRemoteSwiftPackageReference "DropDown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thingineeer/DropDown";
+			requirement = {
+				kind = exactVersion;
+				version = 2.3.13;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2045,6 +2089,96 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 71F206D22F38A78B00DF721E /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
 			productName = NMapsMap;
+		};
+		AA00000100000002AAAAAAAA /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000100000003AAAAAAAA /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		AA00000200000002AAAAAAAA /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000200000003AAAAAAAA /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		AA00000300000002AAAAAAAA /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000300000003AAAAAAAA /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		AA00000400000002AAAAAAAA /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000400000003AAAAAAAA /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
+		};
+		AA00000500000002AAAAAAAA /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000300000003AAAAAAAA /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		AA00000600000002AAAAAAAA /* KakaoSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCommon;
+		};
+		AA00000700000002AAAAAAAA /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		AA00000800000002AAAAAAAA /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
+		};
+		AA00000900000002AAAAAAAA /* KakaoSDKShare */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKShare;
+		};
+		AA00001000000002AAAAAAAA /* KakaoSDKTemplate */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKTemplate;
+		};
+		AA00001100000002AAAAAAAA /* KakaoSDKTalk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00000600000003AAAAAAAA /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKTalk;
+		};
+		AA00001200000002AAAAAAAA /* CombineCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001200000003AAAAAAAA /* XCRemoteSwiftPackageReference "CombineCocoa" */;
+			productName = CombineCocoa;
+		};
+		AA00001300000002AAAAAAAA /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		AA00001400000002AAAAAAAA /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		AA00001500000002AAAAAAAA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		AA00001600000002AAAAAAAA /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001300000003AAAAAAAA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		AA00001700000002AAAAAAAA /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001700000003AAAAAAAA /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+		AA00001800000002AAAAAAAA /* DropDown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA00001800000003AAAAAAAA /* XCRemoteSwiftPackageReference "DropDown" */;
+			productName = DropDown;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
