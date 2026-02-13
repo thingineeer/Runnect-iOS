@@ -31,7 +31,11 @@ extension TabBarController {
             // iOS 26+: Liquid Glass 활용
             tabBar.tintColor = .m1
             tabBar.unselectedItemTintColor = .g3
-            // 시스템 Liquid Glass 스타일 사용 — 커스텀 배경/코너 제거
+            // Liquid Glass 활성화: 시스템 기본 반투명 외관 설정
+            let appearance = UITabBarAppearance()
+            appearance.configureWithDefaultBackground()
+            tabBar.standardAppearance = appearance
+            tabBar.scrollEdgeAppearance = appearance
         } else {
             // iOS 25 이하: 기존 커스텀 스타일 유지
             tabBar.backgroundColor = .white

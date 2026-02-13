@@ -301,7 +301,12 @@ extension CourseDiscoveryVC {
         
         mapCollectionView.snp.makeConstraints {
             $0.top.equalTo(self.naviBar.snp.bottom)
-            $0.leading.bottom.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            if #available(iOS 26, *) {
+                $0.bottom.equalToSuperview()
+            } else {
+                $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            }
         }
         
         uploadButton.snp.makeConstraints {
