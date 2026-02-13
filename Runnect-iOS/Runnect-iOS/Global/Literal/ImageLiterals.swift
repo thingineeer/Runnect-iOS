@@ -78,10 +78,8 @@ enum ImageLiterals {
     static var imgStamp: UIImage { .load(named: "img_stamp") }
     static var imgStorage: UIImage { .load(named: "img_storage") }
     static var imgLock: UIImage { .load(named: "img_lock") }
-    static var imgTelescope: UIImage { .load(named: "img_telescope") }
     static var imgSpaceship: UIImage { .load(named: "img_spaceship") }
     static var imgAppIcon: UIImage { .load(named: "img_app_icon") }
-    static var imgAd: UIImage { .load(named: "img_ad") }
     static var imgBanner1: UIImage { .load(named: "img_banner1") }
     static var imgBanner2: UIImage { .load(named: "img_banner2") }
     static var imgBanner3: UIImage { .load(named: "img_banner3") }

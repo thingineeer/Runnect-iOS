@@ -11,7 +11,7 @@
 		23EE06C12AC1AD5200CB3FF8 /* LocationSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EE06C02AC1AD5200CB3FF8 /* LocationSelectView.swift */; };
 		23EE06C52AC1AE1900CB3FF8 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EE06C42AC1AE1900CB3FF8 /* BaseView.swift */; };
 		23EE06C92AC1DED100CB3FF8 /* GesturePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EE06C82AC1DED100CB3FF8 /* GesturePublisher.swift */; };
-		23EE06CB2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EE06CA2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift */; };
+
 		23EE06D12AC2F44E00CB3FF8 /* TmapAddressSearchingResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EE06D02AC2F44E00CB3FF8 /* TmapAddressSearchingResponseDto.swift */; };
 		711E18212B38516D00C651CD /* GAManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711E18202B38516D00C651CD /* GAManager.swift */; };
 		71288ECF2B26ECDB00D6C921 /* UserInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71288ECE2B26ECDB00D6C921 /* UserInfoCell.swift */; };
@@ -39,7 +39,6 @@
 		A3BC2F322962E0DB00198261 /* GoalRewardInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F312962E0DB00198261 /* GoalRewardInfoModel.swift */; };
 		A3BC2F34296303A600198261 /* GoalRewardInfoCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F33296303A600198261 /* GoalRewardInfoCVC.swift */; };
 		A3BC2F3A2963D0ED00198261 /* ActivityRecordInfoTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F392963D0ED00198261 /* ActivityRecordInfoTVC.swift */; };
-		A3BC2F3F2964706100198261 /* UploadedCourseInfoCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F3E2964706100198261 /* UploadedCourseInfoCVC.swift */; };
 		A3BC2F4129667A0D00198261 /* NicknameEditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F4029667A0D00198261 /* NicknameEditorVC.swift */; };
 		A3BC2F432966A93100198261 /* CourseDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BC2F422966A93100198261 /* CourseDetailVC.swift */; };
 		A3C2CACE29E313CC00EC525B /* SettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C2CACD29E313CC00EC525B /* SettingVC.swift */; };
@@ -84,7 +83,6 @@
 		CE29D582296402B500F47542 /* CourseDrawingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE29D581296402B500F47542 /* CourseDrawingVC.swift */; };
 		CE29D584296416D800F47542 /* caculateStatusBarHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE29D583296416D800F47542 /* caculateStatusBarHeight.swift */; };
 		CE320F38296C8FAB009F89A7 /* CourseDrawingResponseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE320F37296C8FAB009F89A7 /* CourseDrawingResponseData.swift */; };
-		CE3A53C5296C6017003D518C /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3A53C4296C6017003D518C /* KeychainManager.swift */; };
 		CE40BB1C2967E4910030ABCA /* RunningWaitingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE40BB1B2967E4910030ABCA /* RunningWaitingVC.swift */; };
 		CE40BB1E2968054F0030ABCA /* BaseResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE40BB1D2968054F0030ABCA /* BaseResponse.swift */; };
 		CE40BB2D296808B00030ABCA /* DepartureSearchingRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE40BB2C296808B00030ABCA /* DepartureSearchingRouter.swift */; };
@@ -100,7 +98,7 @@
 		CE5875A029601500005D967E /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58759F29601500005D967E /* Toast.swift */; };
 		CE5875A2296015A2005D967E /* NetworkLoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5875A1296015A2005D967E /* NetworkLoggerPlugin.swift */; };
 		CE5875A4296015D2005D967E /* Encodable+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5875A3296015D2005D967E /* Encodable+.swift */; };
-		CE591E9C296D4F69000FCBB3 /* RunningRecordResonseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE591E9B296D4F69000FCBB3 /* RunningRecordResonseDto.swift */; };
+
 		CE591EA1296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE591EA0296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift */; };
 		CE6655C8295D849F00C64E12 /* StringLiterals.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655C7295D849F00C64E12 /* StringLiterals.swift */; };
 		CE6655CA295D84DD00C64E12 /* UserDefaultKeyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655C9295D84DD00C64E12 /* UserDefaultKeyList.swift */; };
@@ -108,17 +106,13 @@
 		CE6655D0295D85FF00C64E12 /* CancelBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655CF295D85FF00C64E12 /* CancelBag.swift */; };
 		CE6655D2295D862A00C64E12 /* Publisher+Driver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655D1295D862A00C64E12 /* Publisher+Driver.swift */; };
 		CE6655D4295D865B00C64E12 /* Publisher+UIControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655D3295D865B00C64E12 /* Publisher+UIControl.swift */; };
-		CE6655D7295D86F900C64E12 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655D6295D86F900C64E12 /* String+.swift */; };
-		CE6655D9295D871B00C64E12 /* URL+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655D8295D871B00C64E12 /* URL+.swift */; };
 		CE6655DC295D873500C64E12 /* UIButton+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655DB295D873500C64E12 /* UIButton+.swift */; };
 		CE6655DE295D877F00C64E12 /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655DD295D877F00C64E12 /* UIColor+.swift */; };
 		CE6655E0295D87D200C64E12 /* UIDevice+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655DF295D87D200C64E12 /* UIDevice+.swift */; };
 		CE6655E2295D87EB00C64E12 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655E1295D87EB00C64E12 /* UIImage+.swift */; };
 		CE6655E4295D884600C64E12 /* UILabel+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655E3295D884600C64E12 /* UILabel+.swift */; };
 		CE6655E6295D887F00C64E12 /* UIStackView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655E5295D887F00C64E12 /* UIStackView+.swift */; };
-		CE6655E8295D889600C64E12 /* UISwitch+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655E7295D889600C64E12 /* UISwitch+.swift */; };
 		CE6655EA295D88B200C64E12 /* UITabBar+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655E9295D88B200C64E12 /* UITabBar+.swift */; };
-		CE6655EC295D88D000C64E12 /* UITableView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655EB295D88D000C64E12 /* UITableView+.swift */; };
 		CE6655EE295D88E600C64E12 /* UITextField+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655ED295D88E600C64E12 /* UITextField+.swift */; };
 		CE6655F0295D891B00C64E12 /* UITextView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655EF295D891B00C64E12 /* UITextView+.swift */; };
 		CE6655F2295D894D00C64E12 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655F1295D894D00C64E12 /* UIView+.swift */; };
@@ -126,17 +120,12 @@
 		CE6655F6295D90B600C64E12 /* addToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655F5295D90B600C64E12 /* addToolBar.swift */; };
 		CE6655F8295D90CF00C64E12 /* adjusted+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655F7295D90CF00C64E12 /* adjusted+.swift */; };
 		CE6655FA295D90E000C64E12 /* applyShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655F9295D90E000C64E12 /* applyShadow.swift */; };
-		CE6655FC295D90F500C64E12 /* calculatePastTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655FB295D90F500C64E12 /* calculatePastTime.swift */; };
 		CE6655FE295D912300C64E12 /* calculateTopInset.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655FD295D912300C64E12 /* calculateTopInset.swift */; };
 		CE665600295D915D00C64E12 /* getClassName.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655FF295D915D00C64E12 /* getClassName.swift */; };
-		CE665602295D918000C64E12 /* JsonCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665601295D918000C64E12 /* JsonCoder.swift */; };
-		CE665604295D91B100C64E12 /* makeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665603295D91B100C64E12 /* makeAlert.swift */; };
 		CE665606295D91C500C64E12 /* makeVibrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665605295D91C500C64E12 /* makeVibrate.swift */; };
 		CE665608295D921500C64E12 /* setImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665607295D921500C64E12 /* setImage.swift */; };
 		CE66560A295D924A00C64E12 /* Result+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665609295D924A00C64E12 /* Result+.swift */; };
 		CE66560C295D928300C64E12 /* setRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE66560B295D928300C64E12 /* setRootViewController.swift */; };
-		CE66560E295D92A500C64E12 /* setStatusBarBackgroundColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE66560D295D92A500C64E12 /* setStatusBarBackgroundColor.swift */; };
-		CE665610295D92C200C64E12 /* setTextLineHeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE66560F295D92C200C64E12 /* setTextLineHeight.swift */; };
 		CE665612295D92E400C64E12 /* UserDefaultWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE665611295D92E400C64E12 /* UserDefaultWrapper.swift */; };
 		CE665615295D989A00C64E12 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = CE665614295D989A00C64E12 /* .swiftlint.yml */; };
 		CE6B63D02967230D003F900F /* PrivateCourseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6B63CF2967230D003F900F /* PrivateCourseListView.swift */; };
@@ -157,7 +146,6 @@
 		CEC2A6902962B06C00160BF7 /* convertLocationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC2A68F2962B06C00160BF7 /* convertLocationObject.swift */; };
 		CEC2A6922962BE2900160BF7 /* DepartureSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC2A6912962BE2900160BF7 /* DepartureSearchVC.swift */; };
 		CECA695C296E61D6002AF05C /* PrivateCourseNotUploadedResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECA695B296E61D6002AF05C /* PrivateCourseNotUploadedResponseDto.swift */; };
-		CED791B32A2626AF001BFCFB /* ShadowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CED791B22A2626AF001BFCFB /* ShadowView.swift */; };
 		CEE59FDA29DD6F7D00C791F1 /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE59FD929DD6F7D00C791F1 /* Providers.swift */; };
 		CEEC6B3A2961C4F300D00E1E /* CourseDrawingHomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEC6B392961C4F300D00E1E /* CourseDrawingHomeVC.swift */; };
 		CEEC6B3C2961C51A00D00E1E /* CourseStorageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEC6B3B2961C51A00D00E1E /* CourseStorageVC.swift */; };
@@ -226,7 +214,7 @@
 		23EE06C02AC1AD5200CB3FF8 /* LocationSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSelectView.swift; sourceTree = "<group>"; };
 		23EE06C42AC1AE1900CB3FF8 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		23EE06C82AC1DED100CB3FF8 /* GesturePublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GesturePublisher.swift; sourceTree = "<group>"; };
-		23EE06CA2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoAddressSearchingResponseDto.swift; sourceTree = "<group>"; };
+
 		23EE06D02AC2F44E00CB3FF8 /* TmapAddressSearchingResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TmapAddressSearchingResponseDto.swift; sourceTree = "<group>"; };
 		7110A6032AA337DD009A7E99 /* Runnect-iOSDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Runnect-iOSDebug.entitlements"; sourceTree = "<group>"; };
 		711E18202B38516D00C651CD /* GAManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAManager.swift; sourceTree = "<group>"; };
@@ -254,7 +242,6 @@
 		A3BC2F312962E0DB00198261 /* GoalRewardInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardInfoModel.swift; sourceTree = "<group>"; };
 		A3BC2F33296303A600198261 /* GoalRewardInfoCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalRewardInfoCVC.swift; sourceTree = "<group>"; };
 		A3BC2F392963D0ED00198261 /* ActivityRecordInfoTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRecordInfoTVC.swift; sourceTree = "<group>"; };
-		A3BC2F3E2964706100198261 /* UploadedCourseInfoCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedCourseInfoCVC.swift; sourceTree = "<group>"; };
 		A3BC2F4029667A0D00198261 /* NicknameEditorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameEditorVC.swift; sourceTree = "<group>"; };
 		A3BC2F422966A93100198261 /* CourseDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailVC.swift; sourceTree = "<group>"; };
 		A3C2CACD29E313CC00EC525B /* SettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingVC.swift; sourceTree = "<group>"; };
@@ -277,10 +264,8 @@
 		CE0C23782966D6AF00B45063 /* ViewPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPager.swift; sourceTree = "<group>"; };
 		CE0D9FD229648DA300CEB5CD /* CustomAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertVC.swift; sourceTree = "<group>"; };
 		CE10063929680C5700FD31FB /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		CE10064D29680D2500FD31FB /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		CE10064F29680D3300FD31FB /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		CE10065029680D3800FD31FB /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
-		CE10065229680D4400FD31FB /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+
+
 		CE10065429680F7000FD31FB /* DepartureSearchingResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureSearchingResponseDto.swift; sourceTree = "<group>"; };
 		CE1006562968230800FD31FB /* DepartureLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureLocationModel.swift; sourceTree = "<group>"; };
 		CE102C4729DB1D6B00E23E69 /* GetNewTokenResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetNewTokenResponseDto.swift; sourceTree = "<group>"; };
@@ -306,7 +291,6 @@
 		CE29D581296402B500F47542 /* CourseDrawingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDrawingVC.swift; sourceTree = "<group>"; };
 		CE29D583296416D800F47542 /* caculateStatusBarHeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = caculateStatusBarHeight.swift; sourceTree = "<group>"; };
 		CE320F37296C8FAB009F89A7 /* CourseDrawingResponseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDrawingResponseData.swift; sourceTree = "<group>"; };
-		CE3A53C4296C6017003D518C /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		CE40BB1B2967E4910030ABCA /* RunningWaitingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningWaitingVC.swift; sourceTree = "<group>"; };
 		CE40BB1D2968054F0030ABCA /* BaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResponse.swift; sourceTree = "<group>"; };
 		CE40BB2C296808B00030ABCA /* DepartureSearchingRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureSearchingRouter.swift; sourceTree = "<group>"; };
@@ -324,7 +308,7 @@
 		CE58759F29601500005D967E /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		CE5875A1296015A2005D967E /* NetworkLoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLoggerPlugin.swift; sourceTree = "<group>"; };
 		CE5875A3296015D2005D967E /* Encodable+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+.swift"; sourceTree = "<group>"; };
-		CE591E9B296D4F69000FCBB3 /* RunningRecordResonseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningRecordResonseDto.swift; sourceTree = "<group>"; };
+
 		CE591EA0296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCourseResponseDto.swift; sourceTree = "<group>"; };
 		CE6655BE295D82E200C64E12 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		CE6655C1295D82F700C64E12 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
@@ -335,17 +319,13 @@
 		CE6655CF295D85FF00C64E12 /* CancelBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelBag.swift; sourceTree = "<group>"; };
 		CE6655D1295D862A00C64E12 /* Publisher+Driver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Driver.swift"; sourceTree = "<group>"; };
 		CE6655D3295D865B00C64E12 /* Publisher+UIControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+UIControl.swift"; sourceTree = "<group>"; };
-		CE6655D6295D86F900C64E12 /* String+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+.swift"; sourceTree = "<group>"; };
-		CE6655D8295D871B00C64E12 /* URL+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+.swift"; sourceTree = "<group>"; };
 		CE6655DB295D873500C64E12 /* UIButton+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+.swift"; sourceTree = "<group>"; };
 		CE6655DD295D877F00C64E12 /* UIColor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
 		CE6655DF295D87D200C64E12 /* UIDevice+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+.swift"; sourceTree = "<group>"; };
 		CE6655E1295D87EB00C64E12 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		CE6655E3295D884600C64E12 /* UILabel+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+.swift"; sourceTree = "<group>"; };
 		CE6655E5295D887F00C64E12 /* UIStackView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+.swift"; sourceTree = "<group>"; };
-		CE6655E7295D889600C64E12 /* UISwitch+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISwitch+.swift"; sourceTree = "<group>"; };
 		CE6655E9295D88B200C64E12 /* UITabBar+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBar+.swift"; sourceTree = "<group>"; };
-		CE6655EB295D88D000C64E12 /* UITableView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+.swift"; sourceTree = "<group>"; };
 		CE6655ED295D88E600C64E12 /* UITextField+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+.swift"; sourceTree = "<group>"; };
 		CE6655EF295D891B00C64E12 /* UITextView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+.swift"; sourceTree = "<group>"; };
 		CE6655F1295D894D00C64E12 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
@@ -353,17 +333,12 @@
 		CE6655F5295D90B600C64E12 /* addToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addToolBar.swift; sourceTree = "<group>"; };
 		CE6655F7295D90CF00C64E12 /* adjusted+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "adjusted+.swift"; sourceTree = "<group>"; };
 		CE6655F9295D90E000C64E12 /* applyShadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = applyShadow.swift; sourceTree = "<group>"; };
-		CE6655FB295D90F500C64E12 /* calculatePastTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calculatePastTime.swift; sourceTree = "<group>"; };
 		CE6655FD295D912300C64E12 /* calculateTopInset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calculateTopInset.swift; sourceTree = "<group>"; };
 		CE6655FF295D915D00C64E12 /* getClassName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getClassName.swift; sourceTree = "<group>"; };
-		CE665601295D918000C64E12 /* JsonCoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonCoder.swift; sourceTree = "<group>"; };
-		CE665603295D91B100C64E12 /* makeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = makeAlert.swift; sourceTree = "<group>"; };
 		CE665605295D91C500C64E12 /* makeVibrate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = makeVibrate.swift; sourceTree = "<group>"; };
 		CE665607295D921500C64E12 /* setImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setImage.swift; sourceTree = "<group>"; };
 		CE665609295D924A00C64E12 /* Result+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+.swift"; sourceTree = "<group>"; };
 		CE66560B295D928300C64E12 /* setRootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setRootViewController.swift; sourceTree = "<group>"; };
-		CE66560D295D92A500C64E12 /* setStatusBarBackgroundColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setStatusBarBackgroundColor.swift; sourceTree = "<group>"; };
-		CE66560F295D92C200C64E12 /* setTextLineHeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setTextLineHeight.swift; sourceTree = "<group>"; };
 		CE665611295D92E400C64E12 /* UserDefaultWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultWrapper.swift; sourceTree = "<group>"; };
 		CE665614295D989A00C64E12 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		CE6B63CF2967230D003F900F /* PrivateCourseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCourseListView.swift; sourceTree = "<group>"; };
@@ -384,7 +359,6 @@
 		CEC2A68F2962B06C00160BF7 /* convertLocationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = convertLocationObject.swift; sourceTree = "<group>"; };
 		CEC2A6912962BE2900160BF7 /* DepartureSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureSearchVC.swift; sourceTree = "<group>"; };
 		CECA695B296E61D6002AF05C /* PrivateCourseNotUploadedResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCourseNotUploadedResponseDto.swift; sourceTree = "<group>"; };
-		CED791B22A2626AF001BFCFB /* ShadowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowView.swift; sourceTree = "<group>"; };
 		CEE59FD929DD6F7D00C791F1 /* Providers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Providers.swift; sourceTree = "<group>"; };
 		CEEC6B392961C4F300D00E1E /* CourseDrawingHomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDrawingHomeVC.swift; sourceTree = "<group>"; };
 		CEEC6B3B2961C51A00D00E1E /* CourseStorageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseStorageVC.swift; sourceTree = "<group>"; };
@@ -507,7 +481,6 @@
 		A3BC2F292962C39F00198261 /* InfoVC */ = {
 			isa = PBXGroup;
 			children = (
-				A3BC2F3B2964671D00198261 /* UploadedCourseInfoCollectionView */,
 				A3BC2F362963CD2100198261 /* ActivityRecordInfoTableView */,
 				A3BC2F302962E08400198261 /* GoalRewardInfoCollectionView */,
 				A3BC2F2A2962C3D500198261 /* GoalRewardInfoVC.swift */,
@@ -534,14 +507,6 @@
 				A3BC2F392963D0ED00198261 /* ActivityRecordInfoTVC.swift */,
 			);
 			path = ActivityRecordInfoTableView;
-			sourceTree = "<group>";
-		};
-		A3BC2F3B2964671D00198261 /* UploadedCourseInfoCollectionView */ = {
-			isa = PBXGroup;
-			children = (
-				A3BC2F3E2964706100198261 /* UploadedCourseInfoCVC.swift */,
-			);
-			path = UploadedCourseInfoCollectionView;
 			sourceTree = "<group>";
 		};
 		A3C2CACF29E4F72400EC525B /* SettingVC */ = {
@@ -662,14 +627,8 @@
 			path = RunningModel;
 			sourceTree = "<group>";
 		};
-		CE10064729680CED00FD31FB /* CourseDetailModel */ = {
-			isa = PBXGroup;
-			children = (
-				CE10065229680D4400FD31FB /* .gitkeep */,
-			);
-			path = CourseDetailModel;
-			sourceTree = "<group>";
-		};
+
+
 		CE10064829680CF200FD31FB /* MyPageModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -678,22 +637,10 @@
 			path = MyPageModel;
 			sourceTree = "<group>";
 		};
-		CE10064929680CF800FD31FB /* CourseDiscoveryModel */ = {
-			isa = PBXGroup;
-			children = (
-				CE10065029680D3800FD31FB /* .gitkeep */,
-			);
-			path = CourseDiscoveryModel;
-			sourceTree = "<group>";
-		};
-		CE10064A29680D0200FD31FB /* CourseStorageModel */ = {
-			isa = PBXGroup;
-			children = (
-				CE10064F29680D3300FD31FB /* .gitkeep */,
-			);
-			path = CourseStorageModel;
-			sourceTree = "<group>";
-		};
+
+
+
+
 		CE10064B29680D0900FD31FB /* CourseDrawingModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -703,18 +650,11 @@
 			path = CourseDrawingModel;
 			sourceTree = "<group>";
 		};
-		CE10064C29680D1700FD31FB /* SignInModel */ = {
-			isa = PBXGroup;
-			children = (
-				CE10064D29680D2500FD31FB /* .gitkeep */,
-			);
-			path = SignInModel;
-			sourceTree = "<group>";
-		};
+
+
 		CE14676C296568C000DCEA1B /* Running */ = {
 			isa = PBXGroup;
 			children = (
-				CE14676E296568CD00DCEA1B /* Views */,
 				CE14676D296568CA00DCEA1B /* VC */,
 			);
 			path = Running;
@@ -729,13 +669,6 @@
 				CE40BB1B2967E4910030ABCA /* RunningWaitingVC.swift */,
 			);
 			path = VC;
-			sourceTree = "<group>";
-		};
-		CE14676E296568CD00DCEA1B /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		CE17F02E2961BEAE00E1DED0 /* Fonts */ = {
@@ -910,7 +843,7 @@
 			children = (
 				CE10065429680F7000FD31FB /* DepartureSearchingResponseDto.swift */,
 				CE320F37296C8FAB009F89A7 /* CourseDrawingResponseData.swift */,
-				23EE06CA2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift */,
+
 				23EE06D02AC2F44E00CB3FF8 /* TmapAddressSearchingResponseDto.swift */,
 			);
 			path = ResponseDto;
@@ -972,7 +905,6 @@
 				CEC2A68F2962B06C00160BF7 /* convertLocationObject.swift */,
 				CE14677729658C7200DCEA1B /* Stopwatch.swift */,
 				CE9291282965E01D0010959C /* RNTimeFormatter.swift */,
-				CE3A53C4296C6017003D518C /* KeychainManager.swift */,
 				A3D1A77F29CF142E00DD54EC /* UserManager.swift */,
 			);
 			path = RNUtils;
@@ -989,7 +921,7 @@
 		CE55BC13296D4F3900E8CD69 /* ResponseDto */ = {
 			isa = PBXGroup;
 			children = (
-				CE591E9B296D4F69000FCBB3 /* RunningRecordResonseDto.swift */,
+
 				CEF3CD99296DB305002723A1 /* CourseDetailResponseDto.swift */,
 			);
 			path = ResponseDto;
@@ -1061,12 +993,8 @@
 		CE6655AC295D7FE400C64E12 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CE10064C29680D1700FD31FB /* SignInModel */,
 				CE10064B29680D0900FD31FB /* CourseDrawingModel */,
-				CE10064A29680D0200FD31FB /* CourseStorageModel */,
-				CE10064929680CF800FD31FB /* CourseDiscoveryModel */,
 				CE10064829680CF200FD31FB /* MyPageModel */,
-				CE10064729680CED00FD31FB /* CourseDetailModel */,
 				CE10064629680CE600FD31FB /* RunningModel */,
 				CE6655C1295D82F700C64E12 /* .gitkeep */,
 			);
@@ -1132,16 +1060,11 @@
 				CE6655F5295D90B600C64E12 /* addToolBar.swift */,
 				CE6655F7295D90CF00C64E12 /* adjusted+.swift */,
 				CE6655F9295D90E000C64E12 /* applyShadow.swift */,
-				CE6655FB295D90F500C64E12 /* calculatePastTime.swift */,
 				CE6655FD295D912300C64E12 /* calculateTopInset.swift */,
 				CE6655FF295D915D00C64E12 /* getClassName.swift */,
-				CE665601295D918000C64E12 /* JsonCoder.swift */,
-				CE665603295D91B100C64E12 /* makeAlert.swift */,
 				CE665605295D91C500C64E12 /* makeVibrate.swift */,
 				CE665607295D921500C64E12 /* setImage.swift */,
 				CE66560B295D928300C64E12 /* setRootViewController.swift */,
-				CE66560D295D92A500C64E12 /* setStatusBarBackgroundColor.swift */,
-				CE66560F295D92C200C64E12 /* setTextLineHeight.swift */,
 				CE665611295D92E400C64E12 /* UserDefaultWrapper.swift */,
 				CE58759D29601476005D967E /* LoadingIndicator.swift */,
 				CE58759F29601500005D967E /* Toast.swift */,
@@ -1205,7 +1128,6 @@
 				CE9291262965D0ED0010959C /* StatsInfoView.swift */,
 				CE6B63D729673450003F900F /* ListEmptyView.swift */,
 				CEB0BCBB29D123350048CCD5 /* GuideView.swift */,
-				CED791B22A2626AF001BFCFB /* ShadowView.swift */,
 				A3C2CAD629E53B2900EC525B /* RNAlertVC.swift */,
 			);
 			path = UIComponents;
@@ -1258,8 +1180,6 @@
 		CE6655D5295D86EB00C64E12 /* Foundation+ */ = {
 			isa = PBXGroup;
 			children = (
-				CE6655D6295D86F900C64E12 /* String+.swift */,
-				CE6655D8295D871B00C64E12 /* URL+.swift */,
 				CE665609295D924A00C64E12 /* Result+.swift */,
 				CE5875A3296015D2005D967E /* Encodable+.swift */,
 			);
@@ -1275,9 +1195,7 @@
 				CE6655E1295D87EB00C64E12 /* UIImage+.swift */,
 				CE6655E3295D884600C64E12 /* UILabel+.swift */,
 				CE6655E5295D887F00C64E12 /* UIStackView+.swift */,
-				CE6655E7295D889600C64E12 /* UISwitch+.swift */,
 				CE6655E9295D88B200C64E12 /* UITabBar+.swift */,
-				CE6655EB295D88D000C64E12 /* UITableView+.swift */,
 				CE6655ED295D88E600C64E12 /* UITextField+.swift */,
 				CE6655EF295D891B00C64E12 /* UITextView+.swift */,
 				CE6655F1295D894D00C64E12 /* UIView+.swift */,
@@ -1519,12 +1437,10 @@
 			files = (
 				715D36E82B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift in Sources */,
 				CE55BC11296D4EA600E8CD69 /* RunningRecordRequestDto.swift in Sources */,
-				CE665604295D91B100C64E12 /* makeAlert.swift in Sources */,
 				A3BC2F2F2962C40A00198261 /* UploadedCourseInfoVC.swift in Sources */,
 				CE6655EA295D88B200C64E12 /* UITabBar+.swift in Sources */,
 				CE9291272965D0ED0010959C /* StatsInfoView.swift in Sources */,
 				CEC2A68729629B9B00160BF7 /* NickNameSetUpVC.swift in Sources */,
-				CE665602295D918000C64E12 /* JsonCoder.swift in Sources */,
 				DA97A033296E65D80086760E /* CourseUploadingRequestDto.swift in Sources */,
 				711E18212B38516D00C651CD /* GAManager.swift in Sources */,
 				CE4545CD295D7AF4003201E1 /* TabBarController.swift in Sources */,
@@ -1546,12 +1462,10 @@
 				CE66560A295D924A00C64E12 /* Result+.swift in Sources */,
 				DA20D847296697A600F1581F /* MyCourseSelectVC.swift in Sources */,
 				CE10065529680F7000FD31FB /* DepartureSearchingResponseDto.swift in Sources */,
-				CE66560E295D92A500C64E12 /* setStatusBarBackgroundColor.swift in Sources */,
 				CE9291292965E01D0010959C /* RNTimeFormatter.swift in Sources */,
 				CE0C23792966D6AF00B45063 /* ViewPager.swift in Sources */,
 				CE6B63D02967230D003F900F /* PrivateCourseListView.swift in Sources */,
 				71288ED32B26ED2500D6C921 /* UserUploadedLabelCell.swift in Sources */,
-				CE6655D7295D86F900C64E12 /* String+.swift in Sources */,
 				CE58759E29601476005D967E /* LoadingIndicator.swift in Sources */,
 				CE5875A2296015A2005D967E /* NetworkLoggerPlugin.swift in Sources */,
 				CEEC6B3C2961C51A00D00E1E /* CourseStorageVC.swift in Sources */,
@@ -1562,7 +1476,6 @@
 				A3F67AEA296E4936001598A2 /* ActivityRecordInfoDto.swift in Sources */,
 				CE6655E0295D87D200C64E12 /* UIDevice+.swift in Sources */,
 				CE17F0382961BF8B00E1DED0 /* FontLiterals.swift in Sources */,
-				CE6655E8295D889600C64E12 /* UISwitch+.swift in Sources */,
 				CE0C23772966D64D00B45063 /* PageCVC.swift in Sources */,
 				CEE59FDA29DD6F7D00C791F1 /* Providers.swift in Sources */,
 				CE5875A029601500005D967E /* Toast.swift in Sources */,
@@ -1587,7 +1500,6 @@
 				CE4545CB295D7AF4003201E1 /* SceneDelegate.swift in Sources */,
 				A3F67AE2296D33AC001598A2 /* MyPageDto.swift in Sources */,
 				CE591EA1296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift in Sources */,
-				A3BC2F3F2964706100198261 /* UploadedCourseInfoCVC.swift in Sources */,
 				71288ED12B26ECF600D6C921 /* UserProgressCell.swift in Sources */,
 				DA0587F42A05DEC000B72869 /* CourseEditVC.swift in Sources */,
 				CE6655FE295D912300C64E12 /* calculateTopInset.swift in Sources */,
@@ -1619,7 +1531,6 @@
 				DA20D84E2966A9B300F1581F /* CourseSearchVC.swift in Sources */,
 				CE1006572968230800FD31FB /* DepartureLocationModel.swift in Sources */,
 				CECA695C296E61D6002AF05C /* PrivateCourseNotUploadedResponseDto.swift in Sources */,
-				CE6655EC295D88D000C64E12 /* UITableView+.swift in Sources */,
 				CEEC6B3A2961C4F300D00E1E /* CourseDrawingHomeVC.swift in Sources */,
 				CEB0BCBC29D123350048CCD5 /* GuideView.swift in Sources */,
 				CEC2A6902962B06C00160BF7 /* convertLocationObject.swift in Sources */,
@@ -1631,7 +1542,6 @@
 				71288ECF2B26ECDB00D6C921 /* UserInfoCell.swift in Sources */,
 				CE29D584296416D800F47542 /* caculateStatusBarHeight.swift in Sources */,
 				CE66560C295D928300C64E12 /* setRootViewController.swift in Sources */,
-				CE6655D9295D871B00C64E12 /* URL+.swift in Sources */,
 				CE6655DE295D877F00C64E12 /* UIColor+.swift in Sources */,
 				CEEC6B402961C55000D00E1E /* MyPageVC.swift in Sources */,
 				CE665608295D921500C64E12 /* setImage.swift in Sources */,
@@ -1639,7 +1549,6 @@
 				DA20D849296697B400F1581F /* CourseUploadVC.swift in Sources */,
 				CE665612295D92E400C64E12 /* UserDefaultWrapper.swift in Sources */,
 				A3BC2F3A2963D0ED00198261 /* ActivityRecordInfoTVC.swift in Sources */,
-				CE665610295D92C200C64E12 /* setTextLineHeight.swift in Sources */,
 				CE6655E2295D87EB00C64E12 /* UIImage+.swift in Sources */,
 				A3BC2F322962E0DB00198261 /* GoalRewardInfoModel.swift in Sources */,
 				CEC2A68C2962AE1B00160BF7 /* RNStartMarker.swift in Sources */,
@@ -1647,11 +1556,9 @@
 				CE5875A4296015D2005D967E /* Encodable+.swift in Sources */,
 				A3BC2F4129667A0D00198261 /* NicknameEditorVC.swift in Sources */,
 				CE0C23742966D62A00B45063 /* PagedView.swift in Sources */,
-				CE3A53C5296C6017003D518C /* KeychainManager.swift in Sources */,
 				717916DA2B13613B009CEF97 /* MarathonListResponseDto.swift in Sources */,
 				CEEC6B4B2961D89700D00E1E /* CustomNavigationBar.swift in Sources */,
 				CE09037D296E9ED900BEA710 /* ScrapCourseResponseDto.swift in Sources */,
-				CED791B32A2626AF001BFCFB /* ShadowView.swift in Sources */,
 				CE40BB2D296808B00030ABCA /* DepartureSearchingRouter.swift in Sources */,
 				CE15F5A4296C932E0023827C /* RunningModel.swift in Sources */,
 				CE17F02D2961BBA100E1DED0 /* ColorLiterals.swift in Sources */,
@@ -1670,13 +1577,12 @@
 				71802C5C2B3364C2008DBCEE /* CourseDetailScrapCountDto.swift in Sources */,
 				712F661D2A7B7BAB00D9539B /* Config.swift in Sources */,
 				D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */,
-				23EE06CB2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift in Sources */,
+
 				CE6655F2295D894D00C64E12 /* UIView+.swift in Sources */,
 				CE9291252965C9FB0010959C /* CourseDetailInfoView.swift in Sources */,
 				CE665600295D915D00C64E12 /* getClassName.swift in Sources */,
 				A3BC2F2D2962C3F200198261 /* ActivityRecordInfoVC.swift in Sources */,
-				CE591E9C296D4F69000FCBB3 /* RunningRecordResonseDto.swift in Sources */,
-				CE6655FC295D90F500C64E12 /* calculatePastTime.swift in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
