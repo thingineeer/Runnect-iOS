@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Kingfisher
 import SnapKit
 import Then
 
@@ -34,10 +35,11 @@ public enum CourseListCVCType {
 final class CourseListCVC: UICollectionViewCell {
     
     // MARK: - Properties
-    
+
     weak var delegate: CourseListCVCDelegate?
-    
+
     private var indexPath: Int?
+    private var currentImageURL: String?
     
     // MARK: - UI Components
     
@@ -102,6 +104,20 @@ final class CourseListCVC: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        courseImageView.kf.cancelDownloadTask()
+        courseImageView.image = nil
+        titleLabel.text = nil
+        locationLabel.text = nil
+        likeButton.isSelected = false
+        selectIndicatorButton.isSelected = false
+        imageCoverView.isHidden = true
+        courseImageView.layer.borderColor = UIColor(hex: "EAEAEA").cgColor
+        indexPath = nil
+        currentImageURL = nil
+    }
 }
 
 // MARK: - Methods
@@ -112,9 +128,16 @@ extension CourseListCVC {
     }
     
     func setData(imageURL: String, title: String, location: String?, didLike: Bool?, indexPath: Int? = nil, isEditMode: Bool = false) {
-        self.courseImageView.setImage(with: imageURL)
         self.titleLabel.text = title
         self.indexPath = indexPath
+
+        // 동일한 URL이면 이미지 재로딩을 건너뛰어 깜빡임 방지
+        if currentImageURL != imageURL {
+            currentImageURL = imageURL
+            courseImageView.kf.cancelDownloadTask()
+            self.courseImageView.setImage(with: imageURL)
+        }
+
         if let location = location {
             self.locationLabel.text = location
         }

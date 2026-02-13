@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "71F206762F38949F00DF721E"
+               BuildableName = "RNWatch Watch App.app"
+               BlueprintName = "RNWatch Watch App"
+               ReferencedContainer = "container:Runnect-iOS.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "CE4545C4295D7AF4003201E1"
                BuildableName = "Runnect-iOS.app"
                BlueprintName = "Runnect-iOS"

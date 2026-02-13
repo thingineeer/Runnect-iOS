@@ -65,20 +65,17 @@ platform :ios do
       scheme: "Runnect-iOS",
       configuration: "Release",
       clean: true,
-      export_options: {
-        provisioningProfiles: {
-          "com.runnect.Runnect-iOS" => "match AppStore com.runnect.Runnect-iOS"
-        }
-      }
+      export_method: "app-store",
+      export_xcargs: "-allowProvisioningUpdates"
     )
 
     # App Store 업로드 + 심사 제출
     upload_to_app_store(
       api_key: api_key_data,
       app_version: version,
-      submit_for_review: true,
+      submit_for_review: false,
       force: true,
-      automatic_release: true,
+      automatic_release: false,
       skip_screenshots: true,
       skip_metadata: false,
       precheck_include_in_app_purchases: false,
@@ -205,6 +202,26 @@ platform :ios do
       app_identifier: "com.runnect.Runnect-iOS",
       readonly: true,
       api_key: api_key_data
+    )
+  end
+
+  ############# Watch Provisioning #############
+
+  desc "Upload IPA to App Store Connect (without review)"
+  lane :upload_only do |options|
+    api_key_data = api_key
+    version = options[:version]
+
+    upload_to_app_store(
+      api_key: api_key_data,
+      ipa: options[:ipa] || "/tmp/ipa_export/Runnect-iOS.ipa",
+      app_version: version,
+      submit_for_review: false,
+      force: true,
+      automatic_release: false,
+      skip_screenshots: true,
+      skip_metadata: false,
+      precheck_include_in_app_purchases: false
     )
   end
 

@@ -77,6 +77,14 @@ Register Devices
 
 Match all code signing (read only)
 
+### ios upload_only
+
+```sh
+[bundle exec] fastlane ios upload_only
+```
+
+Upload IPA to App Store Connect (without review)
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

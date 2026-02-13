@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import CoreLocation
 
 import SnapKit
 import Then
@@ -14,15 +15,20 @@ import Then
 import NMapsMap
 
 final class RunTrackingVC: UIViewController {
-    
+
     // MARK: - Properties
-    
+
     private var runningModel: RunningModel?
-    
+
     private let stopwatch = Stopwatch()
     private var cancelBag = CancelBag()
     var totalTime: Int = 0
     var distance: String = "0.0"
+
+    // GPS 기반 실제 뛴 거리 (Watch 전송용)
+    private let runLocationManager = CLLocationManager()
+    private var lastLocation: CLLocation?
+    private var runDistance: Double = 0.0  // meters
     
     // MARK: - UI Components
     
@@ -132,6 +138,13 @@ final class RunTrackingVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.bindStopwatch()
+        self.startRunLocationTracking()
+        self.startWatchDataSync()
+        self.observeWatchCommand()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -186,6 +199,49 @@ extension RunTrackingVC {
         timeStatsLabel.text = formattedString
     }
     
+    private func startRunLocationTracking() {
+        runLocationManager.delegate = self
+        runLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        runLocationManager.distanceFilter = 5
+        runLocationManager.startUpdatingLocation()
+    }
+
+    private func stopRunLocationTracking() {
+        runLocationManager.stopUpdatingLocation()
+        runLocationManager.delegate = nil
+    }
+
+    private func startWatchDataSync() {
+        WatchSessionService.shared.startSendingRunningData { [weak self] in
+            guard let self, let runningModel = self.runningModel else { return nil }
+            let actualDistanceKm = self.runDistance / 1000.0
+            let totalCourseDistance = Double(runningModel.distance ?? "0.0") ?? 0.0
+            let progress = totalCourseDistance > 0 ? min(actualDistanceKm / totalCourseDistance, 1.0) : 0.0
+            let elapsedTime = self.totalTime
+            let pace = actualDistanceKm > 0 ? Int(round(Double(elapsedTime) / actualDistanceKm)) : 0
+
+            return [
+                "messageType": "runningUpdate",
+                "distance": actualDistanceKm,
+                "elapsedTime": elapsedTime,
+                "pace": pace,
+                "progress": progress,
+                "totalCourseDistance": totalCourseDistance,
+                "isRunning": self.stopwatch.isRunning,
+                "courseName": ""
+            ]
+        }
+    }
+
+    private func observeWatchCommand() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleWatchCommand(_:)),
+            name: .watchCommandReceived,
+            object: nil
+        )
+    }
+
     private func pushToRunningRecordVC() {
         guard var runningModel = self.runningModel else { return }
         
@@ -201,12 +257,61 @@ extension RunTrackingVC {
 
 extension RunTrackingVC {
     @objc private func popToPreviousVC() {
-        self.navigationController?.popViewController(animated: true)
+        let alertVC = RNAlertVC(description: "러닝을 종료하시겠습니까?")
+            .setButtonTitle("취소", "종료하기")
+        alertVC.modalPresentationStyle = .overFullScreen
+        alertVC.rightButtonTapAction = { [weak self] in
+            alertVC.dismiss(animated: false)
+            self?.stopwatch.isRunning = false
+            self?.stopRunLocationTracking()
+            WatchSessionService.shared.stopSendingRunningData()
+            WatchSessionService.shared.sendRunReset()
+            self?.navigationController?.popViewController(animated: true)
+        }
+        self.present(alertVC, animated: false)
     }
     
     @objc private func runningCompleteButtonDidTap() {
+        let alertVC = RNAlertVC(description: "러닝을 종료하시겠습니까?")
+            .setButtonTitle("취소", "종료하기")
+        alertVC.modalPresentationStyle = .overFullScreen
+        alertVC.rightButtonTapAction = { [weak self] in
+            alertVC.dismiss(animated: false)
+            self?.stopwatch.isRunning.toggle()
+            self?.stopRunLocationTracking()
+            WatchSessionService.shared.stopSendingRunningData()
+            WatchSessionService.shared.sendRunCompleted()
+            self?.pushToRunningRecordVC()
+        }
+        self.present(alertVC, animated: false)
+    }
+
+    @objc private func handleWatchCommand(_ notification: Notification) {
+        guard let command = notification.userInfo?["command"] as? String,
+              command == "endRunning" else { return }
         stopwatch.isRunning.toggle()
+        stopRunLocationTracking()
+        WatchSessionService.shared.stopSendingRunningData()
+        WatchSessionService.shared.sendRunCompleted()
         self.pushToRunningRecordVC()
+    }
+}
+
+// MARK: - CLLocationManagerDelegate
+
+extension RunTrackingVC: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let newLocation = locations.last,
+              newLocation.horizontalAccuracy >= 0,
+              newLocation.horizontalAccuracy < 20 else { return }
+
+        if let last = lastLocation {
+            let delta = newLocation.distance(from: last)
+            if delta > 1 {
+                runDistance += delta
+            }
+        }
+        lastLocation = newLocation
     }
 }
 

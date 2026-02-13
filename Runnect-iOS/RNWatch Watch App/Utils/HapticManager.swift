@@ -23,4 +23,8 @@ enum HapticManager {
     static func runCompleted() {
         WKInterfaceDevice.current().play(.success)
     }
+
+    static func heartRateZoneAlert() {
+        WKInterfaceDevice.current().play(.notification)
+    }
 }

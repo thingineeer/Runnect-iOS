@@ -12,13 +12,13 @@ import SnapKit
 import Then
 
 final class RunningRecordVC: UIViewController {
-    
+
     // MARK: - Properties
-    
+
     private var runningModel: RunningModel?
-    
+
     private let recordProvider = Providers.recordProvider
-    
+
     private let courseTitleMaxLength = 20
     
     // MARK: - UI Components
@@ -85,6 +85,7 @@ final class RunningRecordVC: UIViewController {
         self.setAddTarget()
         self.setKeyboardNotification()
         self.setTapGesture()
+        self.setNaviBarBackAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,6 +129,12 @@ extension RunningRecordVC {
         view.addGestureRecognizer(tap)
     }
     
+    private func setNaviBarBackAction() {
+        naviBar.resetLeftButtonAction({ [weak self] in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }, .titleWithLeftButton)
+    }
+
     func setData(runningModel: RunningModel) {
         self.runningModel = runningModel
         self.distanceStatsView.setAttributedStats(stats: runningModel.distance ?? "0.0")
@@ -294,13 +301,13 @@ extension RunningRecordVC {
         guard let time = runningModel.getFormattedTotalTime() else { return }
         guard let secondsPerKm = runningModel.getIntPace() else { return }
         let pace = RNTimeFormatter.secondsToHHMMSS(seconds: secondsPerKm)
-        
+
         let requestDto = RunningRecordRequestDto(courseId: courseId,
                                                  publicCourseId: runningModel.publicCourseId,
                                                  title: titleText,
                                                  time: time,
                                                  pace: pace)
-        
+
         LoadingIndicator.showLoading()
         recordProvider.request(.recordRunning(param: requestDto)) { [weak self] response in
             guard let self = self else { return }
@@ -310,6 +317,7 @@ extension RunningRecordVC {
                 let status = result.statusCode
                 if 200..<300 ~= status {
                     analyze(buttonName: GAEvent.Button.clickStoreRunningTracking)
+                    WatchSessionService.shared.sendRunReset()
                     self.showToastOnWindow(text: "저장한 러닝 기록은 마이페이지에서 볼 수 있어요.")
                     self.navigationController?.popToRootViewController(animated: true)
                 }

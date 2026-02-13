@@ -39,11 +39,12 @@ struct ActiveRunView: View {
 
                 // Course progress bar
                 if sessionManager.runningData.totalCourseDistance > 0 {
-                    ProgressView(value: sessionManager.runningData.progress)
-                        .progressViewStyle(.linear)
-                        .tint(Color.runnectPrimary)
-                        .frame(height: 4)
-                        .padding(.horizontal, 8)
+                    CourseProgressBar(
+                        progress: sessionManager.runningData.progress,
+                        currentDistance: sessionManager.runningData.distance,
+                        totalDistance: sessionManager.runningData.totalCourseDistance
+                    )
+                    .padding(.horizontal, 8)
                 }
 
                 // Time and Pace row
@@ -79,11 +80,20 @@ struct ActiveRunView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 10))
-                        .foregroundColor(.runnectHeartRate)
+                        .foregroundColor(heartRateZoneColor)
 
                     Text(heartRateText)
                         .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundColor(.runnectHeartRate)
+                        .foregroundColor(heartRateZoneColor)
+
+                    if workoutManager.heartRate > 0 {
+                        Text(workoutManager.currentZone.shortLabel)
+                            .font(.system(size: 8, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(Capsule().fill(workoutManager.currentZone.color))
+                    }
 
                     Spacer()
 
@@ -164,6 +174,10 @@ struct ActiveRunView: View {
         } else {
             return WatchTimeFormatter.secondsToHHMMSS(seconds: sessionManager.localElapsedTime)
         }
+    }
+
+    private var heartRateZoneColor: Color {
+        workoutManager.heartRate > 0 ? workoutManager.currentZone.color : .runnectHeartRate
     }
 
     private var heartRateText: String {
