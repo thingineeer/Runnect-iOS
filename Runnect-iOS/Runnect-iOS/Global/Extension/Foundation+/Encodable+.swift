@@ -14,7 +14,7 @@ extension Encodable {
         let data = try JSONEncoder().encode(self)
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
                 as? [String: Any] else {
-            throw NSError()
+            throw NSError(domain: "EncodableExtension", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert to dictionary"])
         }
         return dictionary
     }

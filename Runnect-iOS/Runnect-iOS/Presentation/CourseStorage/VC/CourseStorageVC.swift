@@ -310,9 +310,9 @@ extension CourseStorageVC {
             target: .createAndDeleteScrap(publicCourseId: publicCourseId, scrapTF: scrapTF),
             instance: BaseResponse<BlankData>.self,
             vc: self
-        ) { response in
+        ) { _ in
             LoadingIndicator.hideLoading()
-            
+
             self.getScrapCourseList()
         }
     }
@@ -324,9 +324,9 @@ extension CourseStorageVC {
             target: .deleteCourse(courseIdList: courseIdList),
             instance: BaseResponse<BlankData>.self,
             vc: self
-        ) { response in
+        ) { _ in
             LoadingIndicator.hideLoading()
-            
+
             self.privateCourseListView.isEditMode = false
             self.getPrivateCourseList()
             self.finishEditMode(withDuration: 0.7)

@@ -368,6 +368,7 @@ extension CourseDiscoveryVC: UICollectionViewDelegate, UICollectionViewDataSourc
         }
     }
     
+    // swiftlint:disable:next cyclomatic_complexity
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.section {
         case Section.adImage:
@@ -674,6 +675,7 @@ extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
 // MARK: - Network
 
 extension CourseDiscoveryVC {
+    // swiftlint:disable:next cyclomatic_complexity
     private func getCourseData(pageNo: Int) {
         isFetchingData = true
 
@@ -804,4 +806,3 @@ extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
         }
     }
 }
-
