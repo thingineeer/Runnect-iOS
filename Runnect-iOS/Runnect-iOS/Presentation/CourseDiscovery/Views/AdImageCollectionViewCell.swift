@@ -156,16 +156,33 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         ).cgPath
         gradientLayer.frame = gradientView.bounds
         shimmerGradientLayer.frame = shimmerView.bounds
+
+        // containerView bounds가 확정된 후 carousel cell 크기를 갱신
+        if containerView.bounds.size != .zero {
+            bannerCollectionView.collectionViewLayout.invalidateLayout()
+        }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
         stopAutoScroll()
-        if shouldShowAds && !isAd1Loaded && !isAd2Loaded {
-            adsResponseCount = 0
-            carouselShown = false
-            loadAdMobBanners()
-        }
+        cancelShimmerTimeout()
+
+        // 상태 초기화
+        adsResponseCount = 0
+        carouselShown = false
+        isAd1Loaded = false
+        isAd2Loaded = false
+        currentPage = 0
+        pages = imgBanners.map { .image($0) }
+
+        // UI 초기 상태로 리셋
+        bannerCollectionView.isHidden = true
+        gradientView.isHidden = true
+        pageControlStack.isHidden = true
+        adLabelContainer.alpha = 0
+        shimmerView.isHidden = false
+        shimmerView.alpha = 1
     }
 
     deinit {
@@ -368,9 +385,20 @@ extension AdImageCollectionViewCell {
     private func updatePageDots() {
         guard !pages.isEmpty else { return }
         let activeIndex = currentPage % pages.count
+
+        let isAdPage: Bool
+        if case .ad = pages[activeIndex] {
+            isAdPage = true
+        } else {
+            isAdPage = false
+        }
+
+        let activeColor: UIColor = isAdPage ? .m1 : .white
+        let inactiveColor: UIColor = isAdPage ? UIColor.m1.withAlphaComponent(0.3) : UIColor.white.withAlphaComponent(0.5)
+
         for (index, dot) in pageControlStack.arrangedSubviews.enumerated() {
             let isActive = index == activeIndex
-            dot.backgroundColor = isActive ? .white : UIColor.white.withAlphaComponent(0.5)
+            dot.backgroundColor = isActive ? activeColor : inactiveColor
             dot.layer.cornerRadius = 2
             dot.snp.remakeConstraints {
                 $0.width.equalTo(isActive ? 16 : 4)
@@ -398,6 +426,19 @@ extension AdImageCollectionViewCell {
 
         UIView.animate(withDuration: 0.2) {
             self.adLabelContainer.alpha = isAdPage ? 1 : 0
+            self.gradientView.alpha = isAdPage ? 0 : 1
+        }
+        updateDotColors(isAdPage: isAdPage)
+    }
+
+    private func updateDotColors(isAdPage: Bool) {
+        let activeColor: UIColor = isAdPage ? .m1 : .white
+        let inactiveColor: UIColor = isAdPage ? UIColor.m1.withAlphaComponent(0.3) : UIColor.white.withAlphaComponent(0.5)
+
+        guard !pages.isEmpty else { return }
+        let activeIndex = currentPage % pages.count
+        for (index, dot) in pageControlStack.arrangedSubviews.enumerated() {
+            dot.backgroundColor = index == activeIndex ? activeColor : inactiveColor
         }
     }
 }
@@ -610,7 +651,9 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
             adBannerView.removeFromSuperview()
             cell.contentView.addSubview(adBannerView)
             adBannerView.snp.makeConstraints {
-                $0.center.equalToSuperview()
+                $0.centerX.equalToSuperview()
+                $0.centerY.equalToSuperview()
+                $0.leading.trailing.equalToSuperview()
             }
         }
         return cell
@@ -621,7 +664,13 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
 
 extension AdImageCollectionViewCell: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return containerView.bounds.size
+        let size = containerView.bounds.size
+        guard size.width > 0 && size.height > 0 else {
+            let bannerWidth = UIScreen.main.bounds.width - 32
+            let bannerHeight = bannerWidth * (174.0 / 390.0)
+            return CGSize(width: bannerWidth, height: bannerHeight)
+        }
+        return size
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
