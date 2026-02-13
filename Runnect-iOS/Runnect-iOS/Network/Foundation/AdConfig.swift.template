@@ -1,0 +1,27 @@
+//
+//  AdConfig.swift
+//  Runnect-iOS
+//
+//  이 파일을 복사하여 AdConfig.swift로 이름을 변경한 후
+//  프로덕션 광고 단위 ID를 입력하세요.
+//
+
+import Foundation
+
+enum AdConfig {
+    static var bannerAdUnitId: String {
+        #if DEBUG
+        return "ca-app-pub-3940256099942544/2934735716" // Google 테스트 배너 광고 단위 ID
+        #else
+        return "<프로덕션 배너 광고 단위 ID>"
+        #endif
+    }
+
+    static var nativeAdUnitId: String {
+        #if DEBUG
+        return "ca-app-pub-3940256099942544/3986624511" // Google 테스트 네이티브 광고 단위 ID
+        #else
+        return "<프로덕션 네이티브 광고 단위 ID>"
+        #endif
+    }
+}

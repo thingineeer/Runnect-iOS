@@ -19,6 +19,7 @@
 		71288ED32B26ED2500D6C921 /* UserUploadedLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71288ED22B26ED2500D6C921 /* UserUploadedLabelCell.swift */; };
 		712DB0702B443ACC0013FD79 /* GAEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712DB06F2B443ACC0013FD79 /* GAEvent.swift */; };
 		712F661D2A7B7BAB00D9539B /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712F661C2A7B7BAB00D9539B /* Config.swift */; };
+		D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60580146C4D0444DCFA48DF /* AdConfig.swift */; };
 		7136BF8A2AF921A900679364 /* CustomBottomSheetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7136BF892AF921A900679364 /* CustomBottomSheetVC.swift */; };
 		715D36E82B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 715D36E72B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift */; };
 		71773C8E2B6BDF3B0041605E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 71773C8D2B6BDF3B0041605E /* GoogleService-Info.plist */; };
@@ -219,6 +220,7 @@
 		71288ED22B26ED2500D6C921 /* UserUploadedLabelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUploadedLabelCell.swift; sourceTree = "<group>"; };
 		712DB06F2B443ACC0013FD79 /* GAEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAEvent.swift; sourceTree = "<group>"; };
 		712F661C2A7B7BAB00D9539B /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B60580146C4D0444DCFA48DF /* AdConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdConfig.swift; sourceTree = "<group>"; };
 		7136BF892AF921A900679364 /* CustomBottomSheetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBottomSheetVC.swift; sourceTree = "<group>"; };
 		715D36E72B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUploadedCourseResponseDto.swift; sourceTree = "<group>"; };
 		71773C8D2B6BDF3B0041605E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -1082,6 +1084,7 @@
 				CE40BB1D2968054F0030ABCA /* BaseResponse.swift */,
 				CE5875A1296015A2005D967E /* NetworkLoggerPlugin.swift */,
 				712F661C2A7B7BAB00D9539B /* Config.swift */,
+				B60580146C4D0444DCFA48DF /* AdConfig.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -1681,6 +1684,7 @@
 				CE6655CA295D84DD00C64E12 /* UserDefaultKeyList.swift in Sources */,
 				71802C5C2B3364C2008DBCEE /* CourseDetailScrapCountDto.swift in Sources */,
 				712F661D2A7B7BAB00D9539B /* Config.swift in Sources */,
+				D1508343A884565BF31ECB04 /* AdConfig.swift in Sources */,
 				23EE06CB2AC2AF3E00CB3FF8 /* KakaoAddressSearchingResponseDto.swift in Sources */,
 				CE6655F2295D894D00C64E12 /* UIView+.swift in Sources */,
 				CE9291252965C9FB0010959C /* CourseDetailInfoView.swift in Sources */,
