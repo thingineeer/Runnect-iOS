@@ -40,6 +40,7 @@ final class CourseDiscoveryVC: UIViewController {
     private var pageNo: Int = 1
     private var sort = "date"
     private var isFetchingData = false
+    private var isScrolledDown = false
 
     /// 남은 아이템이 이 수 이하일 때 다음 페이지 프리페치 시작
     private let prefetchThreshold = 6
@@ -531,11 +532,14 @@ extension CourseDiscoveryVC: UIScrollViewDelegate {
     
     private func changeButtonStyleOnScroll() {
         let contentOffsetY = mapCollectionView.contentOffset.y
-        let scrollThreshold = mapCollectionView.bounds.size.height * 0.1 // 10% 스크롤 했으면 UI 변경
-        
+        let scrollThreshold = mapCollectionView.bounds.size.height * 0.1
+        let shouldBeDown = contentOffsetY > scrollThreshold
+
+        guard shouldBeDown != isScrolledDown else { return }
+        isScrolledDown = shouldBeDown
+
         UIView.animate(withDuration: 0.25) {
-            if contentOffsetY > scrollThreshold {
-                // 10% 이상 스크롤 했을 때
+            if shouldBeDown {
                 self.downScroll()
             } else {
                 self.upScroll()

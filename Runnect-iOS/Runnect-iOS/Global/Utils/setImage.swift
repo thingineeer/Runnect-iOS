@@ -40,9 +40,9 @@ public extension UIImageView {
             with: resource,
             placeholder: placeholder,
             options: [
-                .scaleFactor(UIScreen.main.scale/4),
-                .transition(.fade(0.5)),
-                .cacheMemoryOnly
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.3)),
+                .cacheOriginalImage
             ],
             completionHandler: { result in
                 result.success { imageResult in

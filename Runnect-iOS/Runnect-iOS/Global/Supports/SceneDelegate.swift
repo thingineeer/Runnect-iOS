@@ -138,8 +138,22 @@ extension SceneDelegate {
     }
 
     private func incrementAppLaunchCount() {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let lastVersion = UserDefaultKeyList.Ad.lastKnownAppVersion
         let current = UserDefaultKeyList.Ad.appLaunchCount ?? 0
-        UserDefaultKeyList.Ad.appLaunchCount = current + 1
+
+        // 앱 업데이트 또는 복귀 유저 감지: 토큰이 있는데 카운트가 낮으면 복귀 유저
+        if current <= 3 && UserManager.shared.hasAccessToken {
+            // 복귀 유저 — 광고 유예기간 즉시 해제
+            UserDefaultKeyList.Ad.appLaunchCount = 4
+        } else {
+            UserDefaultKeyList.Ad.appLaunchCount = current + 1
+        }
+
+        // 향후 업데이트 감지를 위한 버전 추적
+        if lastVersion != currentVersion {
+            UserDefaultKeyList.Ad.lastKnownAppVersion = currentVersion
+        }
     }
 
     private func requestTrackingAuthorizationIfNeeded() {

@@ -14,5 +14,6 @@ struct UserDefaultKeyList {
 
     struct Ad {
         @UserDefaultWrapper<Int>(key: "appLaunchCount") public static var appLaunchCount
+        @UserDefaultWrapper<String>(key: "lastKnownAppVersion") public static var lastKnownAppVersion
     }
 }
