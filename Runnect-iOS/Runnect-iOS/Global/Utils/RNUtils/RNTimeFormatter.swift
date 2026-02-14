@@ -16,7 +16,7 @@ class RNTimeFormatter {
         formatter.unitsStyle = .positional
         formatter.zeroFormattingBehavior = .pad
 
-        let formattedString = formatter.string(from: TimeInterval(interval))!
+        let formattedString = formatter.string(from: TimeInterval(interval)) ?? "00:00:00"
         return formattedString
     }
     
@@ -34,11 +34,11 @@ class RNTimeFormatter {
     static func changeDateSplit(date: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        let convertDate = dateFormatter.date(from: date)
-        
+        guard let convertDate = dateFormatter.date(from: date) else { return date }
+
         let resultDateFormatter = DateFormatter()
         resultDateFormatter.dateFormat = "yyyy.MM.dd"
-        
-        return resultDateFormatter.string(from: convertDate!)
+
+        return resultDateFormatter.string(from: convertDate)
     }
 }

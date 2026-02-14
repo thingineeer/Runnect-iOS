@@ -29,6 +29,7 @@ final class RunTrackingVC: UIViewController {
     private let runLocationManager = CLLocationManager()
     private var lastLocation: CLLocation?
     private var runDistance: Double = 0.0  // meters
+    private let distanceQueue = DispatchQueue(label: "com.runnect.distance", qos: .userInitiated)
     
     // MARK: - UI Components
     
@@ -133,18 +134,22 @@ final class RunTrackingVC: UIViewController {
         self.setUI()
         self.setLayout()
         self.setAddTarget()
+        self.bindStopwatch()
+        self.observeWatchCommand()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.bindStopwatch()
+        self.stopwatch.isRunning = true
         self.startRunLocationTracking()
         self.startWatchDataSync()
-        self.observeWatchCommand()
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+        cancelBag.cancel()
+        stopRunLocationTracking()
+        WatchSessionService.shared.stopSendingRunningData()
     }
 }
 
@@ -183,8 +188,6 @@ extension RunTrackingVC {
     }
     
     private func bindStopwatch() {
-        stopwatch.isRunning.toggle()
-        
         stopwatch.$elapsedTime.sink { [weak self] time in
             guard let self = self else { return }
             let time = Int(time)
@@ -201,20 +204,25 @@ extension RunTrackingVC {
     
     private func startRunLocationTracking() {
         runLocationManager.delegate = self
-        runLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        runLocationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         runLocationManager.distanceFilter = 5
+        runLocationManager.allowsBackgroundLocationUpdates = false
+        runLocationManager.pausesLocationUpdatesAutomatically = true
+        runLocationManager.activityType = .fitness
         runLocationManager.startUpdatingLocation()
     }
 
     private func stopRunLocationTracking() {
         runLocationManager.stopUpdatingLocation()
         runLocationManager.delegate = nil
+        lastLocation = nil
     }
 
     private func startWatchDataSync() {
         WatchSessionService.shared.startSendingRunningData { [weak self] in
             guard let self, let runningModel = self.runningModel else { return nil }
-            let actualDistanceKm = self.runDistance / 1000.0
+            let currentDistance = self.distanceQueue.sync { self.runDistance }
+            let actualDistanceKm = currentDistance / 1000.0
             let totalCourseDistance = Double(runningModel.distance ?? "0.0") ?? 0.0
             let progress = totalCourseDistance > 0 ? min(actualDistanceKm / totalCourseDistance, 1.0) : 0.0
             let elapsedTime = self.totalTime
@@ -277,7 +285,7 @@ extension RunTrackingVC {
         alertVC.modalPresentationStyle = .overFullScreen
         alertVC.rightButtonTapAction = { [weak self] in
             alertVC.dismiss(animated: false)
-            self?.stopwatch.isRunning.toggle()
+            self?.stopwatch.isRunning = false
             self?.stopRunLocationTracking()
             WatchSessionService.shared.stopSendingRunningData()
             WatchSessionService.shared.sendRunCompleted()
@@ -289,7 +297,7 @@ extension RunTrackingVC {
     @objc private func handleWatchCommand(_ notification: Notification) {
         guard let command = notification.userInfo?["command"] as? String,
               command == "endRunning" else { return }
-        stopwatch.isRunning.toggle()
+        stopwatch.isRunning = false
         stopRunLocationTracking()
         WatchSessionService.shared.stopSendingRunningData()
         WatchSessionService.shared.sendRunCompleted()
@@ -303,12 +311,17 @@ extension RunTrackingVC: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let newLocation = locations.last,
               newLocation.horizontalAccuracy >= 0,
-              newLocation.horizontalAccuracy < 20 else { return }
+              newLocation.horizontalAccuracy < 30 else { return }
 
         if let last = lastLocation {
             let delta = newLocation.distance(from: last)
-            if delta > 1 {
-                runDistance += delta
+            let timeDelta = newLocation.timestamp.timeIntervalSince(last.timestamp)
+
+            // GPS 노이즈 필터: 1m 미만 무시, 50m/초 이상(180km/h) 비현실적 이동 무시
+            if delta > 1 && timeDelta > 0 && (delta / timeDelta) < 50 {
+                distanceQueue.sync {
+                    runDistance += delta
+                }
             }
         }
         lastLocation = newLocation

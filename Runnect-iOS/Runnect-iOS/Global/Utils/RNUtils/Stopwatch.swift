@@ -30,7 +30,8 @@ class Stopwatch {
         self.timer?.cancel()
         self.timer = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
-            .sink { _ in
+            .sink { [weak self] _ in
+                guard let self = self else { return }
                 self.elapsedTime = self.getElapsedTime()
             }
     }
@@ -50,6 +51,7 @@ class Stopwatch {
     }
     
     private func getElapsedTime() -> TimeInterval {
-        return -(self.startTime?.timeIntervalSinceNow ?? 0)+self.accumulatedTime
+        guard let start = self.startTime else { return self.accumulatedTime }
+        return max(0, Date().timeIntervalSince(start) + self.accumulatedTime)
     }
 }

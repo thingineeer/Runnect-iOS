@@ -66,11 +66,13 @@ extension SplashVC {
     }
     
     private func pushToSignInView() {
+        cancelBag.cancel()
         let signInVC = SignInSocialLoginVC()
         self.navigationController?.pushViewController(signInVC, animated: true)
     }
-    
+
     private func pushToTabBarController() {
+        cancelBag.cancel()
         let tabBarController = TabBarController()
         guard let window = self.view.window else { return }
         ViewControllerUtils.setRootViewController(window: window, viewController: tabBarController, withAnimation: true)

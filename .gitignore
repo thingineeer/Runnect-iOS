@@ -145,3 +145,15 @@ firebase-debug.log
 .cursor/
 .cursorignore
 .cursorindexingignore
+
+### 기획/비즈니스 문서 (외부 비공개) ###
+docs/
+docs/**
+
+### 환경 변수 / 시크릿 ###
+.env
+.env.*
+*.secret
+*.secrets
+credentials.json
+secrets.json

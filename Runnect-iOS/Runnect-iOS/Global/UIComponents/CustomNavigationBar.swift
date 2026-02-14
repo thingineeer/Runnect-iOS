@@ -262,11 +262,12 @@ extension CustomNavigationBar {
     
     private func setTitleWithLeftButtonLayout() {
         self.addSubviews(leftButton, centerTitleLabel)
-        
+
         leftButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.width.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(-4)
+            $0.width.equalTo(56)
+            $0.height.equalTo(48)
         }
         
         centerTitleLabel.snp.makeConstraints {
@@ -276,11 +277,12 @@ extension CustomNavigationBar {
     
     private func setSearchLayout() {
         self.addSubviews(leftButton, textField, rightButton)
-        
+
         leftButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.width.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(-4)
+            $0.width.equalTo(56)
+            $0.height.equalTo(48)
         }
         
         rightButton.snp.makeConstraints {
@@ -298,11 +300,12 @@ extension CustomNavigationBar {
     
     private func setReportButtonLayout() {
         self.addSubviews(leftButton, reportButton)
-        
+
         leftButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.width.height.equalTo(48)
+            $0.leading.equalToSuperview().offset(-4)
+            $0.width.equalTo(56)
+            $0.height.equalTo(48)
         }
         
         reportButton.snp.makeConstraints {

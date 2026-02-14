@@ -54,9 +54,10 @@ extension CountDownVC {
     private func animateTimeLabel() {
         self.timeLabel.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
         self.timeLabel.text = "\(self.count)"
-        UIView.animate(withDuration: 1.0, animations: {
-            self.timeLabel.transform = CGAffineTransform(scaleX: 1, y: 1)
-        }, completion: { _ in
+        UIView.animate(withDuration: 1.0, animations: { [weak self] in
+            self?.timeLabel.transform = CGAffineTransform(scaleX: 1, y: 1)
+        }, completion: { [weak self] _ in
+            guard let self = self else { return }
             self.count -= 1
             if self.count > 0 {
                 self.animateTimeLabel()
@@ -66,7 +67,7 @@ extension CountDownVC {
                 let runTrackingVC = RunTrackingVC()
                 runTrackingVC.setData(runningModel: runningModel)
                 self.navigationController?.pushViewController(runTrackingVC, animated: true)
-                
+
                 // CountDownVC를 navigationController 스택에서 제거하여 pop 하였을 때 더 이전 뷰로 넘어가지도록 함
                 self.navigationController?.viewControllers.removeAll { vc in
                     vc.isKind(of: CountDownVC.self)

@@ -21,6 +21,7 @@ final class RunningWaitingVC: UIViewController {
     private var publicCourseId: Int?
     private var courseModel: Course?
     private var courseTitle: String?
+    private var isProcessing = false
     
     private let courseProvider = Providers.courseProvider
     
@@ -129,9 +130,11 @@ extension RunningWaitingVC {
 
 extension RunningWaitingVC {
     @objc private func startButtonDidTap() {
+        guard !isProcessing else { return }
         guard handleVisitor() else { return }
         guard let courseModel = self.courseModel, self.distanceLabel.text != "0.0" else { return }
-        
+        isProcessing = true
+
         let countDownVC = CountDownVC()
         let runningModel = RunningModel(courseId: self.courseId,
                                         publicCourseId: self.publicCourseId,
@@ -301,11 +304,14 @@ extension RunningWaitingVC {
 
 extension RunningWaitingVC {
     private func deleteCourse() {
+        guard !isProcessing else { return }
         guard let courseId = self.courseId else { return }
+        isProcessing = true
         LoadingIndicator.showLoading()
         courseProvider.request(.deleteCourse(courseIdList: [courseId])) { [weak self] response in
             LoadingIndicator.hideLoading()
             guard let self = self else { return }
+            self.isProcessing = false
             switch response {
             case .success(let result):
                 print("리절트", result)
@@ -360,9 +366,10 @@ extension RunningWaitingVC {
         DropDown.appearance().shadowOpacity = 1
         DropDown.appearance().shadowRadius = 10
         
-        menu.selectionAction = { [unowned self] (_, item) in
+        menu.selectionAction = { [weak self] (_, item) in
+            guard let self = self else { return }
             menu.clearSelection()
-            
+
             switch item {
             case "수정하기":
                 analyze(buttonName: GAEvent.Button.clickMyStorageTryModify)
@@ -371,9 +378,9 @@ extension RunningWaitingVC {
                 analyze(buttonName: GAEvent.Button.clickMyStorageTryRemove)
                 let deleteAlertVC = RNAlertVC(description: "러닝 기록을 정말로 삭제하시겠어요?").setButtonTitle("취소", "삭제하기")
                 deleteAlertVC.modalPresentationStyle = .overFullScreen
-                deleteAlertVC.rightButtonTapAction = {
+                deleteAlertVC.rightButtonTapAction = { [weak self] in
                     deleteAlertVC.dismiss(animated: false)
-                    self.deleteCourse()
+                    self?.deleteCourse()
                 }
                 self.present(deleteAlertVC, animated: false)
             default:

@@ -24,7 +24,7 @@ final class CourseSearchVC: UIViewController {
     
     // MARK: - UI Components
     
-    private lazy var naviBar = CustomNavigationBar(self, type: .search).setTextFieldPlaceholder(placeholder: "지역과 키워드 위주로 검색해보세요").showKeyboard()
+    private lazy var naviBar = CustomNavigationBar(self, type: .search).setTextFieldPlaceholder(placeholder: "지역과 키워드 위주로 검색해보세요")
     private let dividerView = UIView().then {
         $0.backgroundColor = .g5
     }
@@ -75,7 +75,12 @@ final class CourseSearchVC: UIViewController {
         setTabBar()
         analyze(screenName: GAEvent.View.viewCourseSearch)
     }
-    
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        naviBar.showKeyboard()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard let keyword = self.keyword else { return }

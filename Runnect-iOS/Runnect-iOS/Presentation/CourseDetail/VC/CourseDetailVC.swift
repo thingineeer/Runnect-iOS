@@ -147,6 +147,8 @@ final class CourseDetailVC: UIViewController {
         setRefreshControl()
         analyze(screenName: GAEvent.View.viewCourseDetail)
         self.hideTabBar(wantsToHide: true)
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -602,6 +604,14 @@ extension CourseDetailVC {
                 self.showNetworkFailureToast()
             }
         }
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension CourseDetailVC: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return navigationController?.viewControllers.count ?? 0 > 1
     }
 }
 

@@ -143,6 +143,15 @@ final class CourseDrawingVC: UIViewController {
         self.bindMapView()
         self.setNavigationGesture(false)
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.setNavigationGesture(true)
+    }
+
+    deinit {
+        cancelBag.cancel()
+    }
 }
 
 // MARK: - Methods
@@ -470,7 +479,7 @@ extension CourseDrawingVC {
 extension CourseDrawingVC {
     private func makecourseDrawingRequestDto() -> CourseDrawingRequestDto? {
         guard let image = self.pathImage else { return nil }
-        guard let imageData = image.jpegData(compressionQuality: 1.0) else { return nil }
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return nil }
         guard let departureLocationModel = self.departureLocationModel else { return nil }
         let path = mapView.getMarkersLatLng().map { $0.toRNLocationModel() }
         

@@ -76,6 +76,13 @@ final class RNMapView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    deinit {
+        map.mapView.removeObserver(self, forKeyPath: "positionMode")
+        locationManager.stopUpdatingLocation()
+        locationManager.delegate = nil
+        cancelBag.cancel()
+    }
 }
 
 // MARK: - Methods
@@ -167,20 +174,20 @@ extension RNMapView {
         let userLatLng = getUserLocation()
         let cameraUpdate = NMFCameraUpdate(scrollTo: userLatLng)
         
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [weak self] in
             cameraUpdate.animation = .easeIn
-            self.map.mapView.moveCamera(cameraUpdate)
+            self?.map.mapView.moveCamera(cameraUpdate)
         }
         return self
     }
-    
+
     /// 지정 위치로 카메라 이동
     @discardableResult
     func moveToLocation(location: NMGLatLng) -> Self {
         let cameraUpdate = NMFCameraUpdate(scrollTo: location)
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [weak self] in
             cameraUpdate.animation = .easeIn
-            self.map.mapView.moveCamera(cameraUpdate)
+            self?.map.mapView.moveCamera(cameraUpdate)
         }
         return self
     }
@@ -284,8 +291,8 @@ extension RNMapView {
                 print("카메라 이동 취소")
                 LoadingIndicator.hideLoading()
             } else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.makePathImage()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.makePathImage()
                     LoadingIndicator.hideLoading()
                 }
             }
@@ -319,10 +326,10 @@ extension RNMapView {
     }
     
     private func getLocationAuth() {
-        DispatchQueue.global().async { [self] in
+        DispatchQueue.global().async { [weak self] in
             if CLLocationManager.locationServicesEnabled() {
                 print("위치 상태 On 상태")
-                self.locationManager.startUpdatingLocation()
+                self?.locationManager.startUpdatingLocation()
             } else {
                 print("위치 상태 Off 상태")
             }

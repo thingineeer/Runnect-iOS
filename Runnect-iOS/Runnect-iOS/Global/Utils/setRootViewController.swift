@@ -15,10 +15,16 @@ import UIKit
           
 */
 enum ViewControllerUtils {
+    private static var isTransitioning = false
+
     static func setRootViewController(window: UIWindow, viewController: UIViewController, withAnimation: Bool) {
+        guard !isTransitioning else { return }
+        isTransitioning = true
+
         if !withAnimation {
             window.rootViewController = viewController
             window.makeKeyAndVisible()
+            isTransitioning = false
             return
         }
 
@@ -26,12 +32,15 @@ enum ViewControllerUtils {
             viewController.view.addSubview(snapshot)
             window.rootViewController = viewController
             window.makeKeyAndVisible()
-            
+
             UIView.animate(withDuration: 0.4, animations: {
                 snapshot.layer.opacity = 0
             }, completion: { _ in
                 snapshot.removeFromSuperview()
+                isTransitioning = false
             })
+        } else {
+            isTransitioning = false
         }
     }
 }

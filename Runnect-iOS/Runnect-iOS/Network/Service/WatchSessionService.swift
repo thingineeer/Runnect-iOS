@@ -67,11 +67,24 @@ final class WatchSessionService: NSObject, ObservableObject {
         sendIfReachable(["messageType": "runReset"])
     }
 
-    private func sendIfReachable(_ message: [String: Any]) {
+    private func sendIfReachable(_ message: [String: Any], retryCount: Int = 0) {
         guard WCSession.default.activationState == .activated,
-              WCSession.default.isReachable else { return }
-        WCSession.default.sendMessage(message, replyHandler: nil) { error in
+              WCSession.default.isReachable else {
+            // Watch 미연결 시 transferUserInfo로 대기열에 추가 (중요 메시지만)
+            if let type = message["messageType"] as? String,
+               ["runCompleted", "runReset"].contains(type) {
+                WCSession.default.transferUserInfo(message)
+            }
+            return
+        }
+        WCSession.default.sendMessage(message, replyHandler: nil) { [weak self] error in
             print("[WatchSession] Send error: \(error.localizedDescription)")
+            // 중요 메시지 1회 재시도
+            if retryCount < 1 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self?.sendIfReachable(message, retryCount: retryCount + 1)
+                }
+            }
         }
     }
 }
