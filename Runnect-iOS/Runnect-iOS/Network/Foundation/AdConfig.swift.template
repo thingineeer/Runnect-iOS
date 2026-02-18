@@ -24,4 +24,12 @@ enum AdConfig {
         return "<프로덕션 네이티브 광고 단위 ID>"
         #endif
     }
+
+    static var appOpenAdUnitId: String {
+        #if DEBUG
+        return "ca-app-pub-3940256099942544/5575463023" // Google 테스트 앱 오픈
+        #else
+        return "<프로덕션 앱 오픈 광고 단위 ID>"
+        #endif
+    }
 }

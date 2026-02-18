@@ -188,8 +188,7 @@ extension CourseListCVC {
         
         courseImageView.snp.makeConstraints {
             $0.leading.top.trailing.equalToSuperview()
-            let imageHeight = contentView.frame.width * (124/174)
-            $0.height.equalTo(imageHeight)
+            $0.height.equalTo(courseImageView.snp.width).multipliedBy(124.0 / 174.0)
         }
         
         imageCoverView.snp.makeConstraints {

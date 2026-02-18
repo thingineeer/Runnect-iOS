@@ -29,7 +29,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
     private static let adPageInterval: TimeInterval = 5.0
     private static let imagePageInterval: TimeInterval = 4.0
-    private static let adFreeAppLaunchThreshold = 3
+    private static let adFreeAppLaunchThreshold = 1
 
     // MARK: - Properties
 
@@ -43,6 +43,8 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     private let imgBanners: [UIImage] = [ImageLiterals.imgBanner1, ImageLiterals.imgBanner2, ImageLiterals.imgBanner3]
     private var pages: [PageType] = []
     private var currentPage: Int = 0
+    private var lastLayoutSize: CGSize = .zero
+    private weak var cachedParentScrollView: UIScrollView?
 
     private var shouldShowAds: Bool {
         guard UserManager.shared.userType != .visitor else { return false }
@@ -157,8 +159,10 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         gradientLayer.frame = gradientView.bounds
         shimmerGradientLayer.frame = shimmerView.bounds
 
-        // containerView bounds가 확정된 후 carousel cell 크기를 갱신
-        if containerView.bounds.size != .zero {
+        // containerView bounds가 변경된 경우에만 carousel cell 크기를 갱신 (1회성)
+        let currentSize = containerView.bounds.size
+        if currentSize != .zero && currentSize != lastLayoutSize {
+            lastLayoutSize = currentSize
             bannerCollectionView.collectionViewLayout.invalidateLayout()
         }
     }
@@ -166,6 +170,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         stopAutoScroll()
+        cachedParentScrollView = nil
         // 이미 캐러셀이 표시된 상태면 리셋하지 않음
         // 새 광고 로드가 필요할 때만 리셋 (setRootViewController에서 처리)
     }
@@ -575,9 +580,11 @@ extension AdImageCollectionViewCell: UIScrollViewDelegate {
     }
 
     private func findParentScrollView() -> UIScrollView? {
+        if let cached = cachedParentScrollView { return cached }
         var view = superview
         while let v = view {
             if let scrollView = v as? UIScrollView, scrollView !== bannerCollectionView {
+                cachedParentScrollView = scrollView
                 return scrollView
             }
             view = v.superview

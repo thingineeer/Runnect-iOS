@@ -99,6 +99,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         requestTrackingAuthorizationIfNeeded()
+        AppOpenAdManager.shared.showAdIfAvailable()
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
@@ -107,8 +108,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+        AppOpenAdManager.shared.preloadAd()
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -143,9 +143,9 @@ extension SceneDelegate {
         let current = UserDefaultKeyList.Ad.appLaunchCount ?? 0
 
         // 앱 업데이트 또는 복귀 유저 감지: 토큰이 있는데 카운트가 낮으면 복귀 유저
-        if current <= 3 && UserManager.shared.hasAccessToken {
+        if current <= 1 && UserManager.shared.hasAccessToken {
             // 복귀 유저 — 광고 유예기간 즉시 해제
-            UserDefaultKeyList.Ad.appLaunchCount = 4
+            UserDefaultKeyList.Ad.appLaunchCount = 2
         } else {
             UserDefaultKeyList.Ad.appLaunchCount = current + 1
         }

@@ -62,6 +62,10 @@ struct Config {
         return AdConfig.nativeAdUnitId
     }
 
+    static var adMobAppOpenAdUnitId: String {
+        return AdConfig.appOpenAdUnitId
+    }
+
     static var accessToken: String {
         return UserManager.shared.accessToken ?? ""
     }

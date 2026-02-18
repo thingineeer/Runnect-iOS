@@ -51,12 +51,13 @@ final class CourseDiscoveryVC: UIViewController {
 
     // MARK: - Native Ad Properties
 
-    private static let nativeAdInterval = 10
-    private static let maxNativeAds = 3
-    private static let adFreeAppLaunchThreshold = 3
+    private static let nativeAdInterval = 7
+    private static let maxNativeAds = 5
+    private static let adFreeAppLaunchThreshold = 1
 
     private var nativeAds = [GADNativeAd]()
     private var adLoader: GADAdLoader?
+    private var cachedAdPositions: Set<Int> = []
 
     private var shouldShowNativeAds: Bool {
         guard UserManager.shared.userType != .visitor else { return false }
@@ -127,6 +128,7 @@ extension CourseDiscoveryVC {
     
     private func setData(courseList: [PublicCourse]) {
         self.courseList = courseList
+        rebuildAdPositionCache()
         mapCollectionView.reloadData()
         self.emptyView.isHidden = !courseList.isEmpty
     }
@@ -175,19 +177,30 @@ extension CourseDiscoveryVC {
 
     // MARK: - Native Ad Helpers
 
-    /// 광고가 삽입되는 위치인지 확인
+    /// 광고가 삽입되는 위치인지 확인 (캐시 기반)
     private func isAdPosition(at item: Int) -> Bool {
-        guard shouldShowNativeAds, !nativeAds.isEmpty else { return false }
-        guard item > 0 else { return false }
-        // 매 10개 코스 뒤 (item 10, 21, 32, ...)
-        // item 10 -> 광고 0번째 (코스 0~9 뒤)
-        // item 21 -> 광고 1번째 (코스 10~19 뒤)
-        let adInterval = Self.nativeAdInterval + 1 // 코스 10개 + 광고 1개 = 11개 단위
-        if (item + 1) % adInterval == 0 {
-            let adIndex = (item + 1) / adInterval - 1
-            return adIndex < nativeAds.count
+        return cachedAdPositions.contains(item)
+    }
+
+    /// courseList 또는 nativeAds 변경 시 광고 위치 캐시 재계산
+    private func rebuildAdPositionCache() {
+        cachedAdPositions.removeAll()
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return }
+        let adInterval = Self.nativeAdInterval + 1
+        for i in 0..<nativeAds.count {
+            let pos = (i + 1) * adInterval - 1
+            if pos < totalItemCountUncached() {
+                cachedAdPositions.insert(pos)
+            }
         }
-        return false
+    }
+
+    /// 캐시 재계산용 — cachedAdPositions에 의존하지 않는 totalItemCount
+    private func totalItemCountUncached() -> Int {
+        let courseCount = courseList.count
+        guard shouldShowNativeAds, !nativeAds.isEmpty else { return courseCount }
+        let possibleAds = min(courseCount / Self.nativeAdInterval, nativeAds.count)
+        return courseCount + possibleAds
     }
 
     /// collectionView item 인덱스에서 실제 courseList 인덱스로 변환
@@ -666,9 +679,9 @@ extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
     }
 
     func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
-        if !nativeAds.isEmpty {
-            mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
-        }
+        guard !nativeAds.isEmpty else { return }
+        rebuildAdPositionCache()
+        mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
     }
 
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
@@ -716,6 +729,7 @@ extension CourseDiscoveryVC {
 
                         if isFirstPage {
                             self.courseList = newCourses
+                            self.rebuildAdPositionCache()
                             // Section 4(courseList)만 갱신 — 배너·마라톤 등 불필요한 재구성 방지
                             self.mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
                             self.emptyView.isHidden = !newCourses.isEmpty
@@ -746,6 +760,7 @@ extension CourseDiscoveryVC {
 
         // courseList에 새 데이터 추가
         courseList.append(contentsOf: newCourses)
+        rebuildAdPositionCache()
 
         // 삽입 후 상태 (광고 포함 전체 아이템 수)
         let newTotalItemCount = totalItemCount()
