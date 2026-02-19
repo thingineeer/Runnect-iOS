@@ -28,7 +28,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     // MARK: - Constants
 
     private static let adPageInterval: TimeInterval = 5.0
-    private static let imagePageInterval: TimeInterval = 4.0
+    private static let imagePageInterval: TimeInterval = 3.0
     private static let adFreeAppLaunchThreshold = 1
     private static let nativeAdCellReuseId = "NativeAdCarouselCell"
 
@@ -84,22 +84,6 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
-
-    // MARK: - UI Components (AD Label - Glass Pill)
-
-    private let adLabelContainer = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark)).then {
-        $0.layer.cornerRadius = 11
-        $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.white.withAlphaComponent(0.15).cgColor
-        $0.layer.borderWidth = 0.5
-        $0.alpha = 0
-    }
-
-    private let adLabel = UILabel().then {
-        $0.text = "AD"
-        $0.font = .b9
-        $0.textColor = UIColor.white.withAlphaComponent(0.9)
-    }
 
     // MARK: - UI Components (Custom Page Control)
 
@@ -242,17 +226,17 @@ extension AdImageCollectionViewCell {
         }
     }
 
-    /// 광고 로드 상태에 따라 페이지 배열 구성: [배너1, 광고1?, 배너2, 광고2?, 배너3]
+    /// 광고 로드 상태에 따라 페이지 배열 구성: [광고1?, 배너1, 광고2?, 배너2, 배너3]
     private func buildPages() {
         var result: [PageType] = []
-        result.append(.image(imgBanners[0]))
         if let ad1 = nativeAd1 {
             result.append(.nativeAd(ad1))
         }
-        result.append(.image(imgBanners[1]))
+        result.append(.image(imgBanners[0]))
         if let ad2 = nativeAd2 {
             result.append(.nativeAd(ad2))
         }
+        result.append(.image(imgBanners[1]))
         result.append(.image(imgBanners[2]))
         pages = result
     }
@@ -283,7 +267,6 @@ extension AdImageCollectionViewCell {
             self.shimmerView.alpha = 1
             self.shimmerGradientLayer.removeAnimation(forKey: "shimmer")
             self.startAutoScroll()
-            self.updateAdPillVisibility()
         })
     }
 }
@@ -332,7 +315,6 @@ extension AdImageCollectionViewCell {
         shimmerView.isHidden = false
         shimmerView.alpha = 1
         bannerCollectionView.isHidden = true
-        adLabelContainer.alpha = 0
         pageControlStack.isHidden = true
         gradientView.isHidden = true
 
@@ -411,10 +393,7 @@ extension AdImageCollectionViewCell {
     }
 
     private func updateAdPillVisibility() {
-        guard !pages.isEmpty else {
-            adLabelContainer.alpha = 0
-            return
-        }
+        guard !pages.isEmpty else { return }
         let pageIndex = currentPage % pages.count
         let isAdPage: Bool
         if case .nativeAd = pages[pageIndex] {
@@ -424,7 +403,6 @@ extension AdImageCollectionViewCell {
         }
 
         UIView.animate(withDuration: 0.2) {
-            self.adLabelContainer.alpha = isAdPage ? 1 : 0
             self.gradientView.alpha = isAdPage ? 0 : 1
         }
         updateDotColors(isAdPage: isAdPage)
@@ -614,8 +592,7 @@ extension AdImageCollectionViewCell {
         contentView.backgroundColor = .clear
         contentView.addSubview(shadowView)
         shadowView.addSubview(containerView)
-        containerView.addSubviews(bannerCollectionView, shimmerView, gradientView, adLabelContainer, pageControlStack)
-        adLabelContainer.contentView.addSubview(adLabel)
+        containerView.addSubviews(bannerCollectionView, shimmerView, gradientView, pageControlStack)
 
         shadowView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -641,16 +618,6 @@ extension AdImageCollectionViewCell {
         }
         setupGradient()
 
-        adLabelContainer.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(12)
-            $0.height.equalTo(22)
-        }
-
-        adLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(8)
-        }
-
         pageControlStack.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(12)
@@ -658,7 +625,6 @@ extension AdImageCollectionViewCell {
 
         // 초기 상태: shimmer만 표시
         bannerCollectionView.isHidden = true
-        adLabelContainer.alpha = 0
         gradientView.isHidden = true
         pageControlStack.isHidden = true
     }

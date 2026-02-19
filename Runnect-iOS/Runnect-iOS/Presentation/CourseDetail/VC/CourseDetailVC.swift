@@ -36,6 +36,7 @@ final class CourseDetailVC: UIViewController {
     private var isMyCourse: Bool?
     
     private var scrapCount: Int = 0
+    private var hasLoadedDetail = false
     
     // MARK: - UI Components
     
@@ -153,7 +154,9 @@ final class CourseDetailVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.hideTabBar(wantsToHide: true)
-        getUploadedCourseDetail()
+        if !hasLoadedDetail {
+            getUploadedCourseDetail()
+        }
     }
 }
 
@@ -256,6 +259,7 @@ extension CourseDetailVC {
     }
     
     func setData(model: UploadedCourseDetailResponseDto) {
+        self.hasLoadedDetail = true
         self.uploadedCourseDetailModel = model
         self.userId = model.user.id
         self.publicCourseId = model.publicCourse.id
@@ -589,8 +593,10 @@ extension CourseDetailVC {
                 print("리절트", result)
                 let status = result.statusCode
                 if 200..<300 ~= status {
-                    delegate?.didRemoveCourse(publicCourseId: courseId)
-                    print("코스 \(courseId) 번 삭제 성공")
+                    if let publicCourseId = self.publicCourseId {
+                        self.delegate?.didRemoveCourse(publicCourseId: publicCourseId)
+                    }
+                    print("코스 삭제 성공 (publicCourseId: \(self.publicCourseId ?? -1))")
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.navigationController?.popViewController(animated: true)
                     }
@@ -631,6 +637,7 @@ extension CourseDetailVC {
             
             switch item {
             case "수정하기":
+                self.hasLoadedDetail = false
                 let courseEditVC = CourseEditVC()
                 courseEditVC.loadData(model: uploadedCourseDetailModel)
                 courseEditVC.publicCourseId = self.publicCourseId

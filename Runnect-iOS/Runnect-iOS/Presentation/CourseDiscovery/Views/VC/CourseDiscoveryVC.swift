@@ -41,6 +41,8 @@ final class CourseDiscoveryVC: UIViewController {
     private var sort = "date"
     private var isFetchingData = false
     private var isScrolledDown = false
+    private var currentCourseRequest: Moya.Cancellable?
+    private var sortDebounceWorkItem: DispatchWorkItem?
 
     /// 남은 아이템이 이 수 이하일 때 다음 페이지 프리페치 시작
     private let prefetchThreshold = 6
@@ -247,6 +249,8 @@ extension CourseDiscoveryVC {
 
     /// Section 4(courseList)만 새로고침 — courseList를 API 응답 전에 비우지 않아 data source 불일치 방지
     func refreshCourseList() {
+        currentCourseRequest?.cancel()
+        currentCourseRequest = nil
         pageNo = 1
         isFetchingData = false
         getCourseData(pageNo: pageNo)
@@ -613,9 +617,21 @@ extension CourseDiscoveryVC: CourseListCVCDelegate {
             showToastOnWindow(text: "러넥트에 가입하면 코스를 스크랩할 수 있어요")
             return
         }
-        
+
+        guard index < courseList.count else { return }
         let publicCourseId = courseList[index].id
-        self.scrapCourse(publicCourseId: publicCourseId, scrapTF: wantsTolike)
+        let oldScrapValue = courseList[index].scrap
+
+        // 낙관적 업데이트: 즉시 로컬 상태 반영
+        courseList[index].scrap = wantsTolike
+
+        scrapCourse(publicCourseId: publicCourseId, scrapTF: wantsTolike) { [weak self] success in
+            guard let self = self, !success else { return }
+            // 실패 시 롤백
+            guard index < self.courseList.count, self.courseList[index].id == publicCourseId else { return }
+            self.courseList[index].scrap = oldScrapValue
+            self.reloadCellForCourse(publicCourseId: publicCourseId)
+        }
     }
 }
 
@@ -632,16 +648,19 @@ extension CourseDiscoveryVC: ScrapStateDelegate {
     }
     
     func didRemoveCourse(publicCourseId: Int) {
-        //        if let index = courseList.firstIndex(where: { $0.id == publicCourseId }) {
-        //            courseList.remove(at: index)
-        //            self.mapCollectionView.reloadData()
-        //        }
-        // ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
-        // 원래 해당하는 데이터(index) 만 가지고, 그 데이터 삭제 후 courseList를 받아야하는데, 삭제가 이미되어버려서 if let index 부분이 안들어옴
-        // 왜??? 이미 데이터는 삭제가 되어서 $0.id 랑 publicCourseId 가 같은게 매치가 될 수 없어!!!
-        // 네트워크 성공하기 전에 didRemoveCourse(publicCourseId:) 를 호출 해야 해당 부분 확인하고 지운다음, 서버측에서 지워야 1페이지부터 시작 안하고 지울 수 있음
-        // ⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️⭐️
-        self.refreshCourseList()
+        guard let index = courseList.firstIndex(where: { $0.id == publicCourseId }) else {
+            refreshCourseList()
+            return
+        }
+
+        let collectionViewItem = collectionViewItem(for: index)
+        courseList.remove(at: index)
+        rebuildAdPositionCache()
+
+        let indexPath = IndexPath(item: collectionViewItem, section: Section.courseList)
+        mapCollectionView.deleteItems(at: [indexPath])
+
+        emptyView.isHidden = !courseList.isEmpty
     }
 }
 
@@ -694,9 +713,12 @@ extension CourseDiscoveryVC: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
 extension CourseDiscoveryVC {
     // swiftlint:disable:next cyclomatic_complexity
     private func getCourseData(pageNo: Int) {
+        // 페이지네이션 요청은 이미 로딩 중이면 무시
+        let isFirstPage = (pageNo == 1)
+        if !isFirstPage && isFetchingData { return }
+
         isFetchingData = true
 
-        let isFirstPage = (pageNo == 1)
         let isRefreshing = mapCollectionView.refreshControl?.isRefreshing == true
 
         // pull-to-refresh 중이면 자체 스피너 사용, 아니면 로딩 인디케이터
@@ -704,12 +726,13 @@ extension CourseDiscoveryVC {
             LoadingIndicator.showLoading()
         }
 
-        publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { [weak self] response in
+        currentCourseRequest = publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { [weak self] response in
             guard let self = self else { return }
 
             if isFirstPage && !isRefreshing {
                 LoadingIndicator.hideLoading()
             }
+            self.currentCourseRequest = nil
             self.isFetchingData = false
             self.mapCollectionView.refreshControl?.endRefreshing()
 
@@ -777,24 +800,22 @@ extension CourseDiscoveryVC {
         }, completion: nil)
     }
     
-    private func scrapCourse(publicCourseId: Int, scrapTF: Bool) {
-        LoadingIndicator.showLoading()
+    private func scrapCourse(publicCourseId: Int, scrapTF: Bool, completion: ((Bool) -> Void)? = nil) {
         scrapProvider.request(.createAndDeleteScrap(publicCourseId: publicCourseId, scrapTF: scrapTF)) { [weak self] response in
-            LoadingIndicator.hideLoading()
             guard let self = self else { return }
             switch response {
             case .success(let result):
                 let status = result.statusCode
                 if 200..<300 ~= status {
-                    print("스크랩 성공")
-                }
-                if status >= 400 {
-                    print("400 error")
+                    completion?(true)
+                } else {
                     self.showNetworkFailureToast()
+                    completion?(false)
                 }
             case .failure(let error):
                 print(error.localizedDescription)
                 self.showNetworkFailureToast()
+                completion?(false)
             }
         }
     }
@@ -810,11 +831,8 @@ extension CourseDiscoveryVC: ListEmptyViewDelegate {
 
 extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
     func didTapSortButton(ordering: String) {
-        pageNo = 1
-        isFetchingData = false
         sort = ordering
-        getCourseData(pageNo: pageNo)
-        
+
         switch ordering {
         case "date":
             analyze(buttonName: GAEvent.Button.clickDate)
@@ -823,5 +841,18 @@ extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
         default:
             break
         }
+
+        // 빠른 연속 탭 방지를 위한 디바운싱 (0.3초)
+        sortDebounceWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            self.currentCourseRequest?.cancel()
+            self.currentCourseRequest = nil
+            self.pageNo = 1
+            self.isFetchingData = false
+            self.getCourseData(pageNo: self.pageNo)
+        }
+        sortDebounceWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
     }
 }
