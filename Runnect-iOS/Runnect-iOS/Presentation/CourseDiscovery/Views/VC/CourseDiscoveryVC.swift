@@ -106,6 +106,7 @@ final class CourseDiscoveryVC: UIViewController {
     
     override func viewDidLoad () {
         super.viewDidLoad()
+        AdImageCollectionViewCell.prefetchAds(rootViewController: self)
         setUI()
         register()
         setNavigationBar()

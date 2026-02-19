@@ -37,6 +37,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     weak var delegate: AdImageCollectionViewCellDelegate?
     private var nativeAd1: GADNativeAd?
     private var nativeAd2: GADNativeAd?
+    private var nativeAd3: GADNativeAd?
     private var adsResponseCount = 0
     private var carouselShown = false
     private var shimmerTimeoutWork: DispatchWorkItem?
@@ -49,6 +50,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
     private var adLoader1: GADAdLoader?
     private var adLoader2: GADAdLoader?
+    private var adLoader3: GADAdLoader?
     private weak var rootViewController: UIViewController?
 
     private var shouldShowAds: Bool {
@@ -56,6 +58,13 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         let launchCount = UserDefaultKeyList.Ad.appLaunchCount ?? 0
         return launchCount > Self.adFreeAppLaunchThreshold
     }
+
+    // MARK: - Prefetch Cache (Static)
+
+    fileprivate static var prefetchedAds: [GADNativeAd] = []
+    fileprivate static var isPrefetching = false
+    private static var prefetchLoader: GADAdLoader?
+    private static var prefetchHelper: AdPrefetchHelper?
 
     // MARK: - UI Components (Container)
 
@@ -154,6 +163,46 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
 extension AdImageCollectionViewCell {
 
+    /// 탭바 로드 시 일찍 호출하여 광고를 미리 로드
+    static func prefetchAds(rootViewController: UIViewController) {
+        guard !isPrefetching, prefetchedAds.isEmpty else { return }
+
+        // shouldShowAds 조건을 static에서 직접 확인
+        guard UserManager.shared.userType != .visitor else { return }
+        let launchCount = UserDefaultKeyList.Ad.appLaunchCount ?? 0
+        guard launchCount > adFreeAppLaunchThreshold else { return }
+
+        isPrefetching = true
+
+        let multipleAdOptions = GADMultipleAdsAdLoaderOptions()
+        multipleAdOptions.numberOfAds = 3
+
+        let loader = GADAdLoader(
+            adUnitID: AdConfig.carouselNativeAdUnitId,
+            rootViewController: rootViewController,
+            adTypes: [.native],
+            options: [multipleAdOptions]
+        )
+
+        let helper = AdPrefetchHelper()
+        prefetchHelper = helper
+        prefetchLoader = loader
+
+        loader.delegate = helper
+        loader.load(GADRequest())
+    }
+
+    /// 프리페치된 광고가 있으면 소비하고 반환
+    private static func consumePrefetchedAds() -> [GADNativeAd]? {
+        guard !prefetchedAds.isEmpty else { return nil }
+        let ads = prefetchedAds
+        prefetchedAds = []
+        isPrefetching = false
+        prefetchHelper = nil
+        prefetchLoader = nil
+        return ads
+    }
+
     func setRootViewController(_ viewController: UIViewController, skipReload: Bool = false) {
         rootViewController = viewController
 
@@ -166,7 +215,32 @@ extension AdImageCollectionViewCell {
         if skipReload && carouselShown {
             return
         }
+
+        // 프리페치된 광고가 있으면 즉시 사용
+        if let prefetched = Self.consumePrefetchedAds() {
+            applyPrefetchedAds(prefetched)
+            return
+        }
+
         loadNativeAds()
+    }
+
+    /// 프리페치된 광고를 적용하여 shimmer 없이 캐러셀 표시
+    private func applyPrefetchedAds(_ ads: [GADNativeAd]) {
+        nativeAd1 = ads.count > 0 ? ads[0] : nil
+        nativeAd2 = ads.count > 1 ? ads[1] : nil
+        nativeAd3 = ads.count > 2 ? ads[2] : nil
+        carouselShown = true
+
+        buildPages()
+        showCarousel()
+
+        if nativeAd1 != nil || nativeAd2 != nil || nativeAd3 != nil {
+            delegate?.adBannerDidReceiveAd()
+            analyze(buttonName: GAEvent.Button.clickTryBanner)
+        } else {
+            delegate?.adBannerDidFailToReceiveAd()
+        }
     }
 
     private func skipAdsAndShowCarousel() {
@@ -180,6 +254,7 @@ extension AdImageCollectionViewCell {
         adsResponseCount = 0
         nativeAd1 = nil
         nativeAd2 = nil
+        nativeAd3 = nil
 
         adLoader1 = GADAdLoader(
             adUnitID: AdConfig.carouselNativeAdUnitId,
@@ -197,8 +272,17 @@ extension AdImageCollectionViewCell {
         )
         adLoader2?.delegate = self
 
+        adLoader3 = GADAdLoader(
+            adUnitID: AdConfig.carouselNativeAdUnitId,
+            rootViewController: rootViewController,
+            adTypes: [.native],
+            options: nil
+        )
+        adLoader3?.delegate = self
+
         adLoader1?.load(GADRequest())
         adLoader2?.load(GADRequest())
+        adLoader3?.load(GADRequest())
 
         showShimmer()
         startShimmerTimeout()
@@ -206,7 +290,7 @@ extension AdImageCollectionViewCell {
 
     private func handleAdResponse() {
         adsResponseCount += 1
-        if adsResponseCount >= 2 {
+        if adsResponseCount >= 3 {
             buildPagesAndShowCarousel()
         }
     }
@@ -218,7 +302,7 @@ extension AdImageCollectionViewCell {
         buildPages()
         showCarousel()
 
-        if nativeAd1 != nil || nativeAd2 != nil {
+        if nativeAd1 != nil || nativeAd2 != nil || nativeAd3 != nil {
             delegate?.adBannerDidReceiveAd()
             analyze(buttonName: GAEvent.Button.clickTryBanner)
         } else {
@@ -226,7 +310,7 @@ extension AdImageCollectionViewCell {
         }
     }
 
-    /// 광고 로드 상태에 따라 페이지 배열 구성: [광고1?, 배너1, 광고2?, 배너2, 배너3]
+    /// 광고 로드 상태에 따라 페이지 배열 구성: [광고1?, 배너1, 광고2?, 배너2, 광고3?, 배너3]
     private func buildPages() {
         var result: [PageType] = []
         if let ad1 = nativeAd1 {
@@ -237,6 +321,9 @@ extension AdImageCollectionViewCell {
             result.append(.nativeAd(ad2))
         }
         result.append(.image(imgBanners[1]))
+        if let ad3 = nativeAd3 {
+            result.append(.nativeAd(ad3))
+        }
         result.append(.image(imgBanners[2]))
         pages = result
     }
@@ -280,6 +367,8 @@ extension AdImageCollectionViewCell: GADAdLoaderDelegate, GADNativeAdLoaderDeleg
             nativeAd1 = nativeAd
         } else if adLoader === adLoader2 {
             nativeAd2 = nativeAd
+        } else if adLoader === adLoader3 {
+            nativeAd3 = nativeAd
         }
         handleAdResponse()
     }
@@ -290,6 +379,8 @@ extension AdImageCollectionViewCell: GADAdLoaderDelegate, GADNativeAdLoaderDeleg
             nativeAd1 = nil
         } else if adLoader === adLoader2 {
             nativeAd2 = nil
+        } else if adLoader === adLoader3 {
+            nativeAd3 = nil
         }
         handleAdResponse()
     }
@@ -818,5 +909,24 @@ extension AdImageCollectionViewCell: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
+    }
+}
+
+// MARK: - Ad Prefetch Helper
+
+/// 프리페치 전용 GADAdLoader 델리게이트 — static 메서드에서 사용
+final class AdPrefetchHelper: NSObject, GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
+        AdImageCollectionViewCell.prefetchedAds.append(nativeAd)
+    }
+
+    func adLoaderDidFinishLoading(_ adLoader: GADAdLoader) {
+        AdImageCollectionViewCell.isPrefetching = false
+    }
+
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+        print("[AdMob] 캐러셀 프리페치 광고 로드 실패: \(error.localizedDescription)")
+        AdImageCollectionViewCell.isPrefetching = false
     }
 }
