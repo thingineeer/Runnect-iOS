@@ -17,6 +17,10 @@ struct UserDefaultKeyList {
         @UserDefaultWrapper<String>(key: "lastKnownAppVersion") public static var lastKnownAppVersion
     }
 
+    struct Update {
+        @UserDefaultWrapper<String>(key: "optionalUpdateDismissedVersion") public static var optionalUpdateDismissedVersion
+    }
+
     struct Dev {
         @UserDefaultWrapper<Bool>(key: "isDeveloperMode") public static var isDeveloperMode
     }
