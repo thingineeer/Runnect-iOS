@@ -87,4 +87,8 @@ struct Config {
     static var appleDeveloperName: String {
         return "이명진"
     }
+
+    static var developerPassword: String {
+        return "970821"
+    }
 }

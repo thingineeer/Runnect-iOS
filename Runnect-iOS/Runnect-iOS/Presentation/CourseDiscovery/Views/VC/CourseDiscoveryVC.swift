@@ -43,6 +43,8 @@ final class CourseDiscoveryVC: UIViewController {
     private var isScrolledDown = false
     private var currentCourseRequest: Moya.Cancellable?
     private var sortDebounceWorkItem: DispatchWorkItem?
+    /// 요청 세대 카운터 — cancel된 콜백이 새 요청 상태를 오염시키지 않도록 방지
+    private var requestGeneration: UInt = 0
 
     /// 남은 아이템이 이 수 이하일 때 다음 페이지 프리페치 시작
     private let prefetchThreshold = 6
@@ -116,6 +118,9 @@ final class CourseDiscoveryVC: UIViewController {
         setCombineEvent()
         setupRefreshControl()
         loadNativeAds()
+        if UserDefaultKeyList.Dev.isDeveloperMode == true {
+            naviBar.setTitle("코스 발견 🔧")
+        }
         self.getCourseData(pageNo: pageNo)
     }
     
@@ -159,6 +164,20 @@ extension CourseDiscoveryVC {
         self.searchButton.addTarget(self, action: #selector(pushToSearchVC), for: .touchUpInside)
         self.uploadButton.addTarget(self, action: #selector(pushToCourseSelectVC), for: .touchUpInside)
         self.miniUploadButton.addTarget(self, action: #selector(pushToCourseSelectVC), for: .touchUpInside)
+        setupDeveloperModeGesture()
+        setupCellLongPressGesture()
+    }
+
+    private func setupDeveloperModeGesture() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleNaviBarLongPress(_:)))
+        longPress.minimumPressDuration = 3.0
+        naviBar.addGestureRecognizer(longPress)
+    }
+
+    private func setupCellLongPressGesture() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleCellLongPress(_:)))
+        longPress.minimumPressDuration = 0.5
+        mapCollectionView.addGestureRecognizer(longPress)
     }
     
     private func setCombineEvent() {
@@ -210,8 +229,7 @@ extension CourseDiscoveryVC {
     private func courseIndex(for item: Int) -> Int {
         guard shouldShowNativeAds, !nativeAds.isEmpty else { return item }
         let adInterval = Self.nativeAdInterval + 1
-        let adsBefore = item / adInterval // 이 item 이전에 삽입된 광고 수
-        // 현재 위치가 광고면 이 함수를 호출하면 안됨
+        let adsBefore = min(item / adInterval, nativeAds.count)
         return item - adsBefore
     }
 
@@ -253,6 +271,7 @@ extension CourseDiscoveryVC {
         currentCourseRequest?.cancel()
         currentCourseRequest = nil
         pageNo = 1
+        isEnd = false
         isFetchingData = false
         getCourseData(pageNo: pageNo)
     }
@@ -272,6 +291,55 @@ extension CourseDiscoveryVC {
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
+    @objc private func handleNaviBarLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+
+        let isDeveloperMode = UserDefaultKeyList.Dev.isDeveloperMode ?? false
+
+        if isDeveloperMode {
+            UserDefaultKeyList.Dev.isDeveloperMode = false
+            naviBar.setTitle("코스 발견")
+            showToastOnWindow(text: "개발자 모드 비활성화")
+        } else {
+            let alert = UIAlertController(title: "개발자 모드", message: "비밀번호를 입력하세요", preferredStyle: .alert)
+            alert.addTextField { $0.isSecureTextEntry = true }
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            alert.addAction(UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+                guard let password = alert.textFields?.first?.text else { return }
+                if password == Config.developerPassword {
+                    UserDefaultKeyList.Dev.isDeveloperMode = true
+                    self?.naviBar.setTitle("코스 발견 🔧")
+                    self?.showToastOnWindow(text: "개발자 모드 활성화")
+                } else {
+                    self?.showToastOnWindow(text: "비밀번호가 일치하지 않습니다")
+                }
+            })
+            present(alert, animated: true)
+        }
+    }
+
+    @objc private func handleCellLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        guard UserDefaultKeyList.Dev.isDeveloperMode == true else { return }
+
+        let point = gesture.location(in: mapCollectionView)
+        guard let indexPath = mapCollectionView.indexPathForItem(at: point),
+              indexPath.section == Section.courseList,
+              !isAdPosition(at: indexPath.item) else { return }
+
+        let realIndex = courseIndex(for: indexPath.item)
+        guard realIndex < courseList.count else { return }
+
+        let course = courseList[realIndex]
+        let deleteAlertVC = RNAlertVC(description: "이 코스를 삭제하시겠어요?\n(\(course.title))")
+        deleteAlertVC.modalPresentationStyle = .overFullScreen
+        deleteAlertVC.rightButtonTapAction = { [weak self] in
+            deleteAlertVC.dismiss(animated: false)
+            self?.deleteCourseByDeveloper(publicCourseId: course.id)
+        }
+        present(deleteAlertVC, animated: false)
+    }
+
     @objc private func pushToCourseSelectVC() {
         guard UserManager.shared.userType != .visitor else {
             self.showToastOnWindow(text: "러넥트에 가입하면 코스를 업로드할 수 있어요.")
@@ -518,10 +586,10 @@ extension CourseDiscoveryVC: UICollectionViewDelegateFlowLayout {
     private func loadNextPageIfNeeded() {
         // 이미 로딩 중이면 무시
         guard !isFetchingData else { return }
+        // 서버가 마지막 페이지라고 알려주면 무시
+        guard !isEnd else { return }
         // 마지막 페이지면 무시
         guard pageNo < totalPageNum else { return }
-        // 현재 페이지의 데이터가 다 안 왔으면 무시
-        guard courseList.count >= pageNo * serverResponseNumber else { return }
 
         pageNo += 1
         getCourseData(pageNo: pageNo)
@@ -654,12 +722,13 @@ extension CourseDiscoveryVC: ScrapStateDelegate {
             return
         }
 
-        let collectionViewItem = collectionViewItem(for: index)
         courseList.remove(at: index)
         rebuildAdPositionCache()
 
-        let indexPath = IndexPath(item: collectionViewItem, section: Section.courseList)
-        mapCollectionView.deleteItems(at: [indexPath])
+        print("[PageDebug] didRemoveCourse: id=\(publicCourseId) removed at \(index), remaining=\(courseList.count)")
+
+        // deleteItems + 이후 insertItems 간 내부 상태 불일치 방지를 위해 섹션 리로드 사용
+        mapCollectionView.reloadSections(IndexSet(integer: Section.courseList))
 
         emptyView.isHidden = !courseList.isEmpty
     }
@@ -719,6 +788,8 @@ extension CourseDiscoveryVC {
         if !isFirstPage && isFetchingData { return }
 
         isFetchingData = true
+        requestGeneration &+= 1
+        let capturedGeneration = requestGeneration
 
         let isRefreshing = mapCollectionView.refreshControl?.isRefreshing == true
 
@@ -729,6 +800,16 @@ extension CourseDiscoveryVC {
 
         currentCourseRequest = publicCourseProvider.request(.getCourseData(pageNo: pageNo, sort: sort)) { [weak self] response in
             guard let self = self else { return }
+
+            // 세대가 다르면 이미 cancel/refresh된 요청 — 상태 오염 방지를 위해 무시
+            guard capturedGeneration == self.requestGeneration else {
+                // cancel된 요청의 로딩 UI만 정리
+                if isFirstPage && !isRefreshing {
+                    LoadingIndicator.hideLoading()
+                }
+                self.mapCollectionView.refreshControl?.endRefreshing()
+                return
+            }
 
             if isFirstPage && !isRefreshing {
                 LoadingIndicator.hideLoading()
@@ -749,9 +830,10 @@ extension CourseDiscoveryVC {
                         self.totalPageNum = totalPageNum
                         self.isEnd = isEnd
 
-                        let newCourses = data.publicCourses
+                        let newCourses = data.publicCourses.uniqued(by: \.id)
 
                         if isFirstPage {
+                            self.pageNo = 1
                             self.courseList = newCourses
                             self.rebuildAdPositionCache()
                             // Section 4(courseList)만 갱신 — 배너·마라톤 등 불필요한 재구성 방지
@@ -779,11 +861,16 @@ extension CourseDiscoveryVC {
     private func insertNewCourses(_ newCourses: [PublicCourse]) {
         guard !newCourses.isEmpty else { return }
 
+        // 중복 제거: 이미 존재하는 id는 제외
+        let existingIds = Set(courseList.map { $0.id })
+        let uniqueNewCourses = newCourses.filter { !existingIds.contains($0.id) }
+        guard !uniqueNewCourses.isEmpty else { return }
+
         // 삽입 전 상태 (광고 포함 전체 아이템 수)
         let oldTotalItemCount = totalItemCount()
 
         // courseList에 새 데이터 추가
-        courseList.append(contentsOf: newCourses)
+        courseList.append(contentsOf: uniqueNewCourses)
         rebuildAdPositionCache()
 
         // 삽입 후 상태 (광고 포함 전체 아이템 수)
@@ -801,6 +888,26 @@ extension CourseDiscoveryVC {
         }, completion: nil)
     }
     
+    private func deleteCourseByDeveloper(publicCourseId: Int) {
+        LoadingIndicator.showLoading()
+        publicCourseProvider.request(.deleteUploadedCourse(publicCourseIdList: [publicCourseId])) { [weak self] response in
+            LoadingIndicator.hideLoading()
+            guard let self = self else { return }
+            switch response {
+            case .success(let result):
+                if 200..<300 ~= result.statusCode {
+                    self.didRemoveCourse(publicCourseId: publicCourseId)
+                    self.showToastOnWindow(text: "코스가 삭제되었습니다")
+                } else {
+                    self.showNetworkFailureToast()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+                self.showNetworkFailureToast()
+            }
+        }
+    }
+
     private func scrapCourse(publicCourseId: Int, scrapTF: Bool, completion: ((Bool) -> Void)? = nil) {
         scrapProvider.request(.createAndDeleteScrap(publicCourseId: publicCourseId, scrapTF: scrapTF)) { [weak self] response in
             guard let self = self else { return }
@@ -850,6 +957,7 @@ extension CourseDiscoveryVC: TitleCollectionViewCellDelegate {
             self.currentCourseRequest?.cancel()
             self.currentCourseRequest = nil
             self.pageNo = 1
+            self.isEnd = false
             self.isFetchingData = false
             self.getCourseData(pageNo: self.pageNo)
         }

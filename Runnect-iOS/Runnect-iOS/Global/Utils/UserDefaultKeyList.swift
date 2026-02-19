@@ -16,4 +16,8 @@ struct UserDefaultKeyList {
         @UserDefaultWrapper<Int>(key: "appLaunchCount") public static var appLaunchCount
         @UserDefaultWrapper<String>(key: "lastKnownAppVersion") public static var lastKnownAppVersion
     }
+
+    struct Dev {
+        @UserDefaultWrapper<Bool>(key: "isDeveloperMode") public static var isDeveloperMode
+    }
 }

@@ -113,6 +113,7 @@
 		CE58759E29601476005D967E /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58759D29601476005D967E /* LoadingIndicator.swift */; };
 		CE5875A029601500005D967E /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58759F29601500005D967E /* Toast.swift */; };
 		CE5875A2296015A2005D967E /* NetworkLoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5875A1296015A2005D967E /* NetworkLoggerPlugin.swift */; };
+		71F207012F3D000000DF721E /* Sequence+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F207002F3D000000DF721E /* Sequence+.swift */; };
 		CE5875A4296015D2005D967E /* Encodable+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5875A3296015D2005D967E /* Encodable+.swift */; };
 		CE591EA1296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE591EA0296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift */; };
 		CE6655C8295D849F00C64E12 /* StringLiterals.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6655C7295D849F00C64E12 /* StringLiterals.swift */; };
@@ -301,6 +302,7 @@
 		CE58759D29601476005D967E /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		CE58759F29601500005D967E /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		CE5875A1296015A2005D967E /* NetworkLoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLoggerPlugin.swift; sourceTree = "<group>"; };
+		71F207002F3D000000DF721E /* Sequence+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+.swift"; sourceTree = "<group>"; };
 		CE5875A3296015D2005D967E /* Encodable+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+.swift"; sourceTree = "<group>"; };
 		CE591EA0296D5EB5000FCBB3 /* PrivateCourseResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateCourseResponseDto.swift; sourceTree = "<group>"; };
 		CE6655BE295D82E200C64E12 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
@@ -1165,6 +1167,7 @@
 			children = (
 				CE665609295D924A00C64E12 /* Result+.swift */,
 				CE5875A3296015D2005D967E /* Encodable+.swift */,
+				71F207002F3D000000DF721E /* Sequence+.swift */,
 			);
 			path = "Foundation+";
 			sourceTree = "<group>";
@@ -1443,6 +1446,7 @@
 				A3BC2F2B2962C3D500198261 /* GoalRewardInfoVC.swift in Sources */,
 				CE665606295D91C500C64E12 /* makeVibrate.swift in Sources */,
 				CE66560A295D924A00C64E12 /* Result+.swift in Sources */,
+				71F207012F3D000000DF721E /* Sequence+.swift in Sources */,
 				DA20D847296697A600F1581F /* MyCourseSelectVC.swift in Sources */,
 				CE10065529680F7000FD31FB /* DepartureSearchingResponseDto.swift in Sources */,
 				CE9291292965E01D0010959C /* RNTimeFormatter.swift in Sources */,
