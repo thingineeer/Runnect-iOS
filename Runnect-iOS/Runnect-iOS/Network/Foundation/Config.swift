@@ -54,16 +54,12 @@ struct Config {
         return "ldgt4i6s7l"
     }
 
-    static var adMobBannerAdUnitId: String {
-        return AdConfig.bannerAdUnitId
-    }
-
     static var adMobNativeAdUnitId: String {
         return AdConfig.nativeAdUnitId
     }
 
-    static var adMobAppOpenAdUnitId: String {
-        return AdConfig.appOpenAdUnitId
+    static var adMobCarouselNativeAdUnitId: String {
+        return AdConfig.carouselNativeAdUnitId
     }
 
     static var accessToken: String {
@@ -90,5 +86,9 @@ struct Config {
     
     static var appleDeveloperName: String {
         return "이명진"
+    }
+
+    static var developerPassword: String {
+        return "970821"
     }
 }

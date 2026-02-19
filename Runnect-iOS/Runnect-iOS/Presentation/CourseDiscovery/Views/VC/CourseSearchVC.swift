@@ -21,6 +21,7 @@ final class CourseSearchVC: UIViewController {
     
     private var courseList = [PublicCourse]()
     private var keyword: String?
+    private var hasSearched = false
     
     // MARK: - UI Components
     
@@ -83,8 +84,6 @@ final class CourseSearchVC: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let keyword = self.keyword else { return }
-        searchCourseWithKeyword(keyword: keyword)
     }
 }
 // MARK: - Methods
@@ -205,8 +204,9 @@ extension CourseSearchVC: UICollectionViewDelegateFlowLayout {
 extension CourseSearchVC: CustomNavigationBarDelegate {
     func searchButtonDidTap(text: String) {
         guard !text.isEmpty else { return }
-        searchCourseWithKeyword(keyword: text)
         self.keyword = text
+        self.hasSearched = true
+        searchCourseWithKeyword(keyword: text)
     }
 }
 

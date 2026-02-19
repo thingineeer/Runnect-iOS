@@ -28,6 +28,7 @@ final class MarathonMapCollectionViewCell: UICollectionViewCell {
     
     private let PublicCourseProvider = Providers.publicCourseProvider
     private let scrapProvider = Providers.scrapProvider
+    private var hasLoaded = false
     var marathonCourseList = [marathonCourse]() // Cell 사용하는 곳에서 사용 중이라 private ❌
     
     // MARK: - UIComponents
@@ -185,9 +186,11 @@ extension MarathonMapCollectionViewCell: MarathonScrapStateDelegate {
 
 extension MarathonMapCollectionViewCell {
     private func getMarathonCourseData() {
-        LoadingIndicator.showLoading()
-        PublicCourseProvider.request(.getMarathonCourseData) { response in
-            LoadingIndicator.hideLoading()
+        guard !hasLoaded else { return }
+        hasLoaded = true
+
+        PublicCourseProvider.request(.getMarathonCourseData) { [weak self] response in
+            guard let self = self else { return }
             switch response {
             case .success(let result):
                 let status = result.statusCode
@@ -204,6 +207,7 @@ extension MarathonMapCollectionViewCell {
                     print("400 error")
                 }
             case .failure(let error):
+                self.hasLoaded = false
                 print(error.localizedDescription)
             }
         }

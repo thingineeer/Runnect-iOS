@@ -115,7 +115,10 @@ extension SplashVC {
         settings.minimumFetchInterval = 86400 // 개발 중에는 0으로 설정, 실제 앱에서는 적절한 값을 설정
         remoteConfig.configSettings = settings
         
-        remoteConfig.setDefaults(["iOS_current_market_version": "0.0.0" as NSString])
+        remoteConfig.setDefaults([
+            "iOS_current_market_version": "0.0.0" as NSString,
+            "iOS_optional_update_version": "0.0.0" as NSString
+        ])
 
         remoteConfig.fetch { (status, error) in
             if status == .success {
@@ -155,7 +158,7 @@ extension SplashVC {
                     if needsUpdate {
                         self.showUpdateAlert()
                     } else {
-                        self.checkDidSignIn()
+                        self.checkOptionalUpdate(remoteConfig: remoteConfig, currentVersion: currentVersion)
                     }
                 }
             } else {
@@ -164,6 +167,65 @@ extension SplashVC {
             }
         }
     }
+    private func checkOptionalUpdate(remoteConfig: RemoteConfig, currentVersion: String) {
+        let optionalVersion = remoteConfig["iOS_optional_update_version"].stringValue
+
+        guard !optionalVersion.isEmpty, optionalVersion != "0.0.0" else {
+            self.checkDidSignIn()
+            return
+        }
+
+        let splitCurrent = currentVersion.split(separator: ".").compactMap { Int($0) }
+        let splitOptional = optionalVersion.split(separator: ".").compactMap { Int($0) }
+
+        guard !splitCurrent.isEmpty, !splitOptional.isEmpty else {
+            self.checkDidSignIn()
+            return
+        }
+
+        var needsOptionalUpdate = false
+        for i in 0..<min(splitCurrent.count, splitOptional.count) {
+            if splitCurrent[i] < splitOptional[i] {
+                needsOptionalUpdate = true
+                break
+            } else if splitCurrent[i] > splitOptional[i] {
+                break
+            }
+        }
+
+        let dismissedVersion = UserDefaultKeyList.Update.optionalUpdateDismissedVersion
+
+        if needsOptionalUpdate && dismissedVersion != optionalVersion {
+            self.showOptionalUpdateAlert(version: optionalVersion)
+        } else {
+            self.checkDidSignIn()
+        }
+    }
+
+    private func showOptionalUpdateAlert(version: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(
+                title: "업데이트 알림",
+                message: "더 나은 러닝 경험을 위한 새로운 버전이 출시되었어요.\n지금 업데이트하시겠어요?",
+                preferredStyle: .alert
+            )
+
+            let laterAction = UIAlertAction(title: "다음에", style: .cancel) { [weak self] _ in
+                UserDefaultKeyList.Update.optionalUpdateDismissedVersion = version
+                self?.checkDidSignIn()
+            }
+
+            let updateAction = UIAlertAction(title: "업데이트", style: .default) { [weak self] _ in
+                self?.openAppstore()
+            }
+
+            alert.addAction(laterAction)
+            alert.addAction(updateAction)
+
+            self.present(alert, animated: false)
+        }
+    }
+
     private func showUpdateAlert() {
         DispatchQueue.main.async {
             let alert = UIAlertController(

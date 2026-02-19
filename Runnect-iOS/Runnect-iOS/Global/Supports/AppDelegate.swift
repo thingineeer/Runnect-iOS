@@ -45,9 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
         KakaoSDK.initSDK(appKey: Config.kakaoNativeAppKey)
 
-        GADMobileAds.sharedInstance().start { _ in
-            AppOpenAdManager.shared.preloadAd()
-        }
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
 
         // WatchConnectivity 세션 시작
         WatchSessionService.shared.startSession()
