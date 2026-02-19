@@ -99,7 +99,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         requestTrackingAuthorizationIfNeeded()
-        AppOpenAdManager.shared.showAdIfAvailable()
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
@@ -108,7 +107,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        AppOpenAdManager.shared.preloadAd()
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {

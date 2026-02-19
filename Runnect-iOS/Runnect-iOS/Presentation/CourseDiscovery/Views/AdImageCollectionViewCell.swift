@@ -22,7 +22,7 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
     private enum PageType {
         case image(UIImage)
-        case ad(GADBannerView)
+        case nativeAd(GADNativeAd)
     }
 
     // MARK: - Constants
@@ -30,12 +30,13 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     private static let adPageInterval: TimeInterval = 5.0
     private static let imagePageInterval: TimeInterval = 4.0
     private static let adFreeAppLaunchThreshold = 1
+    private static let nativeAdCellReuseId = "NativeAdCarouselCell"
 
     // MARK: - Properties
 
     weak var delegate: AdImageCollectionViewCellDelegate?
-    private var isAd1Loaded = false
-    private var isAd2Loaded = false
+    private var nativeAd1: GADNativeAd?
+    private var nativeAd2: GADNativeAd?
     private var adsResponseCount = 0
     private var carouselShown = false
     private var shimmerTimeoutWork: DispatchWorkItem?
@@ -45,6 +46,10 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
     private var currentPage: Int = 0
     private var lastLayoutSize: CGSize = .zero
     private weak var cachedParentScrollView: UIScrollView?
+
+    private var adLoader1: GADAdLoader?
+    private var adLoader2: GADAdLoader?
+    private weak var rootViewController: UIViewController?
 
     private var shouldShowAds: Bool {
         guard UserManager.shared.userType != .visitor else { return false }
@@ -66,24 +71,6 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 16
     }
-
-    // MARK: - UI Components (AdMob)
-
-    private lazy var bannerView1: GADBannerView = {
-        let adWidth = UIScreen.main.bounds.width - 32
-        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(adWidth)
-        let banner = GADBannerView(adSize: adSize)
-        banner.adUnitID = Config.adMobBannerAdUnitId
-        return banner
-    }()
-
-    private lazy var bannerView2: GADBannerView = {
-        let adWidth = UIScreen.main.bounds.width - 32
-        let adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(adWidth)
-        let banner = GADBannerView(adSize: adSize)
-        banner.adUnitID = Config.adMobBannerAdUnitId
-        return banner
-    }()
 
     // MARK: - UI Components (Carousel)
 
@@ -171,8 +158,6 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         stopAutoScroll()
         cachedParentScrollView = nil
-        // 이미 캐러셀이 표시된 상태면 리셋하지 않음
-        // 새 광고 로드가 필요할 때만 리셋 (setRootViewController에서 처리)
     }
 
     deinit {
@@ -185,21 +170,19 @@ final class AdImageCollectionViewCell: UICollectionViewCell {
 
 extension AdImageCollectionViewCell {
 
-    /// 이미 로드된 광고가 있으면 shimmer 없이 바로 표시
     func setRootViewController(_ viewController: UIViewController, skipReload: Bool = false) {
+        rootViewController = viewController
+
         guard shouldShowAds else {
             if skipReload && carouselShown { return }
             skipAdsAndShowCarousel()
             return
         }
-        bannerView1.rootViewController = viewController
-        bannerView2.rootViewController = viewController
 
         if skipReload && carouselShown {
-            // 이미 로드된 상태 — shimmer 없이 바로 표시
             return
         }
-        loadAdMobBanners()
+        loadNativeAds()
     }
 
     private func skipAdsAndShowCarousel() {
@@ -209,16 +192,41 @@ extension AdImageCollectionViewCell {
         delegate?.adBannerDidFailToReceiveAd()
     }
 
-    private func loadAdMobBanners() {
-        bannerView1.delegate = self
-        bannerView2.delegate = self
-        bannerView1.load(GADRequest())
-        bannerView2.load(GADRequest())
+    private func loadNativeAds() {
+        adsResponseCount = 0
+        nativeAd1 = nil
+        nativeAd2 = nil
+
+        adLoader1 = GADAdLoader(
+            adUnitID: AdConfig.carouselNativeAdUnitId,
+            rootViewController: rootViewController,
+            adTypes: [.native],
+            options: nil
+        )
+        adLoader1?.delegate = self
+
+        adLoader2 = GADAdLoader(
+            adUnitID: AdConfig.carouselNativeAdUnitId,
+            rootViewController: rootViewController,
+            adTypes: [.native],
+            options: nil
+        )
+        adLoader2?.delegate = self
+
+        adLoader1?.load(GADRequest())
+        adLoader2?.load(GADRequest())
+
         showShimmer()
         startShimmerTimeout()
     }
 
-    /// 두 광고 응답 완료 후 페이지 구성 및 캐러셀 표시
+    private func handleAdResponse() {
+        adsResponseCount += 1
+        if adsResponseCount >= 2 {
+            buildPagesAndShowCarousel()
+        }
+    }
+
     private func buildPagesAndShowCarousel() {
         guard !carouselShown else { return }
         carouselShown = true
@@ -226,7 +234,7 @@ extension AdImageCollectionViewCell {
         buildPages()
         showCarousel()
 
-        if isAd1Loaded || isAd2Loaded {
+        if nativeAd1 != nil || nativeAd2 != nil {
             delegate?.adBannerDidReceiveAd()
             analyze(buttonName: GAEvent.Button.clickTryBanner)
         } else {
@@ -238,18 +246,17 @@ extension AdImageCollectionViewCell {
     private func buildPages() {
         var result: [PageType] = []
         result.append(.image(imgBanners[0]))
-        if isAd1Loaded {
-            result.append(.ad(bannerView1))
+        if let ad1 = nativeAd1 {
+            result.append(.nativeAd(ad1))
         }
         result.append(.image(imgBanners[1]))
-        if isAd2Loaded {
-            result.append(.ad(bannerView2))
+        if let ad2 = nativeAd2 {
+            result.append(.nativeAd(ad2))
         }
         result.append(.image(imgBanners[2]))
         pages = result
     }
 
-    /// 캐러셀 표시 애니메이션
     private func showCarousel() {
         cancelShimmerTimeout()
 
@@ -281,32 +288,27 @@ extension AdImageCollectionViewCell {
     }
 }
 
-// MARK: - GADBannerViewDelegate
+// MARK: - GADAdLoaderDelegate, GADNativeAdLoaderDelegate
 
-extension AdImageCollectionViewCell: GADBannerViewDelegate {
-    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
-        if bannerView === bannerView1 {
-            isAd1Loaded = true
-        } else if bannerView === bannerView2 {
-            isAd2Loaded = true
+extension AdImageCollectionViewCell: GADAdLoaderDelegate, GADNativeAdLoaderDelegate {
+
+    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
+        if adLoader === adLoader1 {
+            nativeAd1 = nativeAd
+        } else if adLoader === adLoader2 {
+            nativeAd2 = nativeAd
         }
-        adsResponseCount += 1
-        if adsResponseCount >= 2 {
-            buildPagesAndShowCarousel()
-        }
+        handleAdResponse()
     }
 
-    func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
-        print("[AdMob] 배너 광고 로드 실패: \(error.localizedDescription)")
-        if bannerView === bannerView1 {
-            isAd1Loaded = false
-        } else if bannerView === bannerView2 {
-            isAd2Loaded = false
+    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+        print("[AdMob] 네이티브 광고 로드 실패: \(error.localizedDescription)")
+        if adLoader === adLoader1 {
+            nativeAd1 = nil
+        } else if adLoader === adLoader2 {
+            nativeAd2 = nil
         }
-        adsResponseCount += 1
-        if adsResponseCount >= 2 {
-            buildPagesAndShowCarousel()
-        }
+        handleAdResponse()
     }
 }
 
@@ -384,7 +386,7 @@ extension AdImageCollectionViewCell {
         let activeIndex = currentPage % pages.count
 
         let isAdPage: Bool
-        if case .ad = pages[activeIndex] {
+        if case .nativeAd = pages[activeIndex] {
             isAdPage = true
         } else {
             isAdPage = false
@@ -415,7 +417,7 @@ extension AdImageCollectionViewCell {
         }
         let pageIndex = currentPage % pages.count
         let isAdPage: Bool
-        if case .ad = pages[pageIndex] {
+        if case .nativeAd = pages[pageIndex] {
             isAdPage = true
         } else {
             isAdPage = false
@@ -447,7 +449,7 @@ extension AdImageCollectionViewCell {
     private func currentPageInterval() -> TimeInterval {
         guard !pages.isEmpty else { return Self.imagePageInterval }
         let pageIndex = currentPage % pages.count
-        if case .ad = pages[pageIndex] {
+        if case .nativeAd = pages[pageIndex] {
             return Self.adPageInterval
         }
         return Self.imagePageInterval
@@ -516,7 +518,7 @@ extension AdImageCollectionViewCell {
         guard !pages.isEmpty else { return }
         let pageIndex = currentPage % pages.count
         let isAdPage: Bool
-        if case .ad = pages[pageIndex] {
+        if case .nativeAd = pages[pageIndex] {
             isAdPage = true
         } else {
             isAdPage = false
@@ -686,7 +688,6 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
         switch pages[pageIndex] {
         case .image(let image):
             cell.contentView.backgroundColor = .clear
-            // 기존 UIImageView 재사용 — 매번 생성/제거 방지
             if let imageView = cell.contentView.viewWithTag(100) as? UIImageView {
                 imageView.image = image
             } else {
@@ -699,18 +700,140 @@ extension AdImageCollectionViewCell: UICollectionViewDelegate, UICollectionViewD
                 cell.contentView.addSubview(imageView)
                 imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
             }
-        case .ad(let adBannerView):
+
+        case .nativeAd(let nativeAd):
             cell.contentView.backgroundColor = .w1
-            if adBannerView.superview !== cell.contentView {
+            // 기존 nativeAdView 재사용 (tag 200)
+            if let existingAdView = cell.contentView.viewWithTag(200) as? GADNativeAdView {
+                configureNativeAdView(existingAdView, with: nativeAd)
+            } else {
                 cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-                cell.contentView.addSubview(adBannerView)
-                adBannerView.snp.makeConstraints {
-                    $0.centerY.equalToSuperview()
-                    $0.leading.trailing.equalToSuperview()
-                }
+                let nativeAdView = makeNativeAdView()
+                nativeAdView.tag = 200
+                cell.contentView.addSubview(nativeAdView)
+                nativeAdView.snp.makeConstraints { $0.edges.equalToSuperview() }
+                configureNativeAdView(nativeAdView, with: nativeAd)
             }
         }
         return cell
+    }
+}
+
+// MARK: - Native Ad View Builder
+
+extension AdImageCollectionViewCell {
+
+    private func makeNativeAdView() -> GADNativeAdView {
+        let adView = GADNativeAdView()
+        adView.tag = 200
+
+        let mediaView = GADMediaView()
+        mediaView.contentMode = .scaleAspectFill
+        mediaView.clipsToBounds = true
+        mediaView.tag = 201
+
+        let overlayContainer = UIView()
+        overlayContainer.tag = 205
+
+        let headlineLabel = UILabel()
+        headlineLabel.font = .b4
+        headlineLabel.textColor = .white
+        headlineLabel.numberOfLines = 1
+        headlineLabel.tag = 202
+
+        let advertiserLabel = UILabel()
+        advertiserLabel.font = .b6
+        advertiserLabel.textColor = UIColor.white.withAlphaComponent(0.8)
+        advertiserLabel.numberOfLines = 1
+        advertiserLabel.tag = 203
+
+        let adBadge = UILabel()
+        adBadge.text = "광고"
+        adBadge.font = .b9
+        adBadge.textColor = .w1
+        adBadge.backgroundColor = .m1
+        adBadge.textAlignment = .center
+        adBadge.layer.cornerRadius = 4
+        adBadge.clipsToBounds = true
+        adBadge.tag = 204
+
+        let overlayGradient = UIView()
+        overlayGradient.tag = 206
+        let gradient = CAGradientLayer()
+        gradient.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.5).cgColor
+        ]
+        gradient.locations = [0.4, 1.0]
+        overlayGradient.layer.addSublayer(gradient)
+
+        adView.addSubview(mediaView)
+        adView.addSubview(overlayGradient)
+        adView.addSubview(overlayContainer)
+        overlayContainer.addSubview(headlineLabel)
+        overlayContainer.addSubview(advertiserLabel)
+        adView.addSubview(adBadge)
+
+        adView.mediaView = mediaView
+        adView.headlineView = headlineLabel
+        adView.advertiserView = advertiserLabel
+
+        mediaView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        overlayGradient.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalToSuperview().multipliedBy(0.5)
+        }
+
+        overlayContainer.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(12)
+        }
+
+        headlineLabel.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+        }
+
+        advertiserLabel.snp.makeConstraints {
+            $0.top.equalTo(headlineLabel.snp.bottom).offset(2)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+
+        adBadge.snp.makeConstraints {
+            $0.top.leading.equalToSuperview().inset(8)
+            $0.width.equalTo(30)
+            $0.height.equalTo(16)
+        }
+
+        return adView
+    }
+
+    private func configureNativeAdView(_ adView: GADNativeAdView, with nativeAd: GADNativeAd) {
+        adView.nativeAd = nativeAd
+
+        if let mediaView = adView.viewWithTag(201) as? GADMediaView {
+            mediaView.mediaContent = nativeAd.mediaContent
+        }
+
+        if let headlineLabel = adView.viewWithTag(202) as? UILabel {
+            headlineLabel.text = nativeAd.headline
+        }
+
+        if let advertiserLabel = adView.viewWithTag(203) as? UILabel {
+            advertiserLabel.text = nativeAd.advertiser
+            advertiserLabel.isHidden = nativeAd.advertiser == nil
+        }
+
+        // overlayGradient 레이어 프레임 갱신
+        if let overlayGradient = adView.viewWithTag(206) {
+            DispatchQueue.main.async {
+                if let gradientLayer = overlayGradient.layer.sublayers?.first as? CAGradientLayer {
+                    gradientLayer.frame = overlayGradient.bounds
+                }
+            }
+        }
     }
 }
 
