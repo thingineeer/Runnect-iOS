@@ -13,13 +13,4 @@ struct RunningRecordRequestDto: Codable {
     let courseId: Int
     let publicCourseId: Int?
     let title, time, pace: String
-    let healthData: HealthDataRequestDto?
-}
-
-// MARK: - HealthDataRequestDto
-
-struct HealthDataRequestDto: Codable {
-    let avgHeartRate: Double
-    let maxHeartRate: Double
-    let totalCalories: Double
 }

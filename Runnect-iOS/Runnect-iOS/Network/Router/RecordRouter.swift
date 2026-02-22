@@ -14,6 +14,10 @@ enum RecordRouter {
     case getActivityRecordInfo
     case deleteRecord(recordIdList: [Int])
     case updateRecordTitle(recordId: Int, recordTitle: String)
+    case saveHealthData(recordId: Int, param: HealthDataSaveRequestDto)
+    case getHealthData(recordId: Int)
+    case deleteHealthData(recordId: Int)
+    case getHealthSummary(startDate: String, endDate: String)
 }
 
 extension RecordRouter: TargetType {
@@ -33,19 +37,27 @@ extension RecordRouter: TargetType {
             return "/record/user"
         case .updateRecordTitle(recordId: let recordId, _):
             return "/record/\(recordId)"
+        case .saveHealthData(let recordId, _),
+             .getHealthData(let recordId),
+             .deleteHealthData(let recordId):
+            return "/record/\(recordId)/health"
+        case .getHealthSummary:
+            return "/health/summary"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .recordRunning:
+        case .recordRunning, .saveHealthData:
             return .post
-        case .getActivityRecordInfo:
+        case .getActivityRecordInfo, .getHealthData, .getHealthSummary:
             return .get
         case .deleteRecord:
             return .put
         case .updateRecordTitle:
             return .patch
+        case .deleteHealthData:
+            return .delete
         }
     }
     
@@ -65,6 +77,19 @@ extension RecordRouter: TargetType {
             do {
                 return .requestParameters(parameters: ["title": recordTitle], encoding: JSONEncoding.default)
             }
+        case .saveHealthData(_, let param):
+            do {
+                return .requestParameters(parameters: try param.asParameter(), encoding: JSONEncoding.default)
+            } catch {
+                fatalError(error.localizedDescription)
+            }
+        case .getHealthData, .deleteHealthData:
+            return .requestPlain
+        case .getHealthSummary(let startDate, let endDate):
+            return .requestParameters(
+                parameters: ["startDate": startDate, "endDate": endDate],
+                encoding: URLEncoding.queryString
+            )
         }
     }
     

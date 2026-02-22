@@ -127,6 +127,7 @@ final class WorkoutManager: NSObject, ObservableObject {
     func generateHealthSummary() -> [String: Any] {
         let avgHR = summaryHeartRate
         let maxHR = summaryMaxHeartRate
+        let minHR = heartRateSamples.map(\.bpm).min() ?? 0
         let calories = summaryCalories
         let zones = calculateZoneDistribution()
 
@@ -140,12 +141,28 @@ final class WorkoutManager: NSObject, ObservableObject {
             ])
         }
 
+        // 개별 심박수 샘플을 서버 전송 형식으로 변환
+        var sampleList: [[String: Any]] = []
+        if let startDate = heartRateSamples.first?.date {
+            for sample in heartRateSamples {
+                let elapsedSeconds = Int(sample.date.timeIntervalSince(startDate))
+                let zone = HeartRateZone.zone(for: sample.bpm, maxHeartRate: estimatedMaxHR)
+                sampleList.append([
+                    "heartRate": round(sample.bpm * 10) / 10,
+                    "elapsedSeconds": elapsedSeconds,
+                    "zone": zone.rawValue
+                ])
+            }
+        }
+
         return [
             "messageType": "healthSummary",
             "avgHeartRate": round(avgHR * 10) / 10,
             "maxHeartRate": round(maxHR * 10) / 10,
+            "minHeartRate": round(minHR * 10) / 10,
             "totalCalories": round(calories * 10) / 10,
             "heartRateZones": zoneList,
+            "heartRateSamples": sampleList,
             "timestamp": Date().timeIntervalSince1970
         ]
     }

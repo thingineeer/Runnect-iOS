@@ -24,6 +24,14 @@ struct ActivityRecord: Codable {
     let distance: Double
     let time, pace: String
     let departure: ActivityRecordDeparture
+    let healthData: ActivityRecordHealthData?
+}
+
+// MARK: - ActivityRecordHealthData
+
+struct ActivityRecordHealthData: Codable {
+    let avgHeartRate: Double?
+    let calories: Double?
 }
 
 // MARK: - Departure

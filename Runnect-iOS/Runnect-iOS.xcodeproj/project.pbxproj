@@ -109,6 +109,10 @@
 		CE4545D5295D7AF5003201E1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CE4545D3295D7AF5003201E1 /* LaunchScreen.storyboard */; };
 		CE4942AD296FCD2300736701 /* UploadedCourseDetailResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4942AC296FCD2300736701 /* UploadedCourseDetailResponseDto.swift */; };
 		CE55BC11296D4EA600E8CD69 /* RunningRecordRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE55BC10296D4EA600E8CD69 /* RunningRecordRequestDto.swift */; };
+		F1A2B3C4D5E6F7A81234AB02 /* RecordResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A81234AB01 /* RecordResponseDto.swift */; };
+		F1A2B3C4D5E6F7A81234AB04 /* HealthDataSaveRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A81234AB03 /* HealthDataSaveRequestDto.swift */; };
+		F1A2B3C4D5E6F7A81234AB06 /* HealthDataResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A81234AB05 /* HealthDataResponseDto.swift */; };
+		F1A2B3C4D5E6F7A81234AB08 /* HealthSummaryResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F7A81234AB07 /* HealthSummaryResponseDto.swift */; };
 		CE5645162961B72E000A2856 /* ImageLiterals.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5645152961B72E000A2856 /* ImageLiterals.swift */; };
 		CE58759E29601476005D967E /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58759D29601476005D967E /* LoadingIndicator.swift */; };
 		CE5875A029601500005D967E /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE58759F29601500005D967E /* Toast.swift */; };
@@ -299,6 +303,10 @@
 		CE4545D6295D7AF5003201E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE4942AC296FCD2300736701 /* UploadedCourseDetailResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedCourseDetailResponseDto.swift; sourceTree = "<group>"; };
 		CE55BC10296D4EA600E8CD69 /* RunningRecordRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningRecordRequestDto.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7A81234AB01 /* RecordResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordResponseDto.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7A81234AB03 /* HealthDataSaveRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataSaveRequestDto.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7A81234AB05 /* HealthDataResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataResponseDto.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F7A81234AB07 /* HealthSummaryResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSummaryResponseDto.swift; sourceTree = "<group>"; };
 		CE5645152961B72E000A2856 /* ImageLiterals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLiterals.swift; sourceTree = "<group>"; };
 		CE58759D29601476005D967E /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		CE58759F29601500005D967E /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -902,6 +910,7 @@
 			isa = PBXGroup;
 			children = (
 				CE55BC10296D4EA600E8CD69 /* RunningRecordRequestDto.swift */,
+				F1A2B3C4D5E6F7A81234AB03 /* HealthDataSaveRequestDto.swift */,
 			);
 			path = RequestDto;
 			sourceTree = "<group>";
@@ -910,6 +919,9 @@
 			isa = PBXGroup;
 			children = (
 				CEF3CD99296DB305002723A1 /* CourseDetailResponseDto.swift */,
+				F1A2B3C4D5E6F7A81234AB01 /* RecordResponseDto.swift */,
+				F1A2B3C4D5E6F7A81234AB05 /* HealthDataResponseDto.swift */,
+				F1A2B3C4D5E6F7A81234AB07 /* HealthSummaryResponseDto.swift */,
 			);
 			path = ResponseDto;
 			sourceTree = "<group>";
@@ -1426,6 +1438,10 @@
 			files = (
 				715D36E82B2CC64000CAA9D6 /* MyUploadedCourseResponseDto.swift in Sources */,
 				CE55BC11296D4EA600E8CD69 /* RunningRecordRequestDto.swift in Sources */,
+				F1A2B3C4D5E6F7A81234AB02 /* RecordResponseDto.swift in Sources */,
+				F1A2B3C4D5E6F7A81234AB04 /* HealthDataSaveRequestDto.swift in Sources */,
+				F1A2B3C4D5E6F7A81234AB06 /* HealthDataResponseDto.swift in Sources */,
+				F1A2B3C4D5E6F7A81234AB08 /* HealthSummaryResponseDto.swift in Sources */,
 				A3BC2F2F2962C40A00198261 /* UploadedCourseInfoVC.swift in Sources */,
 				CE6655EA295D88B200C64E12 /* UITabBar+.swift in Sources */,
 				CE9291272965D0ED0010959C /* StatsInfoView.swift in Sources */,

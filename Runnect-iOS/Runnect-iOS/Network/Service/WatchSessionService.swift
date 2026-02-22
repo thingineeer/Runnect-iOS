@@ -194,9 +194,23 @@ extension WatchSessionService: WCSessionDelegate {
 struct WatchHealthSummary {
     let avgHeartRate: Double
     let maxHeartRate: Double
+    let minHeartRate: Double?
     let totalCalories: Double
     let heartRateZones: [[String: Any]]
+    let heartRateSamples: [[String: Any]]
     let timestamp: Date
+
+    /// heartRateZones 배열에서 zone별 초(seconds) 추출
+    var zoneDurations: [Int: Int] {
+        var durations: [Int: Int] = [:]
+        for zone in heartRateZones {
+            if let zoneNum = zone["zone"] as? Int,
+               let seconds = zone["durationSeconds"] as? Int {
+                durations[zoneNum] = seconds
+            }
+        }
+        return durations
+    }
 
     static func fromDictionary(_ dict: [String: Any]) -> WatchHealthSummary? {
         guard let avgHeartRate = dict["avgHeartRate"] as? Double,
@@ -207,24 +221,33 @@ struct WatchHealthSummary {
         }
 
         let zones = dict["heartRateZones"] as? [[String: Any]] ?? []
+        let minHeartRate = dict["minHeartRate"] as? Double
+        let samples = dict["heartRateSamples"] as? [[String: Any]] ?? []
 
         return WatchHealthSummary(
             avgHeartRate: avgHeartRate,
             maxHeartRate: maxHeartRate,
+            minHeartRate: minHeartRate,
             totalCalories: totalCalories,
             heartRateZones: zones,
+            heartRateSamples: samples,
             timestamp: Date(timeIntervalSince1970: timestamp)
         )
     }
 
     func toDictionary() -> [String: Any] {
-        return [
+        var dict: [String: Any] = [
             "avgHeartRate": avgHeartRate,
             "maxHeartRate": maxHeartRate,
             "totalCalories": totalCalories,
             "heartRateZones": heartRateZones,
+            "heartRateSamples": heartRateSamples,
             "timestamp": timestamp.timeIntervalSince1970
         ]
+        if let minHeartRate {
+            dict["minHeartRate"] = minHeartRate
+        }
+        return dict
     }
 }
 

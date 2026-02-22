@@ -409,54 +409,135 @@ extension RunningRecordVC {
 
 extension RunningRecordVC {
     private func recordRunning() {
-        guard let runningModel = self.runningModel else { return }
-        guard let courseId = runningModel.courseId else { return }
-        guard let titleText = courseTitleTextField.text else { return }
-        guard let time = runningModel.getFormattedTotalTime() else { return }
-        guard let secondsPerKm = runningModel.getIntPace() else { return }
-        let pace = RNTimeFormatter.secondsToHHMMSS(seconds: secondsPerKm)
+        guard let runningModel = self.runningModel,
+              let courseId = runningModel.courseId,
+              let titleText = courseTitleTextField.text,
+              let time = runningModel.getFormattedTotalTime(),
+              let secondsPerKm = runningModel.getIntPace() else { return }
 
-        // 건강 데이터 (Watch 미연결 시 nil)
-        var healthData: HealthDataRequestDto?
-        if let summary = runningModel.healthSummary {
-            healthData = HealthDataRequestDto(
-                avgHeartRate: summary.avgHeartRate,
-                maxHeartRate: summary.maxHeartRate,
-                totalCalories: summary.totalCalories
-            )
-        }
+        let pace = RNTimeFormatter.secondsToHHMMSS(seconds: secondsPerKm)
 
         let requestDto = RunningRecordRequestDto(
             courseId: courseId,
             publicCourseId: runningModel.publicCourseId,
             title: titleText,
             time: time,
-            pace: pace,
-            healthData: healthData
+            pace: pace
         )
 
         LoadingIndicator.showLoading()
+
+        // Step 1: 러닝 기록 저장
         recordProvider.request(.recordRunning(param: requestDto)) { [weak self] response in
             guard let self = self else { return }
-            LoadingIndicator.hideLoading()
             switch response {
             case .success(let result):
                 let status = result.statusCode
                 if 200..<300 ~= status {
-                    analyze(buttonName: GAEvent.Button.clickStoreRunningTracking)
-                    WatchSessionService.shared.sendRunReset()
-                    WatchSessionService.shared.clearHealthData()
-                    self.showToastOnWindow(text: "저장한 러닝 기록은 마이페이지에서 볼 수 있어요.")
-                    self.navigationController?.popToRootViewController(animated: true)
+                    do {
+                        let responseDto = try result.map(BaseResponse<RecordResponseDto>.self)
+                        guard let recordId = responseDto.data?.record.id else {
+                            self.handleRecordSaveSuccess()
+                            return
+                        }
+
+                        // Step 2: 건강 데이터 저장 (Watch 연결 시에만)
+                        if let summary = runningModel.healthSummary {
+                            self.saveHealthData(recordId: recordId, summary: summary)
+                        } else {
+                            self.handleRecordSaveSuccess()
+                        }
+                    } catch {
+                        print("[RecordRunning] Response decode error: \(error)")
+                        self.handleRecordSaveSuccess()
+                    }
                 }
                 if status >= 400 {
-                    print("400 error")
+                    LoadingIndicator.hideLoading()
                     self.showNetworkFailureToast()
                 }
             case .failure(let error):
+                LoadingIndicator.hideLoading()
                 print(error.localizedDescription)
                 self.showNetworkFailureToast()
             }
         }
+    }
+
+    private func saveHealthData(recordId: Int, summary: WatchHealthSummary) {
+        let zoneDurations = summary.zoneDurations
+
+        var sampleDtos: [HeartRateSampleDto]?
+        if !summary.heartRateSamples.isEmpty {
+            sampleDtos = summary.heartRateSamples.compactMap { dict in
+                guard let heartRate = dict["heartRate"] as? Double,
+                      let elapsedSeconds = dict["elapsedSeconds"] as? Int,
+                      let zone = dict["zone"] as? Int else { return nil }
+                return HeartRateSampleDto(
+                    heartRate: heartRate,
+                    elapsedSeconds: elapsedSeconds,
+                    zone: zone
+                )
+            }
+        }
+
+        let healthDto = HealthDataSaveRequestDto(
+            avgHeartRate: summary.avgHeartRate,
+            maxHeartRate: summary.maxHeartRate,
+            minHeartRate: summary.minHeartRate,
+            calories: summary.totalCalories,
+            zone1Seconds: zoneDurations[1] ?? 0,
+            zone2Seconds: zoneDurations[2] ?? 0,
+            zone3Seconds: zoneDurations[3] ?? 0,
+            zone4Seconds: zoneDurations[4] ?? 0,
+            zone5Seconds: zoneDurations[5] ?? 0,
+            maxHeartRateConfig: nil,
+            heartRateSamples: sampleDtos
+        )
+
+        recordProvider.request(.saveHealthData(recordId: recordId, param: healthDto)) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case .success(let result):
+                if 200..<300 ~= result.statusCode {
+                    self.handleRecordSaveSuccess()
+                } else if result.statusCode == 409 {
+                    self.deleteAndResaveHealthData(recordId: recordId, healthDto: healthDto)
+                } else {
+                    print("[HealthData] Save failed: \(result.statusCode)")
+                    self.handleRecordSaveSuccess()
+                }
+            case .failure(let error):
+                print("[HealthData] Network error: \(error.localizedDescription)")
+                self.handleRecordSaveSuccess()
+            }
+        }
+    }
+
+    private func deleteAndResaveHealthData(recordId: Int, healthDto: HealthDataSaveRequestDto) {
+        recordProvider.request(.deleteHealthData(recordId: recordId)) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case .success(let result):
+                if 200..<300 ~= result.statusCode {
+                    self.recordProvider.request(.saveHealthData(recordId: recordId, param: healthDto)) { [weak self] _ in
+                        self?.handleRecordSaveSuccess()
+                    }
+                } else {
+                    self.handleRecordSaveSuccess()
+                }
+            case .failure:
+                self.handleRecordSaveSuccess()
+            }
+        }
+    }
+
+    private func handleRecordSaveSuccess() {
+        LoadingIndicator.hideLoading()
+        analyze(buttonName: GAEvent.Button.clickStoreRunningTracking)
+        WatchSessionService.shared.sendRunReset()
+        WatchSessionService.shared.clearHealthData()
+        showToastOnWindow(text: "저장한 러닝 기록은 마이페이지에서 볼 수 있어요.")
+        navigationController?.popToRootViewController(animated: true)
     }
 }

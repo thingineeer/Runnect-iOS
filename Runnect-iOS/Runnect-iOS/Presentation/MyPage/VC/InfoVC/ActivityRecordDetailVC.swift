@@ -102,6 +102,56 @@ final class ActivityRecordDetailVC: UIViewController {
         $0.distribution = .fill
     }
     
+    // MARK: - Health Data UI Components
+
+    private let healthDividerView = UIView().then {
+        $0.backgroundColor = .g5
+        $0.isHidden = true
+    }
+
+    private let healthTitleIcon = UIImageView().then {
+        $0.image = UIImage(systemName: "heart.fill")
+        $0.tintColor = .m1
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+
+    private let healthTitleLabel = UILabel().then {
+        $0.text = "건강 데이터"
+        $0.font = .h5
+        $0.textColor = .g1
+        $0.isHidden = true
+    }
+
+    private let healthAvgHRStatsView = StatsInfoView(title: "평균 심박수", stats: "-- BPM")
+        .setAttributedStats(stats: "--", unit: " BPM")
+    private let healthCalorieStatsView = StatsInfoView(title: "칼로리", stats: "-- kcal")
+        .setAttributedStats(stats: "--", unit: " kcal")
+    private let healthMaxHRStatsView = StatsInfoView(title: "최대 심박수", stats: "-- BPM")
+        .setAttributedStats(stats: "--", unit: " BPM")
+
+    private let healthVertDivider1 = UIView().then { $0.backgroundColor = .g2 }
+    private let healthVertDivider2 = UIView().then { $0.backgroundColor = .g2 }
+
+    private lazy var healthStatsStackView = UIStackView(
+        arrangedSubviews: [healthAvgHRStatsView,
+                           healthVertDivider1,
+                           healthCalorieStatsView,
+                           healthVertDivider2,
+                           healthMaxHRStatsView]
+    ).then {
+        $0.spacing = 25
+        $0.isHidden = true
+    }
+
+    private let heartRateZoneBarView = HeartRateZoneBarView().then {
+        $0.isHidden = true
+    }
+
+    private var hasHealthData = false
+
+    // MARK: - Finish Edit Button
+
     private lazy var finishEditButton = CustomButton(title: "완료").then {
         $0.isHidden = true
         $0.isEnabled = false
@@ -120,6 +170,10 @@ final class ActivityRecordDetailVC: UIViewController {
         self.view = view
         self.setKeyboardNotification()
         self.setTapGesture()
+
+        if hasHealthData, let recordId = self.recordId {
+            fetchHealthData(recordId: recordId)
+        }
     }
 }
 
@@ -235,19 +289,20 @@ extension ActivityRecordDetailVC {
         self.recordId = model.id
         self.mapImageView.setImage(with: model.image)
         self.courseTitleLabel.text = model.title
-        
+        self.hasHealthData = model.healthData != nil
+
         let location = "\(model.departure.region) \(model.departure.city)"
         self.recordDepartureInfoView.setDescriptionText(description: location)
-        
+
         // 날짜 바꾸기
         let recordDate = model.createdAt.prefix(10)
         let resultDate = RNTimeFormatter.changeDateSplit(date: String(recordDate))
         self.recordDateInfoView.setDescriptionText(description: resultDate)
-        
+
         // 이동 시간 바꾸기
         let recordRunningTime = model.time.suffix(7)
         self.recordRunningTimeValueLabel.text = String(recordRunningTime)
-        
+
         // 평균 페이스 바꾸기
         let array = spiltRecordAveragePace(model: model)
         setUpRecordAveragePaceValueLabel(array: array, label: recordAveragePaceValueLabel)
@@ -406,27 +461,87 @@ extension ActivityRecordDetailVC {
     
     private func setRecordSubInfoStackView() {
         middleScorollView.addSubview(recordSubInfoStackView)
-        
+
         let screenWidth = UIScreen.main.bounds.width
         let containerViewWidth = screenWidth - 32
         let stackViewWidth = Int(containerViewWidth - 2) / 3
-        
+
         recordDistanceStackView.snp.makeConstraints {
             $0.width.equalTo(stackViewWidth)
         }
-        
+
         recordRunningTimeStackView.snp.makeConstraints {
             $0.width.equalTo(stackViewWidth)
         }
-        
+
         recordAveragePaceStackView.snp.makeConstraints {
             $0.width.equalTo(stackViewWidth)
         }
-        
+
         recordSubInfoStackView.snp.makeConstraints {
             $0.top.equalTo(secondHorizontalDivideLine.snp.bottom).offset(23)
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(30)
+        }
+
+        setHealthDataLayout()
+    }
+
+    private func setHealthDataLayout() {
+        middleScorollView.addSubviews(
+            healthDividerView,
+            healthTitleIcon,
+            healthTitleLabel,
+            healthVertDivider1,
+            healthVertDivider2,
+            healthStatsStackView,
+            heartRateZoneBarView
+        )
+
+        healthDividerView.snp.makeConstraints {
+            $0.top.equalTo(recordSubInfoStackView.snp.bottom).offset(25)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(7)
+        }
+
+        healthTitleIcon.snp.makeConstraints {
+            $0.top.equalTo(healthDividerView.snp.bottom).offset(20)
+            $0.leading.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.width.height.equalTo(16)
+        }
+
+        healthTitleLabel.snp.makeConstraints {
+            $0.centerY.equalTo(healthTitleIcon)
+            $0.leading.equalTo(healthTitleIcon.snp.trailing).offset(6)
+        }
+
+        healthVertDivider1.snp.makeConstraints {
+            $0.height.equalTo(44)
+            $0.width.equalTo(0.5)
+        }
+
+        healthVertDivider2.snp.makeConstraints {
+            $0.height.equalTo(44)
+            $0.width.equalTo(0.5)
+        }
+
+        healthStatsStackView.snp.makeConstraints {
+            $0.top.equalTo(healthTitleLabel.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+        }
+
+        heartRateZoneBarView.snp.makeConstraints {
+            $0.top.equalTo(healthStatsStackView.snp.bottom).offset(20)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
+        }
+
+        // 건강 데이터가 있으면 zoneBarView가 bottom, 없으면 recordSubInfo가 bottom
+        heartRateZoneBarView.snp.makeConstraints {
+            $0.bottom.lessThanOrEqualToSuperview().inset(30)
+        }
+
+        // 건강 데이터 없을 때의 bottom 제약
+        recordSubInfoStackView.snp.makeConstraints {
+            $0.bottom.lessThanOrEqualToSuperview().inset(30)
         }
     }
     
@@ -517,6 +632,60 @@ extension ActivityRecordDetailVC {
         }
     }
     
+    private func fetchHealthData(recordId: Int) {
+        recordProvider.request(.getHealthData(recordId: recordId)) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case .success(let result):
+                if 200..<300 ~= result.statusCode {
+                    do {
+                        let responseDto = try result.map(BaseResponse<HealthDataResponseDto>.self)
+                        guard let healthData = responseDto.data?.healthData else { return }
+                        self.showHealthDetail(healthData)
+                    } catch {
+                        print("[HealthData] Decode error: \(error)")
+                    }
+                }
+            case .failure(let error):
+                print("[HealthData] Fetch error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func showHealthDetail(_ detail: HealthDataDetail) {
+        healthDividerView.isHidden = false
+        healthTitleIcon.isHidden = false
+        healthTitleLabel.isHidden = false
+        healthStatsStackView.isHidden = false
+
+        healthAvgHRStatsView.setAttributedStats(stats: "\(Int(detail.avgHeartRate))", unit: " BPM")
+        healthCalorieStatsView.setAttributedStats(stats: "\(Int(detail.calories))", unit: " kcal")
+        healthMaxHRStatsView.setAttributedStats(stats: "\(Int(detail.maxHeartRate))", unit: " BPM")
+
+        // zone seconds → percentage 변환
+        let zones = detail.zones
+        let totalSeconds = zones.zone1Seconds + zones.zone2Seconds +
+                           zones.zone3Seconds + zones.zone4Seconds + zones.zone5Seconds
+        guard totalSeconds > 0 else { return }
+
+        var zoneData: [[String: Any]] = []
+        let zoneSeconds = [
+            (1, zones.zone1Seconds),
+            (2, zones.zone2Seconds),
+            (3, zones.zone3Seconds),
+            (4, zones.zone4Seconds),
+            (5, zones.zone5Seconds)
+        ]
+        for (zone, seconds) in zoneSeconds where seconds > 0 {
+            zoneData.append([
+                "zone": zone,
+                "percentage": Double(seconds) / Double(totalSeconds) * 100.0
+            ])
+        }
+
+        heartRateZoneBarView.configure(with: zoneData)
+    }
+
     private func editRecordTitle() {
         guard let recordId = self.recordId else { return }
         guard let editRecordTitle = self.courseTitleTextField.text else { return }
