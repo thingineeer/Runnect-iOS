@@ -106,6 +106,26 @@ final class WatchSessionManager: NSObject, ObservableObject {
         runningState = .idle
     }
 
+    // MARK: - Send Health Data to iPhone
+
+    func sendHealthSummary(_ data: [String: Any]) {
+        guard WCSession.default.activationState == .activated else { return }
+        // transferUserInfo guarantees delivery even when phone is unreachable
+        WCSession.default.transferUserInfo(data)
+    }
+
+    func sendRealtimeHealth(heartRate: Double, calories: Double) {
+        guard WCSession.default.isReachable else { return }
+        let message: [String: Any] = [
+            "messageType": "realtimeHealth",
+            "heartRate": heartRate,
+            "calories": calories
+        ]
+        WCSession.default.sendMessage(message, replyHandler: nil) { error in
+            print("[WatchSession] Realtime health send error: \(error.localizedDescription)")
+        }
+    }
+
     // MARK: - Send control messages to iPhone
 
     func sendRunCommand(_ command: String) {

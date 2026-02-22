@@ -14,6 +14,12 @@ final class WatchSessionService: NSObject, ObservableObject {
 
     @Published var isWatchReachable = false
 
+    // MARK: - Health Data (received from Watch)
+
+    @Published var realtimeHeartRate: Double = 0
+    @Published var realtimeCalories: Double = 0
+    @Published private(set) var healthSummary: WatchHealthSummary?
+
     private var sendTimer: AnyCancellable?
 
     private override init() {
@@ -67,6 +73,14 @@ final class WatchSessionService: NSObject, ObservableObject {
         sendIfReachable(["messageType": "runReset"])
     }
 
+    // MARK: - Health Data Management
+
+    func clearHealthData() {
+        realtimeHeartRate = 0
+        realtimeCalories = 0
+        healthSummary = nil
+    }
+
     private func sendIfReachable(_ message: [String: Any], retryCount: Int = 0) {
         guard WCSession.default.activationState == .activated,
               WCSession.default.isReachable else {
@@ -111,6 +125,19 @@ extension WatchSessionService: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        handleIncomingMessage(message)
+    }
+
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
+        handleIncomingMessage(message)
+        replyHandler(["status": "received"])
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        handleIncomingMessage(userInfo)
+    }
+
+    private func handleIncomingMessage(_ message: [String: Any]) {
         guard let type = message["messageType"] as? String else { return }
 
         switch type {
@@ -118,14 +145,37 @@ extension WatchSessionService: WCSessionDelegate {
             if let command = message["command"] as? String {
                 handleWatchCommand(command)
             }
+
+        case "realtimeHealth":
+            DispatchQueue.main.async {
+                if let heartRate = message["heartRate"] as? Double {
+                    self.realtimeHeartRate = heartRate
+                }
+                if let calories = message["calories"] as? Double {
+                    self.realtimeCalories = calories
+                }
+                NotificationCenter.default.post(
+                    name: .watchRealtimeHealthReceived,
+                    object: nil,
+                    userInfo: message
+                )
+            }
+
+        case "healthSummary":
+            if let summary = WatchHealthSummary.fromDictionary(message) {
+                DispatchQueue.main.async {
+                    self.healthSummary = summary
+                    NotificationCenter.default.post(
+                        name: .watchHealthSummaryReceived,
+                        object: nil,
+                        userInfo: message
+                    )
+                }
+            }
+
         default:
             break
         }
-    }
-
-    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
-        self.session(session, didReceiveMessage: message)
-        replyHandler(["status": "received"])
     }
 
     private func handleWatchCommand(_ command: String) {
@@ -139,8 +189,49 @@ extension WatchSessionService: WCSessionDelegate {
     }
 }
 
+// MARK: - WatchHealthSummary
+
+struct WatchHealthSummary {
+    let avgHeartRate: Double
+    let maxHeartRate: Double
+    let totalCalories: Double
+    let heartRateZones: [[String: Any]]
+    let timestamp: Date
+
+    static func fromDictionary(_ dict: [String: Any]) -> WatchHealthSummary? {
+        guard let avgHeartRate = dict["avgHeartRate"] as? Double,
+              let maxHeartRate = dict["maxHeartRate"] as? Double,
+              let totalCalories = dict["totalCalories"] as? Double,
+              let timestamp = dict["timestamp"] as? TimeInterval else {
+            return nil
+        }
+
+        let zones = dict["heartRateZones"] as? [[String: Any]] ?? []
+
+        return WatchHealthSummary(
+            avgHeartRate: avgHeartRate,
+            maxHeartRate: maxHeartRate,
+            totalCalories: totalCalories,
+            heartRateZones: zones,
+            timestamp: Date(timeIntervalSince1970: timestamp)
+        )
+    }
+
+    func toDictionary() -> [String: Any] {
+        return [
+            "avgHeartRate": avgHeartRate,
+            "maxHeartRate": maxHeartRate,
+            "totalCalories": totalCalories,
+            "heartRateZones": heartRateZones,
+            "timestamp": timestamp.timeIntervalSince1970
+        ]
+    }
+}
+
 // MARK: - Notification Names
 
 extension Notification.Name {
     static let watchCommandReceived = Notification.Name("watchCommandReceived")
+    static let watchRealtimeHealthReceived = Notification.Name("watchRealtimeHealthReceived")
+    static let watchHealthSummaryReceived = Notification.Name("watchHealthSummaryReceived")
 }

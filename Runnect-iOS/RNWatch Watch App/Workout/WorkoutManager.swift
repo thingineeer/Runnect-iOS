@@ -20,10 +20,16 @@ final class WorkoutManager: NSObject, ObservableObject {
     // Summary values preserved after workout ends
     @Published var summaryHeartRate: Double = 0
     @Published var summaryCalories: Double = 0
+    @Published var summaryMaxHeartRate: Double = 0
 
     private let healthStore = HKHealthStore()
     private var workoutSession: HKWorkoutSession?
     private var workoutBuilder: HKLiveWorkoutBuilder?
+
+    // Heart rate sample tracking for zone distribution
+    private var heartRateSamples: [(bpm: Double, date: Date)] = []
+    private var maxHeartRateValue: Double = 0
+    private let estimatedMaxHR: Double = 190
 
     private override init() {
         super.init()
@@ -67,6 +73,9 @@ final class WorkoutManager: NSObject, ObservableObject {
                 workoutConfiguration: configuration
             )
 
+            heartRateSamples.removeAll()
+            maxHeartRateValue = 0
+
             let startDate = Date()
             workoutSession?.startActivity(with: startDate)
             workoutBuilder?.beginCollection(withStart: startDate) { success, error in
@@ -89,6 +98,7 @@ final class WorkoutManager: NSObject, ObservableObject {
         // Preserve summary values before session ends and triggers reset
         summaryHeartRate = heartRate
         summaryCalories = activeCalories
+        summaryMaxHeartRate = maxHeartRateValue
 
         // Use averageQuantity for heart rate if available
         if let builder = workoutBuilder,
@@ -97,12 +107,86 @@ final class WorkoutManager: NSObject, ObservableObject {
             if let avg = hrStats.averageQuantity()?.doubleValue(for: hrUnit) {
                 summaryHeartRate = avg
             }
+            if let max = hrStats.maximumQuantity()?.doubleValue(for: hrUnit) {
+                summaryMaxHeartRate = max
+            }
         }
+
+        // Send health summary to iPhone via transferUserInfo
+        sendHealthSummaryToiPhone()
 
         workoutSession?.end()
 
         DispatchQueue.main.async {
             self.isWorkoutActive = false
+        }
+    }
+
+    // MARK: - Health Summary
+
+    func generateHealthSummary() -> [String: Any] {
+        let avgHR = summaryHeartRate
+        let maxHR = summaryMaxHeartRate
+        let calories = summaryCalories
+        let zones = calculateZoneDistribution()
+
+        var zoneList: [[String: Any]] = []
+        for zone in zones {
+            zoneList.append([
+                "zone": zone.zone.rawValue,
+                "zoneName": zone.zone.name,
+                "durationSeconds": zone.durationSeconds,
+                "percentage": zone.percentage
+            ])
+        }
+
+        return [
+            "messageType": "healthSummary",
+            "avgHeartRate": round(avgHR * 10) / 10,
+            "maxHeartRate": round(maxHR * 10) / 10,
+            "totalCalories": round(calories * 10) / 10,
+            "heartRateZones": zoneList,
+            "timestamp": Date().timeIntervalSince1970
+        ]
+    }
+
+    private func sendHealthSummaryToiPhone() {
+        let summary = generateHealthSummary()
+        WatchSessionManager.shared.sendHealthSummary(summary)
+    }
+
+    private func calculateZoneDistribution() -> [(zone: HeartRateZone, durationSeconds: Int, percentage: Double)] {
+        guard heartRateSamples.count >= 2 else { return [] }
+
+        var zoneDurations: [HeartRateZone: TimeInterval] = [:]
+        for zone in HeartRateZone.allCases {
+            zoneDurations[zone] = 0
+        }
+
+        for i in 0..<(heartRateSamples.count - 1) {
+            let sample = heartRateSamples[i]
+            let nextSample = heartRateSamples[i + 1]
+            let duration = nextSample.date.timeIntervalSince(sample.date)
+            let zone = HeartRateZone.zone(for: sample.bpm, maxHeartRate: estimatedMaxHR)
+            zoneDurations[zone, default: 0] += duration
+        }
+
+        if let lastSample = heartRateSamples.last {
+            let zone = HeartRateZone.zone(for: lastSample.bpm, maxHeartRate: estimatedMaxHR)
+            zoneDurations[zone, default: 0] += 5
+        }
+
+        let totalDuration = zoneDurations.values.reduce(0, +)
+        guard totalDuration > 0 else { return [] }
+
+        return HeartRateZone.allCases.compactMap { zone in
+            let duration = zoneDurations[zone] ?? 0
+            guard duration > 0 else { return nil }
+            return (
+                zone: zone,
+                durationSeconds: Int(duration),
+                percentage: round((duration / totalDuration) * 1000) / 10
+            )
         }
     }
 
@@ -125,7 +209,17 @@ final class WorkoutManager: NSObject, ObservableObject {
                 let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
                 if let value = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) {
                     self.heartRate = value
+                    self.heartRateSamples.append((bpm: value, date: Date()))
+                    if value > self.maxHeartRateValue {
+                        self.maxHeartRateValue = value
+                    }
                     self.updateHeartRateZone(value)
+
+                    // Send realtime health data to iPhone
+                    WatchSessionManager.shared.sendRealtimeHealth(
+                        heartRate: value,
+                        calories: self.activeCalories
+                    )
                 }
 
             case HKQuantityType(.activeEnergyBurned):
@@ -158,8 +252,11 @@ final class WorkoutManager: NSObject, ObservableObject {
         activeCalories = 0
         summaryHeartRate = 0
         summaryCalories = 0
+        summaryMaxHeartRate = 0
         isWorkoutActive = false
         currentZone = .zone1
+        heartRateSamples.removeAll()
+        maxHeartRateValue = 0
         workoutSession = nil
         workoutBuilder = nil
     }

@@ -19,6 +19,9 @@ struct RunningModel {
     var totalTime: Int?
     var region: String?
     var city: String?
+
+    // Watch 건강 데이터 (Watch 미연결 시 nil)
+    var healthSummary: WatchHealthSummary?
     
     /// HH:MM:SS 형식으로 반환
     func getFormattedTotalTime() -> String? {
