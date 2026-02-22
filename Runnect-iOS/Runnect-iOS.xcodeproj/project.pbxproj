@@ -150,6 +150,7 @@
 		CE6B63D829673450003F900F /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE6B63D729673450003F900F /* ListEmptyView.swift */; };
 		CE9291252965C9FB0010959C /* CourseDetailInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9291242965C9FB0010959C /* CourseDetailInfoView.swift */; };
 		CE9291272965D0ED0010959C /* StatsInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9291262965D0ED0010959C /* StatsInfoView.swift */; };
+		D1A2B3C4D5E6F7081234ABCE /* HeartRateZoneBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A2B3C4D5E6F7081234ABCD /* HeartRateZoneBarView.swift */; };
 		CE9291292965E01D0010959C /* RNTimeFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9291282965E01D0010959C /* RNTimeFormatter.swift */; };
 		CEB0BCBC29D123350048CCD5 /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB0BCBB29D123350048CCD5 /* GuideView.swift */; };
 		CEB8416E2962C45300BF8080 /* LocationSearchResultTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB8416D2962C45300BF8080 /* LocationSearchResultTVC.swift */; };
@@ -342,6 +343,7 @@
 		CE6B63D729673450003F900F /* ListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEmptyView.swift; sourceTree = "<group>"; };
 		CE9291242965C9FB0010959C /* CourseDetailInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailInfoView.swift; sourceTree = "<group>"; };
 		CE9291262965D0ED0010959C /* StatsInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsInfoView.swift; sourceTree = "<group>"; };
+		D1A2B3C4D5E6F7081234ABCD /* HeartRateZoneBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateZoneBarView.swift; sourceTree = "<group>"; };
 		CE9291282965E01D0010959C /* RNTimeFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNTimeFormatter.swift; sourceTree = "<group>"; };
 		CEB0BCBB29D123350048CCD5 /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
 		CEB8416D2962C45300BF8080 /* LocationSearchResultTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchResultTVC.swift; sourceTree = "<group>"; };
@@ -1111,6 +1113,7 @@
 				CE0D9FD229648DA300CEB5CD /* CustomAlertVC.swift */,
 				CE9291242965C9FB0010959C /* CourseDetailInfoView.swift */,
 				CE9291262965D0ED0010959C /* StatsInfoView.swift */,
+				D1A2B3C4D5E6F7081234ABCD /* HeartRateZoneBarView.swift */,
 				CE6B63D729673450003F900F /* ListEmptyView.swift */,
 				CEB0BCBB29D123350048CCD5 /* GuideView.swift */,
 				A3C2CAD629E53B2900EC525B /* RNAlertVC.swift */,
@@ -1426,6 +1429,7 @@
 				A3BC2F2F2962C40A00198261 /* UploadedCourseInfoVC.swift in Sources */,
 				CE6655EA295D88B200C64E12 /* UITabBar+.swift in Sources */,
 				CE9291272965D0ED0010959C /* StatsInfoView.swift in Sources */,
+				D1A2B3C4D5E6F7081234ABCE /* HeartRateZoneBarView.swift in Sources */,
 				CEC2A68729629B9B00160BF7 /* NickNameSetUpVC.swift in Sources */,
 				DA97A033296E65D80086760E /* CourseUploadingRequestDto.swift in Sources */,
 				711E18212B38516D00C651CD /* GAManager.swift in Sources */,

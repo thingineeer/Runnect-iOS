@@ -30,6 +30,9 @@ final class RunTrackingVC: UIViewController {
     private var lastLocation: CLLocation?
     private var runDistance: Double = 0.0  // meters
     private let distanceQueue = DispatchQueue(label: "com.runnect.distance", qos: .userInitiated)
+
+    // Watch 건강 데이터
+    private var healthCancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     
@@ -119,7 +122,102 @@ final class RunTrackingVC: UIViewController {
     private let smallStarImageView = UIImageView().then {
         $0.image = ImageLiterals.icStar
     }
-    
+
+    // Watch 건강 데이터 UI (statsView 내부에 배치)
+    private let healthDividerLine = UIView().then {
+        $0.backgroundColor = .g4
+        $0.isHidden = true
+    }
+
+    private let heartRateImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "heart.fill")
+        $0.tintColor = .g2
+        $0.contentMode = .scaleAspectFit
+    }
+
+    private let heartRateTitleLabel = UILabel().then {
+        $0.text = "심박수"
+        $0.font = .b4
+        $0.textColor = .g2
+    }
+
+    private lazy var heartRateInfoStackView = UIStackView(
+        arrangedSubviews: [heartRateImageView, heartRateTitleLabel]
+    ).then {
+        $0.spacing = 8
+        $0.alignment = .leading
+    }
+
+    private let heartRateValueLabel = UILabel().then {
+        $0.attributedText = {
+            let attr = NSMutableAttributedString(
+                string: "--",
+                attributes: [.font: UIFont.h3, .foregroundColor: UIColor.g1]
+            )
+            attr.append(NSAttributedString(
+                string: " BPM",
+                attributes: [.font: UIFont.b4, .foregroundColor: UIColor.g2]
+            ))
+            return attr
+        }()
+    }
+
+    private lazy var heartRateStatsStackView = UIStackView(
+        arrangedSubviews: [heartRateInfoStackView, heartRateValueLabel]
+    ).then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 14
+    }
+
+    private let calorieImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "flame.fill")
+        $0.tintColor = .g2
+        $0.contentMode = .scaleAspectFit
+    }
+
+    private let calorieTitleLabel = UILabel().then {
+        $0.text = "칼로리"
+        $0.font = .b4
+        $0.textColor = .g2
+    }
+
+    private lazy var calorieInfoStackView = UIStackView(
+        arrangedSubviews: [calorieImageView, calorieTitleLabel]
+    ).then {
+        $0.spacing = 8
+        $0.alignment = .leading
+    }
+
+    private let calorieValueLabel = UILabel().then {
+        $0.attributedText = {
+            let attr = NSMutableAttributedString(
+                string: "0",
+                attributes: [.font: UIFont.h3, .foregroundColor: UIColor.g1]
+            )
+            attr.append(NSAttributedString(
+                string: " kcal",
+                attributes: [.font: UIFont.b4, .foregroundColor: UIColor.g2]
+            ))
+            return attr
+        }()
+    }
+
+    private lazy var calorieStatsStackView = UIStackView(
+        arrangedSubviews: [calorieInfoStackView, calorieValueLabel]
+    ).then {
+        $0.axis = .vertical
+        $0.alignment = .leading
+        $0.spacing = 14
+    }
+
+    private lazy var healthStatsStackView = UIStackView(
+        arrangedSubviews: [heartRateStatsStackView, calorieStatsStackView]
+    ).then {
+        $0.spacing = 38
+        $0.isHidden = true
+    }
+
     private let mapView = RNMapView()
         .showLocationButton(toShow: true)
         .makeContentPadding(padding: UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0))
@@ -136,6 +234,7 @@ final class RunTrackingVC: UIViewController {
         self.setAddTarget()
         self.bindStopwatch()
         self.observeWatchCommand()
+        self.bindWatchHealthData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -148,6 +247,7 @@ final class RunTrackingVC: UIViewController {
     deinit {
         NotificationCenter.default.removeObserver(self)
         cancelBag.cancel()
+        healthCancellables.forEach { $0.cancel() }
         stopRunLocationTracking()
         WatchSessionService.shared.stopSendingRunningData()
     }
@@ -250,11 +350,87 @@ extension RunTrackingVC {
         )
     }
 
+    private func bindWatchHealthData() {
+        let watchService = WatchSessionService.shared
+
+        watchService.$realtimeHeartRate
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] heartRate in
+                guard let self else { return }
+                if heartRate > 0 {
+                    self.showHealthDataRow()
+                    self.heartRateValueLabel.attributedText = self.makeAttributedHealthValue(
+                        value: "\(Int(heartRate))", unit: " BPM"
+                    )
+                }
+            }
+            .store(in: &healthCancellables)
+
+        watchService.$realtimeCalories
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] calories in
+                guard let self else { return }
+                if calories > 0 {
+                    self.calorieValueLabel.attributedText = self.makeAttributedHealthValue(
+                        value: "\(Int(calories))", unit: " kcal"
+                    )
+                }
+            }
+            .store(in: &healthCancellables)
+
+        watchService.$isWatchReachable
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] reachable in
+                guard let self else { return }
+                if !reachable {
+                    self.hideHealthDataRow()
+                }
+            }
+            .store(in: &healthCancellables)
+    }
+
+    private func makeAttributedHealthValue(value: String, unit: String) -> NSMutableAttributedString {
+        let attr = NSMutableAttributedString(
+            string: value,
+            attributes: [.font: UIFont.h3, .foregroundColor: UIColor.g1]
+        )
+        attr.append(NSAttributedString(
+            string: unit,
+            attributes: [.font: UIFont.b4, .foregroundColor: UIColor.g2]
+        ))
+        return attr
+    }
+
+    private func showHealthDataRow() {
+        guard healthStatsStackView.isHidden else { return }
+        healthDividerLine.isHidden = false
+        healthStatsStackView.isHidden = false
+        statsView.snp.updateConstraints {
+            $0.height.equalTo(160)
+        }
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    private func hideHealthDataRow() {
+        guard !healthStatsStackView.isHidden else { return }
+        healthDividerLine.isHidden = true
+        healthStatsStackView.isHidden = true
+        statsView.snp.updateConstraints {
+            $0.height.equalTo(100)
+        }
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
     private func pushToRunningRecordVC() {
         guard var runningModel = self.runningModel else { return }
-        
+
         runningModel.totalTime = self.totalTime
-        
+        runningModel.healthSummary = WatchSessionService.shared.healthSummary
+
         let runningRecordVC = RunningRecordVC()
         runningRecordVC.setData(runningModel: runningModel)
         self.navigationController?.pushViewController(runningRecordVC, animated: true)
@@ -274,6 +450,7 @@ extension RunTrackingVC {
             self?.stopRunLocationTracking()
             WatchSessionService.shared.stopSendingRunningData()
             WatchSessionService.shared.sendRunReset()
+            WatchSessionService.shared.clearHealthData()
             self?.navigationController?.popViewController(animated: true)
         }
         self.present(alertVC, animated: false)
@@ -337,38 +514,58 @@ extension RunTrackingVC {
     
     private func setLayout() {
         view.addSubviews(mapView, statsView, runningCompleteButton)
-        statsView.addSubviews(backButton, statsStackView, bigStarImageView, smallStarImageView)
-        
+        statsView.addSubviews(backButton, statsStackView, bigStarImageView, smallStarImageView, healthDividerLine, healthStatsStackView)
+
         statsView.snp.makeConstraints {
             $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(100)
         }
-        
+
         backButton.snp.makeConstraints {
             $0.leading.top.equalToSuperview()
             $0.width.height.equalTo(48)
         }
-        
+
         statsStackView.snp.makeConstraints {
             $0.leading.equalTo(backButton.snp.trailing)
             $0.top.equalToSuperview().inset(15)
         }
-        
+
         bigStarImageView.snp.makeConstraints {
             $0.centerY.equalTo(timeStatsLabel.snp.centerY)
             $0.trailing.equalToSuperview().inset(15)
         }
-        
+
         smallStarImageView.snp.makeConstraints {
             $0.top.equalTo(bigStarImageView.snp.bottom).offset(2)
             $0.centerX.equalTo(bigStarImageView.snp.leading).multipliedBy(0.99)
         }
-        
+
+        healthDividerLine.snp.makeConstraints {
+            $0.top.equalTo(statsStackView.snp.bottom).offset(8)
+            $0.leading.equalTo(backButton.snp.trailing)
+            $0.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(1)
+        }
+
+        heartRateImageView.snp.makeConstraints {
+            $0.width.height.equalTo(14)
+        }
+
+        calorieImageView.snp.makeConstraints {
+            $0.width.height.equalTo(14)
+        }
+
+        healthStatsStackView.snp.makeConstraints {
+            $0.top.equalTo(healthDividerLine.snp.bottom).offset(8)
+            $0.leading.equalTo(backButton.snp.trailing)
+        }
+
         mapView.snp.makeConstraints {
             $0.leading.top.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalToSuperview()
         }
-        
+
         runningCompleteButton.snp.makeConstraints {
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(44)

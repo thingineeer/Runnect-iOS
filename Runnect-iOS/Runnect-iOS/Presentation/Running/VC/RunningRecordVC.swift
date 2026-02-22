@@ -72,7 +72,56 @@ final class RunningRecordVC: UIViewController {
     ).then {
         $0.spacing = 25
     }
-    
+
+    // Watch 건강 데이터 섹션
+    private let healthDividerView = UIView().then {
+        $0.backgroundColor = .g5
+        $0.isHidden = true
+    }
+
+    private let healthTitleIcon = UIImageView().then {
+        $0.image = UIImage(systemName: "heart.fill")
+        $0.tintColor = .m1
+        $0.contentMode = .scaleAspectFit
+        $0.isHidden = true
+    }
+
+    private let healthTitleLabel = UILabel().then {
+        $0.text = "건강 데이터"
+        $0.font = .h5
+        $0.textColor = .g1
+        $0.isHidden = true
+    }
+
+    private let heartRateStatsView = StatsInfoView(title: "평균 심박수", stats: "-- BPM")
+        .setAttributedStats(stats: "--", unit: " BPM")
+    private let calorieStatsView = StatsInfoView(title: "칼로리", stats: "-- kcal")
+        .setAttributedStats(stats: "--", unit: " kcal")
+    private let maxHeartRateStatsView = StatsInfoView(title: "최대 심박수", stats: "-- BPM")
+        .setAttributedStats(stats: "--", unit: " BPM")
+
+    private let healthVerticalDividerView = UIView().then {
+        $0.backgroundColor = .g2
+    }
+    private let healthVerticalDividerView2 = UIView().then {
+        $0.backgroundColor = .g2
+    }
+
+    private lazy var healthStatsContainerStackView = UIStackView(
+        arrangedSubviews: [heartRateStatsView,
+                           healthVerticalDividerView,
+                           calorieStatsView,
+                           healthVerticalDividerView2,
+                           maxHeartRateStatsView]
+    ).then {
+        $0.spacing = 25
+        $0.isHidden = true
+    }
+
+    private let heartRateZoneBarView = HeartRateZoneBarView().then {
+        $0.isHidden = true
+    }
+
     private let saveButton = CustomButton(title: "저장하기")
         .setEnabled(false)
     
@@ -141,12 +190,32 @@ extension RunningRecordVC {
         self.totalTimeStatsView.setStats(stats: runningModel.getFormattedTotalTime() ?? "00:00:00")
         self.averagePaceStatsView.setStats(stats: runningModel.getFormattedAveragePage() ?? "0'00''")
         self.courseImageView.image = runningModel.pathImage
-        
+
+        // 건강 데이터 표시 (Watch 연결 시)
+        if let health = runningModel.healthSummary {
+            showHealthData(health)
+        }
+
         guard let region = runningModel.region, let city = runningModel.city else { return }
         self.departureInfoView.setDescriptionText(description: "\(region) \(city)")
-        
+
         guard let imageUrl = runningModel.imageUrl else { return }
         self.courseImageView.setImage(with: imageUrl)
+    }
+
+    private func showHealthData(_ summary: WatchHealthSummary) {
+        healthDividerView.isHidden = false
+        healthTitleIcon.isHidden = false
+        healthTitleLabel.isHidden = false
+        healthStatsContainerStackView.isHidden = false
+
+        heartRateStatsView.setAttributedStats(stats: "\(Int(summary.avgHeartRate))", unit: " BPM")
+        calorieStatsView.setAttributedStats(stats: "\(Int(summary.totalCalories))", unit: " kcal")
+        maxHeartRateStatsView.setAttributedStats(stats: "\(Int(summary.maxHeartRate))", unit: " BPM")
+
+        if !summary.heartRateZones.isEmpty {
+            heartRateZoneBarView.configure(with: summary.heartRateZones)
+        }
     }
 }
 
@@ -237,51 +306,96 @@ extension RunningRecordVC {
             dividerView,
             verticalDividerView,
             verticalDividerView2,
-            statsContainerStackView
+            statsContainerStackView,
+            healthDividerView,
+            healthTitleIcon,
+            healthTitleLabel,
+            healthVerticalDividerView,
+            healthVerticalDividerView2,
+            healthStatsContainerStackView,
+            heartRateZoneBarView
         )
-        
+
         courseImageView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.height.equalTo(courseImageView.snp.width)
         }
-        
+
         courseTitleTextField.snp.makeConstraints {
             $0.top.equalTo(courseImageView.snp.bottom).offset(27)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(35)
         }
-        
+
         dateInfoView.snp.makeConstraints {
             $0.top.equalTo(courseTitleTextField.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(16)
         }
-        
+
         departureInfoView.snp.makeConstraints {
             $0.top.equalTo(dateInfoView.snp.bottom).offset(6)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(16)
         }
-        
+
         dividerView.snp.makeConstraints {
             $0.top.equalTo(departureInfoView.snp.bottom).offset(34)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(7)
         }
-        
+
         verticalDividerView.snp.makeConstraints {
             $0.height.equalTo(44)
             $0.width.equalTo(0.5)
         }
-        
+
         verticalDividerView2.snp.makeConstraints {
             $0.height.equalTo(44)
             $0.width.equalTo(0.5)
         }
-        
+
         statsContainerStackView.snp.makeConstraints {
             $0.top.equalTo(dividerView.snp.bottom).offset(25)
             $0.centerX.equalToSuperview()
+        }
+
+        // 건강 데이터 섹션 (Watch 연결 시에만 표시)
+        healthDividerView.snp.makeConstraints {
+            $0.top.equalTo(statsContainerStackView.snp.bottom).offset(25)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(7)
+        }
+
+        healthTitleIcon.snp.makeConstraints {
+            $0.top.equalTo(healthDividerView.snp.bottom).offset(20)
+            $0.leading.equalToSuperview().inset(16)
+            $0.width.height.equalTo(16)
+        }
+
+        healthTitleLabel.snp.makeConstraints {
+            $0.centerY.equalTo(healthTitleIcon)
+            $0.leading.equalTo(healthTitleIcon.snp.trailing).offset(6)
+        }
+
+        healthVerticalDividerView.snp.makeConstraints {
+            $0.height.equalTo(44)
+            $0.width.equalTo(0.5)
+        }
+
+        healthVerticalDividerView2.snp.makeConstraints {
+            $0.height.equalTo(44)
+            $0.width.equalTo(0.5)
+        }
+
+        healthStatsContainerStackView.snp.makeConstraints {
+            $0.top.equalTo(healthTitleLabel.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+        }
+
+        heartRateZoneBarView.snp.makeConstraints {
+            $0.top.equalTo(healthStatsContainerStackView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.bottom.lessThanOrEqualToSuperview().inset(25)
         }
     }
@@ -302,11 +416,24 @@ extension RunningRecordVC {
         guard let secondsPerKm = runningModel.getIntPace() else { return }
         let pace = RNTimeFormatter.secondsToHHMMSS(seconds: secondsPerKm)
 
-        let requestDto = RunningRecordRequestDto(courseId: courseId,
-                                                 publicCourseId: runningModel.publicCourseId,
-                                                 title: titleText,
-                                                 time: time,
-                                                 pace: pace)
+        // 건강 데이터 (Watch 미연결 시 nil)
+        var healthData: HealthDataRequestDto?
+        if let summary = runningModel.healthSummary {
+            healthData = HealthDataRequestDto(
+                avgHeartRate: summary.avgHeartRate,
+                maxHeartRate: summary.maxHeartRate,
+                totalCalories: summary.totalCalories
+            )
+        }
+
+        let requestDto = RunningRecordRequestDto(
+            courseId: courseId,
+            publicCourseId: runningModel.publicCourseId,
+            title: titleText,
+            time: time,
+            pace: pace,
+            healthData: healthData
+        )
 
         LoadingIndicator.showLoading()
         recordProvider.request(.recordRunning(param: requestDto)) { [weak self] response in
@@ -318,6 +445,7 @@ extension RunningRecordVC {
                 if 200..<300 ~= status {
                     analyze(buttonName: GAEvent.Button.clickStoreRunningTracking)
                     WatchSessionService.shared.sendRunReset()
+                    WatchSessionService.shared.clearHealthData()
                     self.showToastOnWindow(text: "저장한 러닝 기록은 마이페이지에서 볼 수 있어요.")
                     self.navigationController?.popToRootViewController(animated: true)
                 }
