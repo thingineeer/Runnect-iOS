@@ -2,7 +2,7 @@
 //  WorkoutManager.swift
 //  RNWatch Watch App
 //
-//  Created by Runnect on 2026/02/08.
+//  Created by 이명진 on 2026/02/08.
 //
 
 import Foundation

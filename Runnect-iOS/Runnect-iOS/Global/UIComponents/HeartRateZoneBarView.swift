@@ -2,7 +2,7 @@
 //  HeartRateZoneBarView.swift
 //  Runnect-iOS
 //
-//  Created by Runnect on 2026/02/22.
+//  Created by 이명진 on 2026/02/22.
 //
 
 import UIKit
