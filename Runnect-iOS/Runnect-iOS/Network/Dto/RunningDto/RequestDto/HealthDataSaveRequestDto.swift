@@ -19,7 +19,7 @@ struct HealthDataSaveRequestDto: Codable {
     let zone3Seconds: Int
     let zone4Seconds: Int
     let zone5Seconds: Int
-    let maxHeartRateConfig: Int?
+    let maxHeartRateConfig: Double?
     let heartRateSamples: [HeartRateSampleDto]?
 }
 

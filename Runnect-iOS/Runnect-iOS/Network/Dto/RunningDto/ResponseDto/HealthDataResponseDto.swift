@@ -23,7 +23,7 @@ struct HealthDataDetail: Codable {
     let minHeartRate: Double?
     let calories: Double
     let zones: HealthZonesDto
-    let maxHeartRateConfig: Int?
+    let maxHeartRateConfig: Double?
     let heartRateSamples: [HeartRateSampleDto]?
 }
 
